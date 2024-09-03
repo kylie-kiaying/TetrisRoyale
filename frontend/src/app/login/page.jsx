@@ -16,6 +16,7 @@ import {
         SelectTrigger,
         SelectValue
 } from "@/components/ui/select";
+import Link from "next/link";
 
 export default function LoginPage() {
     return (
@@ -51,8 +52,10 @@ export default function LoginPage() {
                     </form>
                 </CardContent>
                 <CardFooter className="flex justify-between">
+                    <Link href="/">
                         <Button variant="outline" className="text-white bg-[#1e0b38] hover:bg-gray-300/70 font-bold py-2 px-4 rounded"> Cancel</Button>
-                        <Button variant="outline" className= "bg-white text-[#1e0b38] hover:bg-gray-300/70 font-bold py-2 px-4 rounded"> Sign in</Button>
+                    </Link>
+                    <Button variant="outline" className= "bg-white text-[#1e0b38] hover:bg-gray-300/70 font-bold py-2 px-4 rounded"> Sign in</Button>
                 </CardFooter>   
             </Card>
       </div>
