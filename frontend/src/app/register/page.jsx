@@ -23,7 +23,7 @@ export default function LoginPage() {
         <div className="flex justify-center items-center h-screen bg-[#0b051d]">
             <Card className="bg-opacity-40 w-[350px] max-w-md backdrop-blur-md  rounded-lg shadow-lg items-center">
                 <CardHeader>
-                    <CardTitle >Sign in</CardTitle>
+                    <CardTitle >Register new account</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <form>
@@ -42,11 +42,15 @@ export default function LoginPage() {
                             </div>
                             <div className="flex flex-col space-y-1.5">
                             <Label htmlFor="name">User ID</Label>
-                            <Input id="name" placeholder="" />
+                            <Input id="name" placeholder="Your unique username" />
                             </div>
                             <div className="flex flex-col space-y-1.5">
                             <Label htmlFor="password">Password</Label>
-                            <Input id="password" type="password" placeholder="" />
+                            <Input id="password" type="password" placeholder="8-16 Alphanumeric Characters" />
+                            </div>
+                            <div className="flex flex-col space-y-1.5">
+                            <Label htmlFor="confirmPassword">Confirm Password</Label>
+                            <Input id="password" type="password" placeholder="Enter your password again" />
                             </div>
                         </div>
                     </form>
@@ -56,11 +60,8 @@ export default function LoginPage() {
                         <Link href="/">
                             <Button variant="outline" className=" text-white bg-[#1e0b38] hover:bg-gray-300/70"> Cancel</Button>
                         </Link>
-                        <Button variant="outline" className= " bg-white text-[#1e0b38] hover:bg-gray-300/70"> Sign in</Button>
+                        <Button variant="outline" className= " bg-white text-[#1e0b38] hover:bg-gray-300/70">Register </Button>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                        Forgot your password? <a href="/forgot-password" className="hover:underline">Reset it here</a>
-                    </p>
                 </CardFooter>   
             </Card>
       </div>
