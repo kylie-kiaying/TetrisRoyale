@@ -12,9 +12,9 @@ import { IoTrophy, IoSearch, IoPerson } from "react-icons/io5"
 
 export default function Component() {
   return (
-    <div className="flex flex-col bg-[#140a2f] ">
-      <header className="flex items-center justify-between px-6 py-4 bg-background-muted border-muted">
-        <div className="flex items-center gap-4">
+    <div className="flex flex-col items-center align-middle h-10/12 sticky top-0">
+      <header className="flex bg-inherit items-center justify-between w-10/12 h-12 px-6 py-4 shadow-[inset_0_0_0_3000px_rgba(150,150,150,0.192)] border-muted rounded-full backdrop-blur-md sticky">
+        <div className="flex items-center gap-4 ">
           <Link href="#" prefetch={false}>
             <MountainIcon className="h-6 w-6 text-primary-foreground" />
           </Link>
