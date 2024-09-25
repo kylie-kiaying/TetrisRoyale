@@ -1,4 +1,3 @@
-# schema/auth_schemas.py
 from pydantic import BaseModel, EmailStr
 
 class UserReg(BaseModel):

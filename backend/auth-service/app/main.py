@@ -1,19 +1,16 @@
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from app.controller import auth_controller
-from app.utils.db_utils import engine
-from app.model.player_model import Base
+from app.controller.auth_controller import router as auth_router
+from dotenv import load_dotenv
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    yield
+# Initialize FastAPI app and load environment variables
+app = FastAPI()
+load_dotenv()
 
-app = FastAPI(lifespan=lifespan)
-
-app.include_router(auth_controller.router)
+# Include routers
+app.include_router(auth_router)
 
 @app.get("/")
 async def root():
     return {"message": "Auth Service is running!"}
+
+#uvicorn app.main:app --reload

@@ -96,7 +96,7 @@ async def verify_user(auth_data: UserLogin):
 
                 token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-                return {"access_token": token, "token_type": "bearer", "role": role}
+                return {"access_token": token, "token_type": "bearer"}
             else:
                 raise HTTPException(status_code=401, detail="Invalid credentials")
     

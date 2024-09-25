@@ -1,61 +1,63 @@
-from fastapi import HTTPException, Depends
-from app.schema.auth_schema import UserReg, UserLogin, LoginResponse
+from fastapi import HTTPException
 from app.repository.user_repository import UserRepository
-from app.utils.password_utils import hash_password, verify_password
-from app.utils.token_utils import create_access_token, send_verification_email
-from app.model.player_model import User
+from app.utils.password_utils import verify_password, hash_password
+from app.utils.email_utils import send_verification_email
+from app.utils.token_utils import create_access_token
 from sqlalchemy.ext.asyncio import AsyncSession
-import uuid
+from app.model.user_model import User
 
 class AuthService:
 
-    def __init__(self, user_repository: UserRepository):
-        self.user_repository = user_repository
+    async def login(self, auth_data, db: AsyncSession):
+        user_repository = UserRepository()
+        user_record = await user_repository.get_user_by_username(auth_data.username, db)
 
-    async def login(self, auth_data: UserLogin, db: AsyncSession) -> LoginResponse:
-        user_record = await self.user_repository.get_user_by_username(auth_data.username, db)
-        if not user_record:
-            raise HTTPException(status_code=401, detail="User not found")
-        
-        stored_password_hash = user_record.password_hash
-        email_verified = user_record.email_verified
-        role = user_record.role
+        if user_record:
+            stored_password_hash, email_verified, role = (
+                user_record.password_hash,
+                user_record.email_verified,
+                user_record.role
+            )
 
-        if not email_verified:
-            raise HTTPException(status_code=403, detail="Email not verified")
+            if not email_verified:
+                raise HTTPException(status_code=403, detail="Email not verified")
 
-        if not verify_password(auth_data.password, stored_password_hash):
-            raise HTTPException(status_code=401, detail="Invalid credentials")
-        
-        token = create_access_token(auth_data.username, role)
-        
-        # Return the LoginResponse Pydantic model
-        return LoginResponse(access_token=token, token_type="bearer")
+            if verify_password(auth_data.password, stored_password_hash):
+                token = create_access_token(auth_data.username, role)
+                return {"access_token": token, "token_type": "bearer"}
+            else:
+                raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    async def register(self, auth_data: UserReg, db: AsyncSession):
-        if auth_data.role not in ["player", "admin"]:
-            raise HTTPException(status_code=400, detail="Invalid role. Choose either 'player' or 'admin'.")
-        
-        # Create a new user
-        hashed_password = hash_password(auth_data.password)
+        raise HTTPException(status_code=401, detail="User not found")
+
+    async def register(self, auth_data, db: AsyncSession):
+        user_repository = UserRepository()
+
+        # Check if username or email already exists
+        existing_user = await user_repository.get_user_by_username(auth_data.username, db)
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Username or email already exists")
+
+        password_hash = hash_password(auth_data.password)
         verification_token = str(uuid.uuid4())
-        new_user = User(
+
+        user = User(
             username=auth_data.username,
-            password_hash=hashed_password,
+            password_hash=password_hash,
             email=auth_data.email,
             verification_token=verification_token,
             role=auth_data.role
         )
-        await self.user_repository.create_user(new_user, db)
 
-        # Send verification email
+        await user_repository.create_user(user, db)
         send_verification_email(auth_data.email, verification_token)
-        return {"message": "User registered successfully. Please check your email to verify your account."}
 
     async def verify_email(self, token: str, db: AsyncSession):
-        user = await self.user_repository.get_user_by_token(token, db)
-        if not user:
-            raise HTTPException(status_code=400, detail="Invalid or expired verification token")
-        
-        await self.user_repository.update_user_verification(token, db)
-        return {"message": "Email verified successfully"}
+        user_repository = UserRepository()
+        user = await user_repository.get_user_by_verification_token(token, db)
+
+        if user:
+            await user_repository.mark_email_verified(user, db)
+            return {"message": "Email verified successfully"}
+
+        raise HTTPException(status_code=400, detail="Invalid or expired verification token")
