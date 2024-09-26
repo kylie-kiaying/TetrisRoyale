@@ -169,7 +169,7 @@ async def verify_email(token: str):
 
 # curl -X POST "http://127.0.0.1:8000/login/" -H "Content-Type: application/json" -d "{\"username\": \"player1\", \"password\": \"password123\"}"
 
-# curl -X POST http://localhost:8000/register/ -H "Content-Type: application/json" -d "{\"username\": \"player1\", \"email\": \"skiesarered123@gmail.com\", \"password\": \"password123\", \"role\": \"admin\"}"
+# curl -X POST http://localhost:8000/register/ -H "Content-Type: application/json" -d "{\"username\": \"player2\", \"email\": \"dominicyeo42@gmail.com\", \"password\": \"password123\", \"role\": \"admin\"}"
 
 
 # curl -X POST "http://127.0.0.1:8000/register/" ^

@@ -5,6 +5,7 @@ from app.utils.email_utils import send_verification_email
 from app.utils.token_utils import create_access_token
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.model.user_model import User
+import uuid
 
 class AuthService:
 
@@ -51,6 +52,8 @@ class AuthService:
 
         await user_repository.create_user(user, db)
         send_verification_email(auth_data.email, verification_token)
+
+        return {"message": "User registered successfully. Please check your email to verify your account."}
 
     async def verify_email(self, token: str, db: AsyncSession):
         user_repository = UserRepository()
