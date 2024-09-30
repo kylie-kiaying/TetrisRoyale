@@ -34,11 +34,10 @@ class MatchmakingService:
 
     async def submit_match_result(self, match_id: int, winner_id: int):
         try:
-            match = await self.matchmaking_repository.get_match_by_id(match_id)
-            if not match:
-                raise ValueError(f"Match with id {match_id} not found")
-            
             updated_match = await self.matchmaking_repository.update_match_result(match_id, winner_id)
+            if not updated_match:
+                raise ValueError(f"Match with id {match_id} not found")
             return updated_match
-        except NoResultFound:
-            raise ValueError(f"Match with id {match_id} not found")
+        except Exception as e:
+            # Log the error here if you have a logging system
+            raise ValueError(f"Error updating match result: {str(e)}")
