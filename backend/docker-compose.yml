@@ -8,6 +8,7 @@ services:
       - "8001:8000"
     env_file:
       - ./auth-service/.env
+
   player-service:
     build:
       context: ./player-service
@@ -17,6 +18,7 @@ services:
       - ./player-service/.env
     depends_on:
       - auth-service
+
   tournament-service:
     build:
       context: ./tournament-service
@@ -26,3 +28,15 @@ services:
       - ./tournament-service/.env
     depends_on:
       - auth-service
+
+  matchmaking-service:
+    build:
+      context: ./matchmaking-service
+    ports:
+      - "8004:8000"
+    env_file:
+      - ./matchmaking-service/.env
+    depends_on:
+      - auth-service
+      - player-service
+      - tournament-service
