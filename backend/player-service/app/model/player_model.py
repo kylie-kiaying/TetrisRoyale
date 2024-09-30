@@ -17,5 +17,5 @@ class Player(Base):
     profile_picture = Column(String, nullable=True)
     availability_status = Column(String, default="available")
     match_history = Column(JSON, default=list)
-    date_created = Column(DateTime, default=utcnow)
-    last_updated = Column(DateTime, default=utcnow, onupdate=utcnow)
+    date_created = Column(DateTime(timezone=True), default=utcnow)
+    last_updated = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
