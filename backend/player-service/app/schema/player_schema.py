@@ -11,31 +11,31 @@ class MatchHistory(BaseModel):
 class PlayerBase(BaseModel):
     username: str
     email: EmailStr
-    rating: int = 1000
+    rating: int = 1200
     profile_picture: Optional[str] = None
-    availability_status: Optional[str] = "unavailable"
+    availability_status: Optional[str] = "available"
     match_history: Optional[List[MatchHistory]] = []
 
 class PlayerCreate(PlayerBase):
-    rating: int = 1200
-    availability_status: str = "available"
-    match_history: list = []
-    date_created: Optional[datetime] = None
-    last_updated: Optional[datetime] = None
+    pass
 
-    class Config:
-        from_attributes = True
+class PlayerUpdate(BaseModel):
+    username: Optional[str]
+    email: Optional[EmailStr]
+    profile_picture: Optional[str]
 
-class PlayerResponse(BaseModel):
-    user_id: int
-    username: str
-    email: str
-    rating: int
-    profile_picture: Optional[str] = None
+class PlayerAvailabilityUpdate(BaseModel):
     availability_status: str
-    match_history: list
+
+class PlayerResponse(PlayerBase):
+    user_id: int
     date_created: datetime
     last_updated: datetime
 
     class Config:
         from_attributes = True
+
+class PlayerStatistics(BaseModel):
+    user_id: int
+    matches_played: int
+    matches_won: int
