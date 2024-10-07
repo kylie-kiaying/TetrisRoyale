@@ -1,3 +1,5 @@
+"use client";
+
 import Navbar from '@/components/Navbar.jsx';
 
 export default function HomePage() {
@@ -5,7 +7,7 @@ export default function HomePage() {
         <div className="min-h-screen bg-[#0b051d] items-center">
 
             {/* Navbar component */}
-            <div className='w-full'>
+            <div className="w-full absolute top-3 z-50 flex justify-center">
             <Navbar></Navbar>
             </div>
 

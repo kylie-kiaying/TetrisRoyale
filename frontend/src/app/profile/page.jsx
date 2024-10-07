@@ -4,12 +4,12 @@ export default function PlayerProfile() {
     return (
         <div className="min-h-screen bg-[#0b051d] text-white">
             {/* Navbar */}
-            <div className="w-full">
-                <Navbar />
+            <div className="w-full absolute top-3 z-50 flex justify-center">
+            <Navbar></Navbar>
             </div>
 
             {/* Profile Section */}
-            <div className="flex flex-col items-center justify-start h-[calc(100vh-80px)] py-10">
+            <div className="flex flex-col items-center justify-start h-[calc(100vh-80px)] py-10 mt-14">
                 {/* Profile Card */}
                 <div className="w-[90%] max-w-4xl flex flex-col items-center p-8 bg-[#1c1132] rounded-lg shadow-md space-y-6">
                     {/* Profile Picture */}
