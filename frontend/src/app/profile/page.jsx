@@ -2,9 +2,9 @@ import Navbar from '@/components/Navbar.jsx';
 
 export default function PlayerProfile() {
     return (
-        <div className="min-h-screen bg-[#0b051d] text-white">
+        <div className="min-h-screen bg-gradient-to-b from-[#0b051d] to-[#1c1132] text-white">
             {/* Navbar */}
-            <div className="w-full absolute top-3 z-50 flex justify-center">
+            <div className="w-full sticky top-0 z-50 flex justify-center">
             <Navbar></Navbar>
             </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation"; // Correct import to get the pathname
 import Link from "next/link";
 import { Button } from '@/components/ui/button';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
@@ -9,9 +10,13 @@ import { IoTrophy, IoSearch, IoPerson, IoMenu, IoClose } from 'react-icons/io5';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname(); // Get the current pathname
 
   // Toggle function for the menu
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
+  // Check if the current route matches the link path
+  const isActive = (path) => pathname === path;
 
   return (
     <div className="sticky top-3 z-50 w-full flex justify-center mt-3">
@@ -28,14 +33,23 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-4">
-          <Button variant="ghost" className="text-primary-foreground">
+          <Button 
+            variant="ghost" 
+            className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+          >
             <IoTrophy className="w-6 h-6" />
           </Button>
-          <Button variant="ghost" className="text-primary-foreground">
+          <Button 
+            variant="ghost" 
+            className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
+          >
             <IoSearch className="w-6 h-6" />
           </Button>
           <Link href="/profile">
-            <Button variant="ghost" className="text-primary-foreground">
+            <Button 
+              variant="ghost" 
+              className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
+            >
               <IoPerson className="w-6 h-6" />
             </Button>
           </Link>
@@ -85,13 +99,25 @@ export default function Navbar() {
           isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         }`}
       >
-        <Button variant="ghost" className="text-primary-foreground" onClick={() => setIsMobileMenuOpen(false)}>
+        <Button 
+          variant="ghost" 
+          className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
           <IoTrophy className="w-6 h-6" />
         </Button>
-        <Button variant="ghost" className="text-primary-foreground" onClick={() => setIsMobileMenuOpen(false)}>
+        <Button 
+          variant="ghost" 
+          className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
           <IoSearch className="w-6 h-6" />
         </Button>
-        <Button variant="ghost" className="text-primary-foreground" onClick={() => setIsMobileMenuOpen(false)}>
+        <Button 
+          variant="ghost" 
+          className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
           <IoPerson className="w-6 h-6" />
         </Button>
       </nav>
