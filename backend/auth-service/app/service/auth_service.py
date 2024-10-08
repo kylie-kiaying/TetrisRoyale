@@ -1,4 +1,5 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, Response
+from fastapi.responses import JSONResponse
 from app.repository.user_repository import UserRepository
 from app.utils.password_utils import verify_password, hash_password
 from app.utils.email_utils import send_verification_email
@@ -25,7 +26,19 @@ class AuthService:
 
             if verify_password(auth_data.password, stored_password_hash):
                 token = create_access_token(auth_data.username, role)
-                return {"access_token": token, "token_type": "bearer"}
+                response = {"message": "Login successful"}
+                
+                from fastapi.responses import JSONResponse
+                response = JSONResponse(content=response)
+                response.set_cookie(
+                    key="session_token",
+                    value=token,
+                    httponly=True,
+                    secure=True,    # Use HTTPS in production
+                    samesite="lax"
+                )
+                
+                return response
             else:
                 raise HTTPException(status_code=401, detail="Invalid credentials")
 

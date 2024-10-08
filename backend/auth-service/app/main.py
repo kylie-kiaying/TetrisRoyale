@@ -26,3 +26,5 @@ async def root():
     return {"message": "Auth Service is running!"}
 
 #uvicorn app.main:app --reload
+#curl -X POST "http://127.0.0.1:8000/register/" -H "Content-Type: application/json" -d "{\"username\": \"new_username\", \"password\": \"new_password\", \"email\": \"dominicyeo42@gmail.com\", \"role\": \"admin\"}"
+#curl -X POST "http://127.0.0.1:8000/login/" -H "Content-Type: application/json" -d "{\"username\": \"new_username\", \"password\": \"new_password\"}"
