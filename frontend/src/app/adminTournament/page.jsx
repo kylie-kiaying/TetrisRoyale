@@ -38,21 +38,22 @@ export default function adminPage() {
                                         <CardTitle>Match List</CardTitle>
                                     </span>
                                 </CardHeader>
-                                <CardContent>
-                                    <div className="flex flex-row-reverse mt-2">
-                                        <span className="bg-black">
-                                            Upcoming
-                                        </span>
-                                        <span className="pr-52 justify-center bg-black max-w-[1000px] backdrop-blur-md  rounded-lg shadow-lg items-right">
+                                <CardContent className="grid grid-cols-4 gap-4">
+                                    <div className="col-start-1 col-span-2"><span></span></div>
+                                    <div className="col-start-3 col-span-2 bg-black">
+                                        <span className="">
                                             P1 vs P2
                                         </span>
-                                    </div>
-                                    <div className="flex flex-row-reverse mt-2">
-                                        <span className="bg-black">
-                                            Finished
+                                        <span className="float-right">
+                                            Upcoming
                                         </span>
-                                        <span className="pr-52 justify-center bg-black max-w-[1000px] backdrop-blur-md  rounded-lg shadow-lg items-right">
+                                    </div>
+                                    <div className="col-start-3 col-span-2 bg-black">
+                                        <span className="">
                                             <span className="text-green-200">P3 (Win)</span> vs <span className="text-red-200">P4 (Lose)</span>
+                                        </span>
+                                        <span className="float-right">
+                                            Finished
                                         </span>
                                     </div>
                                 </CardContent>

@@ -48,7 +48,7 @@ export default function adminPage() {
                                     <span className="text-xs inline">Status: <span className="text-xs text-yellow-200">Ongoing</span></span>
                                 </CardHeader>
                                 <CardContent>
-                                    <span>Estimated Start-End Time: <span>25-9-2024 1300-1400</span></span>
+                                    <span className="hidden sm:inline">Estimated Start-End Time: </span><span>25-9-2024 1300-1400</span>
                                     <span className="absolute bottom-4 right-5">  
                                         <Button variant="outline" className="bg-white text-[#1e0b38] hover:bg-gray-300/70">Edit</Button>
                                         <Button variant="outline" className="ml-2 bg-white text-[#1e0b38] hover:bg-gray-300/70">Delete</Button>
