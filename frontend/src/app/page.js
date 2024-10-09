@@ -9,29 +9,28 @@ export default function Home() {
         autoPlay
         loop
         muted
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover"
       >
         <source src="/bgvid.mp4" type="video/mp4" />
         Your browser does not support the video tag
       </video>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col justify-center items-center h-full">
-        <h1 className="text-white/90 text-3xl sm:text-6xl font-bebas mb-4 text-nowrap overflow-hidden">
-          {' '}
+      <div className="relative z-10 flex h-full flex-col items-center justify-center p-4 text-center">
+        <h1 className="font-bebas mb-4 text-4xl text-white/90 sm:text-6xl md:text-7xl">
           Welcome to TetriTracker
         </h1>
-        <p className="text-white/75 text-l sm:text-xl font-serif mb-4 text-nowrap overflow-hidden">
+        <p className="mb-4 font-serif text-base text-white/75 sm:text-lg md:text-xl lg:text-2xl">
           Your Hub for Competitive Tetris – Rankings, Tournaments, Community.
         </p>
-        <div className="flex space-x-4">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
           <Link href="/login">
-            <Button className="bg-white text-[#1e0b38] hover:bg-gray-300 font-bold py-2 px-4 rounded">
+            <Button className="rounded bg-white px-4 py-2 font-bold text-[#1e0b38] hover:bg-gray-300">
               Sign in
             </Button>
           </Link>
           <Link href="/register">
-            <Button className="bg-white text-[#1e0b38] hover:bg-gray-300 font-bold py-2 px-4 rounded">
+            <Button className="rounded bg-white px-4 py-2 font-bold text-[#1e0b38] hover:bg-gray-300">
               Register new account
             </Button>
           </Link>

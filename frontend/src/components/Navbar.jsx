@@ -8,6 +8,7 @@ import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/h
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { IoTrophy, IoSearch, IoPerson, IoMenu, IoClose } from 'react-icons/io5';
 
+
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname(); // Get the current pathname
@@ -33,18 +34,24 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-4">
+
+          {/* Tournaments button */}
           <Button 
             variant="ghost" 
             className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
           >
             <IoTrophy className="w-6 h-6" />
           </Button>
-          <Button 
-            variant="ghost" 
-            className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
-          >
-            <IoSearch className="w-6 h-6" />
-          </Button>
+
+          {/* Search button */}
+              <Button 
+                variant="ghost" 
+                className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
+              >
+                <IoSearch className="w-6 h-6" />
+              </Button>
+
+          {/* Profile button button */}  
           <Link href="/profile">
             <Button 
               variant="ghost" 
@@ -64,7 +71,7 @@ export default function Navbar() {
 
         {/* Profile Section */}
         <div className="hidden md:flex items-center gap-4">
-          <HoverCard>
+          <HoverCard> 
             <HoverCardTrigger asChild>
               <div className="flex items-center gap-2 cursor-pointer">
                 <Avatar>
@@ -77,18 +84,28 @@ export default function Navbar() {
                 </div>
               </div>
             </HoverCardTrigger>
-            <HoverCardContent className="w-80">
-              <div className="flex justify-between space-x-4">
-                <Avatar>
-                  <AvatarImage src="/placeholder-user.jpg" />
-                  <AvatarFallback>user</AvatarFallback>
-                </Avatar>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-semibold">User Name</h4>
-                  <p className="text-sm">ELO: 1234</p>
+            <HoverCardContent className="w-80 bg-white/80">
+              <div className="flex flex-col space-y-4">
+
+                {/* Avatar and User Information */}
+                <div className="flex justify-between items-center space-x-4">
+                  <Avatar>
+                    <AvatarImage src="/placeholder-user.jpg" />
+                    <AvatarFallback>user</AvatarFallback>
+                  </Avatar>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-semibold">User Name</h4>
+                    <p className="text-sm">ELO: 1234</p>
+                  </div>
+                </div>
+
+                {/* Sign out Button */}
+                <div className="flex justify-center mt-4">
+                  <Button>Sign Out</Button>
                 </div>
               </div>
             </HoverCardContent>
+
           </HoverCard>
         </div>
       </header>

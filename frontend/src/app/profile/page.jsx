@@ -29,12 +29,21 @@ export default function PlayerProfile() {
                         />
                     </div>
 
-                    {/* Username */}
-                    <h1 className="text-4xl font-semibold">Username</h1>
+                    <div className='flex flex-col items-center space-y-4 w-full'>
+                        {/* Username */}
+                        <h1 className="text-4xl font-semibold">Username</h1>
                     
-                    {/* ELO */}
-                    <p className="text-2xl text-gray-400">ELO: 1234</p>
+                        <div className="flex flex-row justify-between items-center w-full px-6">
+                            {/* ELO */}
+                            <p className="text-2xl text-gray-400">ELO: 1234</p>
+                            <div className="flex flex-col items-center">
+                                <p className="text-base text-gray-400">Matches won: 2</p>
+                                <p className="text-base text-gray-400">Matches lost: 0</p>
+                                <p className="text-base text-gray-400">Winrate: 100% </p>
+                            </div>
+                            </div>
 
+                    </div>
                     {/* Future Analytics Section */}
                     <div className="mt-8 w-full p-6 bg-[#2c1f4c] rounded-lg">
                         <h2 className="text-xl font-bold mb-4">ELO Analytics</h2>
