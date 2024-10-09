@@ -21,10 +21,9 @@ async def startup():
 async def shutdown():
     await engine.dispose()
 
-@app.get("/")
-async def root():
-    return {"message": "Auth Service is running!"}
+
 
 #uvicorn app.main:app --reload
 #curl -X POST "http://127.0.0.1:8000/register/" -H "Content-Type: application/json" -d "{\"username\": \"new_username\", \"password\": \"new_password\", \"email\": \"dominicyeo42@gmail.com\", \"role\": \"admin\"}"
 #curl -X POST "http://127.0.0.1:8000/login/" -H "Content-Type: application/json" -d "{\"username\": \"new_username\", \"password\": \"new_password\"}"
+#uvicorn app.main:app --host 0.0.0.0 --port 443 --ssl-keyfile=key.pem --ssl-certfile=cert.pem
