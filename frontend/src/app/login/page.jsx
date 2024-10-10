@@ -20,7 +20,10 @@ import Link from "next/link";
 
 export default function LoginPage() {
     return (
-        <div className="flex justify-center items-center h-screen bg-[#0b051d]">
+        <div className="min-h-screen flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat justify-center"
+        style={{
+            backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')"
+        }}>
             <Card className="bg-opacity-40 w-[350px] max-w-md backdrop-blur-md  rounded-lg shadow-lg items-center">
                 <CardHeader>
                     <CardTitle >Sign in</CardTitle>
