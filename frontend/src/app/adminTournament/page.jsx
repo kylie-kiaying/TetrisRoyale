@@ -19,6 +19,18 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+const matches = [
+    {player1_id: 1, player2_id: 2, status: "Upcoming"},
+    {player1_id: 3, player2_id: 4, status: "Finished", winner_id: 3}, 
+];
+
+const players = [
+    {user_id: 1, username: "P1"},
+    {user_id: 2, username: "P2"},
+    {user_id: 3, username: "P3"},
+    {user_id: 4, username: "P4"},
+];
+
 export default function adminPage() {
     return (
         <div className="min-h-screen bg-[#0b051d] items-center">
@@ -40,7 +52,26 @@ export default function adminPage() {
                                 </CardHeader>
                                 <CardContent className="grid grid-cols-4 gap-4">
                                     <div className="col-start-1 col-span-2"><span></span></div>
-                                    <div className="col-start-3 col-span-2 bg-black">
+                                        {matches.map(function(match, i){
+                                            return <div className="col-start-3 col-span-2 bg-black" key={i}>
+                                                        {match.status === "Finished" 
+                                                        ? match.player1_id === match.winner_id 
+                                                            ? <span className="text-green-200">{players.find((player) => player.user_id === match.player1_id).username} (Win)</span>
+                                                            : <span className="text-red-200">{players.find((player) => player.user_id === match.player1_id).username} (Lose)</span>
+                                                        : <span>{players.find((player) => player.user_id === match.player1_id).username}</span>}
+                                                        {" vs "}   
+                                                        {match.status === "Finished" 
+                                                        ? match.player2_id === match.winner_id 
+                                                            ? <span className="text-green-200">{players.find((player) => player.user_id === match.player2_id).username} (Win)</span>
+                                                            : <span className="text-red-200">{players.find((player) => player.user_id === match.player2_id).username} (Lose)</span>
+                                                        : <span>{players.find((player) => player.user_id === match.player2_id).username}</span>}
+
+                                                        <span className="float-right">
+                                                            {match.status}
+                                                        </span>
+                                                    </div>
+                                        })}
+                                    {/*<div className="col-start-3 col-span-2 bg-black">
                                         <span className="">
                                             P1 vs P2
                                         </span>
@@ -49,13 +80,13 @@ export default function adminPage() {
                                         </span>
                                     </div>
                                     <div className="col-start-3 col-span-2 bg-black">
-                                        <span className="">
+                                        <span className=""> 
                                             <span className="text-green-200">P3 (Win)</span> vs <span className="text-red-200">P4 (Lose)</span>
                                         </span>
                                         <span className="float-right">
                                             Finished
                                         </span>
-                                    </div>
+                                    </div>*/}
                                 </CardContent>
                             </Card>
                         </CardContent>
