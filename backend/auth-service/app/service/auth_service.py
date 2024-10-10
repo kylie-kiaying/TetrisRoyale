@@ -9,10 +9,11 @@ from app.model.user_model import User
 import uuid
 
 class AuthService:
+    def __init__(self, user_repository: UserRepository):
+        self.user_repository = user_repository
 
     async def login(self, auth_data, db: AsyncSession):
-        user_repository = UserRepository()
-        user_record = await user_repository.get_user_by_username(auth_data.username, db)
+        user_record = await self.user_repository.get_user_by_username(auth_data.username, db)
 
         if user_record:
             stored_password_hash, email_verified, role = (
@@ -45,10 +46,8 @@ class AuthService:
         raise HTTPException(status_code=401, detail="User not found")
 
     async def register(self, auth_data, db: AsyncSession):
-        user_repository = UserRepository()
-
         # Check if username or email already exists
-        existing_user = await user_repository.get_user_by_username(auth_data.username, db)
+        existing_user = await self.user_repository.get_user_by_username(auth_data.username, db)
         if existing_user:
             raise HTTPException(status_code=400, detail="Username or email already exists")
 
@@ -63,17 +62,16 @@ class AuthService:
             role=auth_data.role
         )
 
-        await user_repository.create_user(user, db)
+        await self.user_repository.create_user(user, db)
         send_verification_email(auth_data.email, verification_token)
 
         return {"message": "User registered successfully. Please check your email to verify your account."}
 
     async def verify_email(self, token: str, db: AsyncSession):
-        user_repository = UserRepository()
-        user = await user_repository.get_user_by_verification_token(token, db)
+        user = await self.user_repository.get_user_by_verification_token(token, db)
 
         if user:
-            await user_repository.mark_email_verified(user, db)
+            await self.user_repository.mark_email_verified(user, db)
             return {"message": "Email verified successfully"}
 
         raise HTTPException(status_code=400, detail="Invalid or expired verification token")
