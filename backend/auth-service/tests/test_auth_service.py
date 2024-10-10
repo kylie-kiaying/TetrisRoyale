@@ -12,7 +12,7 @@ from app.repository.user_repository import UserRepository
 async def test_login_success():
     # Arrange
     mock_user_repo = AsyncMock(UserRepository)  # Mock the UserRepository
-    auth_service = AuthService(user_repository=mock_user_repo)  # Inject the mocked repository
+    auth_service = AuthService()  # Inject the mocked repository
     mock_db = AsyncMock()  # Mock the database session
     
     # Use a valid bcrypt hash format for testing (generated using bcrypt)
@@ -33,7 +33,8 @@ async def test_login_success():
 
     # Patch external utilities like password verification and token creation
     with patch('app.service.auth_service.verify_password', return_value=True), \
-         patch('app.service.auth_service.create_access_token', return_value="mock_token"):
+         patch('app.service.auth_service.create_access_token', return_value="mock_token"), \
+         patch('app.service.auth_service.UserRepository', return_value=mock_user_repo):
 
         # Act
         response = await auth_service.login(auth_data, mock_db)
@@ -53,7 +54,7 @@ async def test_login_success():
 async def test_login_invalid_password():
     # Arrange
     mock_user_repo = AsyncMock(UserRepository)
-    auth_service = AuthService(user_repository=mock_user_repo)
+    auth_service = AuthService()
     mock_db = AsyncMock()
     
     # Mock get_user_by_username to return a User object
@@ -68,7 +69,8 @@ async def test_login_invalid_password():
     auth_data = AsyncMock(username="test_user", password="wrong_password")
 
     # Patch verify_password to return False
-    with patch('app.service.auth_service.verify_password', return_value=False):
+    with patch('app.service.auth_service.verify_password', return_value=False), \
+         patch('app.service.auth_service.UserRepository', return_value=mock_user_repo):
 
         # Act & Assert
         with pytest.raises(HTTPException) as exc_info:
@@ -81,7 +83,7 @@ async def test_login_invalid_password():
 async def test_login_email_not_verified():
     # Arrange
     mock_user_repo = AsyncMock(UserRepository)
-    auth_service = AuthService(user_repository=mock_user_repo)
+    auth_service = AuthService()
     mock_db = AsyncMock()
 
     # Mock get_user_by_username to return a User object with unverified email
@@ -96,7 +98,8 @@ async def test_login_email_not_verified():
     auth_data = AsyncMock(username="test_user", password="correct_password")
 
     # Patch verify_password to return True
-    with patch('app.service.auth_service.verify_password', return_value=True):
+    with patch('app.service.auth_service.verify_password', return_value=True), \
+         patch('app.service.auth_service.UserRepository', return_value=mock_user_repo):
 
         # Act & Assert
         with pytest.raises(HTTPException) as exc_info:
@@ -109,7 +112,7 @@ async def test_login_email_not_verified():
 async def test_register_success():
     # Arrange
     mock_user_repo = AsyncMock(UserRepository)
-    auth_service = AuthService(user_repository=mock_user_repo)
+    auth_service = AuthService()
     mock_db = AsyncMock()
 
     # Mock get_user_by_username to return None, meaning no user exists
@@ -119,7 +122,8 @@ async def test_register_success():
 
     # Patch hash_password and email sending
     with patch('app.service.auth_service.hash_password', return_value="hashed_password"), \
-         patch('app.service.auth_service.send_verification_email', return_value=None):
+         patch('app.service.auth_service.send_verification_email', return_value=None), \
+         patch('app.service.auth_service.UserRepository', return_value=mock_user_repo):
 
         # Act
         response = await auth_service.register(auth_data, mock_db)
@@ -132,7 +136,7 @@ async def test_register_success():
 async def test_verify_email_success():
     # Arrange
     mock_user_repo = AsyncMock(UserRepository)
-    auth_service = AuthService(user_repository=mock_user_repo)
+    auth_service = AuthService()
     mock_db = AsyncMock()
 
     # Mock get_user_by_verification_token to return a User object
@@ -143,25 +147,27 @@ async def test_verify_email_success():
         role="user"
     )
 
-    # Act
-    response = await auth_service.verify_email("valid_token", mock_db)
+    with patch('app.service.auth_service.UserRepository', return_value=mock_user_repo):
+        # Act
+        response = await auth_service.verify_email("valid_token", mock_db)
 
-    # Assert
-    assert response == {"message": "Email verified successfully"}
+        # Assert
+        assert response == {"message": "Email verified successfully"}
 
 
 @pytest.mark.asyncio
 async def test_verify_email_invalid_token():
     # Arrange
     mock_user_repo = AsyncMock(UserRepository)
-    auth_service = AuthService(user_repository=mock_user_repo)
+    auth_service = AuthService()
     mock_db = AsyncMock()
 
     # Mock get_user_by_verification_token to return None (invalid token)
     mock_user_repo.get_user_by_verification_token.return_value = None
 
     # Act & Assert
-    with pytest.raises(HTTPException) as exc_info:
+    with pytest.raises(HTTPException) as exc_info, \
+         patch('app.service.auth_service.UserRepository', return_value=mock_user_repo):
         await auth_service.verify_email("invalid_token", mock_db)
     assert exc_info.value.status_code == 400
     assert exc_info.value.detail == "Invalid or expired verification token"
