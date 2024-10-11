@@ -67,7 +67,7 @@ export default function LoginPage() {
     };
 
     try {
-      const response = await fetch("/register/", {
+      const response = await fetch("http://localhost:8001/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +114,7 @@ export default function LoginPage() {
                 </Select>
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">User ID</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   value={formData.email}

@@ -6,17 +6,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.utils.token_utils import verify_user_role
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
-router = APIRouter()
 
+router = APIRouter()
+app = FastAPI()
+
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Change to the port your frontend runs on
+    allow_origins=["http://localhost:3000"],  # Your frontend URL
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all HTTP methods, including POST, GET, OPTIONS
+    allow_headers=["*"],  # Allow all headers
 )
-
 
 
 
