@@ -10,17 +10,6 @@ from fastapi.middleware.cors import CORSMiddleware
 router = APIRouter()
 app = FastAPI()
 
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Your frontend URL
-    allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods, including POST, GET, OPTIONS
-    allow_headers=["*"],  # Allow all headers
-)
-
-
-
 @router.get("/")
 async def root():
     return {"message": "Hello World"}

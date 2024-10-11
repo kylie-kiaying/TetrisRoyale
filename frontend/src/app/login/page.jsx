@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { 
         Card,
@@ -17,8 +19,74 @@ import {
         SelectValue
 } from "@/components/ui/select";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
 
 export default function LoginPage() {
+    const router = useRouter();
+
+    const [formData, setFormData] = useState({
+        username: "",
+        password: "",
+        role: "",
+    })
+
+     // Handle input change
+    const handleInputChange = (e) => {
+        const { id, value } = e.target;
+        setFormData((prevData) => ({
+        ...prevData,
+        [id]: value,
+        }));
+    };
+
+    // Handle role selection
+    const handleRoleChange = (role) => {
+        setFormData((prevData) => ({
+        ...prevData,
+        role: role,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        const payload = {
+            username: formData.username,
+            password: formData.password,
+            role: formData.role,
+        };
+        
+        try {
+            const response = await fetch("http://localhost:8001/login/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+        
+            if (response.ok) {
+                const data = await response.json();
+    
+                // Store the token in Zustand state
+                useAuthStore.getState().setToken(data.access_token);
+    
+                alert("Login successful!");
+                router.push("/playerHome");
+    
+            } else {
+                const errorData = await response.json();
+                console.error("Login failed:", errorData);
+                alert("Login failed: " + (errorData.detail || "Unknown error"));
+            }
+        } catch (error) {
+            console.error("Error during login:", error);
+            alert("An error occurred during login. Please try again.");
+        }
+    };
+    
     return (
         <div className="min-h-screen flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat justify-center"
         style={{
@@ -29,11 +97,11 @@ export default function LoginPage() {
                     <CardTitle >Sign in</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div className="grid w-full items-center gap-4">
                             <div className="flex flex-col space-y-1.5">
                                 {/* <Label htmlfor="userType" >I am a</Label> */}
-                                <Select>
+                                <Select onValueChange={handleRoleChange}>
                                     <SelectTrigger id="userType">
                                         <SelectValue  placeholder="I am a..."></SelectValue>
                                     </SelectTrigger>
@@ -45,26 +113,38 @@ export default function LoginPage() {
                             </div>
                             <div className="flex flex-col space-y-1.5">
                             <Label htmlFor="name">User ID</Label>
-                            <Input id="name" placeholder="" />
+                            <Input 
+                              id="username" 
+                              placeholder=""
+                              value={formData.username}
+                              onChange={handleInputChange}
+                              required />
                             </div>
                             <div className="flex flex-col space-y-1.5">
                             <Label htmlFor="password">Password</Label>
-                            <Input id="password" type="password" placeholder="" />
+                            <Input 
+                              id="password" 
+                              type="password" 
+                              placeholder="" 
+                              value={formData.password}
+                              onChange={handleInputChange}
+                              required/>
                             </div>
                         </div>
-                    </form>
-                </CardContent>
-                <CardFooter className="flex flex-col items-start space-y-2">
+                <CardFooter className="flex flex-col items-start space-y-2 mt-6">
                     <div className = "flex w-full space-x-2 items-center justify-center ">
                         <Link href="/">
-                            <Button variant="outline" className=" text-white bg-[#1e0b38] hover:bg-gray-300/70"> Cancel</Button>
+                            <Button type="button" variant="outline" className=" text-white bg-[#1e0b38] hover:bg-gray-300/70"> Cancel</Button>
                         </Link>
-                        <Button variant="outline" className= " bg-white text-[#1e0b38] hover:bg-gray-300/70"> Sign in</Button>
+                            <Button type="submit" variant="outline" className= " bg-white text-[#1e0b38] hover:bg-gray-300/70"> Sign in</Button>
                     </div>
                     <p className="text-sm text-muted-foreground">
                         Forgot your password? <a href="/forgot-password" className="hover:underline">Reset it here</a>
                     </p>
                 </CardFooter>   
+                    </form>
+                </CardContent>
+                
             </Card>
       </div>
     );
