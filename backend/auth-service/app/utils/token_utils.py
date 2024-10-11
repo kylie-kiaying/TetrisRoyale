@@ -58,3 +58,34 @@ def verify_user_role(request: Request, required_role: str) -> bool:
         raise HTTPException(status_code=403, detail="Invalid token")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+def retrieve_username(request: Request) -> str:
+    try:
+        SECRET_KEY = os.getenv("SECRET_KEY")
+        ALGORITHM = os.getenv("ALGORITHM", "HS256")
+
+        token = request.cookies.get("access_token")
+        if token is None:
+            raise HTTPException(status_code=403, detail="Access token is missing")
+
+        payload = decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("username")
+        exp = payload.get("exp")
+
+        if username is None:
+            raise HTTPException(status_code=403, detail="Username is missing in token")
+        
+        if exp is None:
+            raise HTTPException(status_code=403, detail="Expiration time is missing in token")
+
+        current_time = datetime.datetime.utcnow()
+        if current_time >= datetime.datetime.fromtimestamp(exp):
+            raise HTTPException(status_code=403, detail="Access token has expired")
+
+        return username
+
+
+    except PyJWTError:
+        raise HTTPException(status_code=403, detail="Invalid token")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
