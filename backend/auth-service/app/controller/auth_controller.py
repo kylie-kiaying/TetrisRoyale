@@ -1,11 +1,24 @@
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, FastAPI
 from app.schema.auth_schema import UserReg, UserLogin, LoginResponse
 from app.service.auth_service import AuthService
 from app.db.session import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.utils.token_utils import verify_user_role
+from fastapi.middleware.cors import CORSMiddleware
 
+app = FastAPI()
 router = APIRouter()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Change to the port your frontend runs on
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+
 
 @router.get("/")
 async def root():
