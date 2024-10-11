@@ -39,8 +39,7 @@ export default function matchPage() {
                                 <span>
                                     <CardTitle>Match Name</CardTitle>
                                     <span className="absolute top-3 right-5">
-                                    <Button variant="outline" className="bg-white text-[#1e0b38] hover:bg-gray-300/70 mr-1">Edit</Button>
-                                    <Button variant="outline" className="bg-white text-[#1e0b38] hover:bg-gray-300/70">Delete</Button>
+                                    <Button variant="outline" className="bg-white text-[#1e0b38] hover:bg-gray-300/70 mr-1">Submit Result</Button>
                                     </span>
                                 </span>
                             </CardHeader>
