@@ -8,7 +8,7 @@ def send_verification_email(to_email, token):
     from_password = os.getenv("from_password")
 
     subject = "Verify Your Email Address"
-    body = f"Please verify your email by clicking the following link: http://localhost:8000/verify/{token}"
+    body = f"Please verify your email by clicking the following link: http://localhost:8001/verify/{token}"
 
     msg = MIMEMultipart()
     msg['From'] = from_email
