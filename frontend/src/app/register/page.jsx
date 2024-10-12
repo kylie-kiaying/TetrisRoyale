@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";  // Import useRouter from next/router
+import { useRouter } from "next/navigation"; 
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/select";
 import Link from "next/link";
 
-export default function LoginPage() {
-  const router = useRouter(); // Initialize the useRouter hook
+export default function RegisterPage() {
+  const router = useRouter();
 
   // State to store form data
   const [formData, setFormData] = useState({
@@ -77,8 +77,10 @@ export default function LoginPage() {
 
       if (response.ok) {
         alert("Registration successful!");
-        // Redirect to the login page
-        router.push("/login");
+        // Save email in local storage before redirecting
+        localStorage.setItem("verificationEmail", payload.email);
+        // Redirect to the verify email page
+        router.push('/verifyEmail');
       } else {
         const errorData = await response.json();
         console.error("Registration failed:", errorData);
@@ -95,7 +97,7 @@ export default function LoginPage() {
                 style={{
                     backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')"
                 }}>
-      <Card className="bg-opacity-40 w-[350px] max-w-md backdrop-blur-md  rounded-lg shadow-lg items-center">
+      <Card className="bg-opacity-40 w-[350px] max-w-md backdrop-blur-md rounded-lg shadow-lg items-center">
         <CardHeader>
           <CardTitle>Register new account</CardTitle>
         </CardHeader>
@@ -162,7 +164,7 @@ export default function LoginPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    className=" text-white bg-[#1e0b38] hover:bg-gray-300/70"
+                    className="text-white bg-[#1e0b38] hover:bg-gray-300/70"
                   >
                     Cancel
                   </Button>
@@ -170,7 +172,7 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   variant="outline"
-                  className=" bg-white text-[#1e0b38] hover:bg-gray-300/70"
+                  className="bg-white text-[#1e0b38] hover:bg-gray-300/70"
                 >
                   Register
                 </Button>
