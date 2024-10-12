@@ -97,4 +97,26 @@ export const columns = {
       ),
     },
   ],
+  all: [
+    {
+      accessorKey: "tournament_name",
+      header: "Name",
+    },
+    {
+      accessorKey: "start",
+      header: "Start",
+    },
+    {
+      accessorKey:"end",
+      header: "End"
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+    },
+    {
+      accessorKey: "organizer",
+      header: "Organizer",
+    },
+  ],
 };

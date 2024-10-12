@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { IoTrophy, IoSearch, IoPerson, IoMenu, IoClose } from 'react-icons/io5';
+import { PiRankingBold } from "react-icons/pi";
 
 
 export default function Navbar() {
@@ -36,11 +37,19 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-4">
 
           {/* Tournaments button */}
-          <Button 
-            variant="ghost" 
-            className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
-          >
-            <IoTrophy className="w-6 h-6" />
+          <Link href="/tournaments">
+            <Button 
+              variant="ghost" 
+              className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}>
+              <IoTrophy className="w-6 h-6" />
+            </Button>
+          </Link>
+
+          {/* Rankings button */}
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}>
+            <PiRankingBold className="w-6 h-6" />
           </Button>
 
           {/* Search button */}

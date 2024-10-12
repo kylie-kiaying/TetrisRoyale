@@ -29,7 +29,7 @@ export default function EmailVerification() {
                 {/* Verification Card */}
                 <div className="w-full max-w-lg p-8 bg-[#1c1132] rounded-lg shadow-lg space-y-6 mx-4 text-center">
                     <h1 className="text-3xl font-bold">Verify Your Email</h1>
-                    <p className="text-lg text-gray-300">To continue enjoying TetriTracker, please verify your email address. We have sent a verification email to <span className="font-semibold text-white">{censoredEmail}</span>. Check your inbox to proceed.</p>
+                    <p className="text-lg text-gray-300">To access TetriTracker, please verify your email address. We have sent a verification email to <span className="font-semibold text-white">{censoredEmail}</span>. Check your inbox to proceed.</p>
                     <Button 
                         variant="solid" 
                         className="bg-purple-700 text-white hover:bg-purple-600 w-full mt-4"
