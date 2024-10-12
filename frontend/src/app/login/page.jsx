@@ -1,5 +1,6 @@
 "use client";
 
+import { successToast, errorToast } from "@/utils/toastUtils";
 import { Button } from "@/components/ui/button";
 import { 
         Card,
@@ -73,17 +74,20 @@ export default function LoginPage() {
                 // Store the token in Zustand state
                 useAuthStore.getState().setToken(data.access_token);
     
-                alert("Login successful!");
+                successToast("Login successful!");
+                // alert("Login successful!");
                 router.push("/playerHome");
     
             } else {
                 const errorData = await response.json();
                 console.error("Login failed:", errorData);
-                alert("Login failed: " + (errorData.detail || "Unknown error"));
+                // alert("Login failed: " + (errorData.detail || "Unknown error"));
+                errorToast("Login failed:" + (errorData.detail || "Unknown error"));
             }
         } catch (error) {
             console.error("Error during login:", error);
-            alert("An error occurred during login. Please try again.");
+            errorToast("An error occurred during login. Please try again.");
+            // alert("An error occurred during login. Please try again.");
         }
     };
     
@@ -118,7 +122,8 @@ export default function LoginPage() {
                               placeholder=""
                               value={formData.username}
                               onChange={handleInputChange}
-                              required />
+                              required 
+                              autoComplete="off" />
                             </div>
                             <div className="flex flex-col space-y-1.5">
                             <Label htmlFor="password">Password</Label>
@@ -128,7 +133,8 @@ export default function LoginPage() {
                               placeholder="" 
                               value={formData.password}
                               onChange={handleInputChange}
-                              required/>
+                              required
+                              autoComplete="off" />
                             </div>
                         </div>
                 <CardFooter className="flex flex-col items-start space-y-2 mt-6">

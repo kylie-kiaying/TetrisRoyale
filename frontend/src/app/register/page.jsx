@@ -1,5 +1,6 @@
 "use client";
 
+import { successToast, errorToast } from "@/utils/toastUtils";
 import { useState } from "react";
 import { useRouter } from "next/navigation"; 
 import { Button } from "@/components/ui/button";
@@ -55,7 +56,9 @@ export default function RegisterPage() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      
+      // alert("Passwords do not match");
+      errorToast("Passwords do not match");
       return;
     }
 
@@ -76,7 +79,8 @@ export default function RegisterPage() {
       });
 
       if (response.ok) {
-        alert("Registration successful!");
+        // alert("Registration successful!");
+        successToast("Registration successful!");
         // Save email in local storage before redirecting
         localStorage.setItem("verificationEmail", payload.email);
         // Redirect to the verify email page
@@ -84,11 +88,13 @@ export default function RegisterPage() {
       } else {
         const errorData = await response.json();
         console.error("Registration failed:", errorData);
-        alert("Registration failed");
+        // alert("Registration failed");
+        errorToast("Registration failed, email or username taken")
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      alert("An error occurred. Please try again.");
+      // alert("An error occurred. Please try again.");
+      errorToast("An error occurred. Please try again.")
     }
   };
 
@@ -123,6 +129,8 @@ export default function RegisterPage() {
                   onChange={handleInputChange}
                   placeholder="Your personal email"
                   required
+                  auto
+                  autoComplete="off"
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
@@ -133,6 +141,7 @@ export default function RegisterPage() {
                   onChange={handleInputChange}
                   placeholder="Your unique username"
                   required
+                  autoComplete="off"
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
@@ -144,6 +153,7 @@ export default function RegisterPage() {
                   onChange={handleInputChange}
                   placeholder="8-16 Alphanumeric Characters"
                   required
+                  autoComplete="off"
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
@@ -155,6 +165,7 @@ export default function RegisterPage() {
                   onChange={handleInputChange}
                   placeholder="Enter your password again"
                   required
+                  autoComplete="off"
                 />
               </div>
             </div>
