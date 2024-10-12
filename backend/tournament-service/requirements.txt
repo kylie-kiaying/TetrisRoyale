@@ -6,3 +6,5 @@ python-jose
 sqlalchemy
 psycopg2-binary
 asyncpg
+pytest==8.3.3
+pytest-asyncio==0.24.0
