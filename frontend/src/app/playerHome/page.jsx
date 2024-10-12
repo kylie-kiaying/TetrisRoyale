@@ -5,7 +5,6 @@ import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
 import { Button } from "@/components/ui/button";
 
-// Sample data for enrolled and completed tournaments
 const enrolledTournaments = [
     { id: "1", tournament_name: "Tetris Championship", start: "June 1", end: "June 10", status: "Ongoing", organizer: "WTFC" },
     { id: "2", tournament_name: "Spring Showdown", start: "October 5", end: "October 15", status: "Upcoming", organizer: "WTFC" },
@@ -28,7 +27,11 @@ export default function HomePage() {
 
     return (
         <>
-            <div className="min-h-screen bg-gradient-to-b from-[#0b051d] to-[#1c1132] flex flex-col items-center px-4">
+            {/* Background image with color gradient overlay */}
+            <div className="min-h-screen flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat"
+                style={{
+                    backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')"
+                }}>
 
                 {/* Sticky Navbar */}
                 <div className="w-full sticky top-0 z-50">
@@ -37,7 +40,6 @@ export default function HomePage() {
 
                 {/* Main Content */}
                 <div className="flex flex-col items-center w-full flex-grow mt-8 space-y-6">
-
                     {/* Toggle Buttons */}
                     <div className="flex flex-wrap gap-4 justify-center mb-4">
                         <Button

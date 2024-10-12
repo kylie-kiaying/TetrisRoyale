@@ -1,12 +1,14 @@
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, FastAPI
 from fastapi.responses import JSONResponse
 from app.schema.auth_schema import UserReg, UserLogin, LoginResponse
 from app.service.auth_service import AuthService
 from app.db.session import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.middleware.cors import CORSMiddleware
 from app.utils.token_utils import verify_user_role, retrieve_username
 
 router = APIRouter()
+app = FastAPI()
 
 @router.get("/")
 async def root():

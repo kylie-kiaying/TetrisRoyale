@@ -34,7 +34,10 @@ const matchHistory = [
 
 export default function PlayerProfile() {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0b051d] to-[#1c1132] text-white">
+        <div className="min-h-screen flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat text-white"
+                style={{
+                    backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')"
+                }}>
             {/* Navbar */}
             <div className="w-full sticky top-0 z-50 flex justify-center">
             <Navbar></Navbar>
