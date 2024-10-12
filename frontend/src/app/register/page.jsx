@@ -160,6 +160,7 @@ export default function LoginPage() {
               <div className="flex w-full space-x-2 items-center justify-center">
                 <Link href="/">
                   <Button
+                    type="button"
                     variant="outline"
                     className=" text-white bg-[#1e0b38] hover:bg-gray-300/70"
                   >
