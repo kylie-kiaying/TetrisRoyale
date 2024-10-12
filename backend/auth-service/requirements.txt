@@ -3,3 +3,5 @@ pydantic==2.9.0
 starlette==0.38.5
 uvicorn==0.30.6
 python-jose
+pytest==8.3.3
+pytest-asyncio==0.24.0
