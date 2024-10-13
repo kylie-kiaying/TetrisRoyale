@@ -1,32 +1,45 @@
+import httpx
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 from app.model.models import Player, Match
-from app.schema.schemas import MatchCreate, MatchUpdate, PlayerRating  # Ensure MatchCreate includes new fields
+from app.schema.schemas import MatchCreate, MatchUpdate
 from app.db.database import get_db
-from app.utils.player_util import get_player_by_id, create_player_in_db
 from app.whr.whr_logic import calculate_whr
+from app.utils.player_util import get_player_by_id, create_player_in_db
 
 router = APIRouter()
 
+PLAYER_SERVICE_URL = "http://player-service:8002"
+TOURNAMENT_SERVICE_URL = "http://tournament-service:8003"
+
+async def validate_player_exists(player_id: int):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{PLAYER_SERVICE_URL}/players/{player_id}")
+        if response.status_code != 200:
+            raise HTTPException(status_code=404, detail=f"Player {player_id} not found")
+
+async def validate_tournament_exists(tournament_id: int):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{TOURNAMENT_SERVICE_URL}/tournaments/{tournament_id}")
+        if response.status_code != 200:
+            raise HTTPException(status_code=404, detail=f"Tournament {tournament_id} not found")
+
 @router.post("/matches/", response_model=dict)
 async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends(get_db)):
-    # Ensure both players exist in the player microservice
-    player1 = await get_player_by_id(match.player1_id, db)
-    player2 = await get_player_by_id(match.player2_id, db)
+    # Ensure both players and tournament exist in the respective microservices
+    await validate_player_exists(match.player1_id)
+    await validate_player_exists(match.player2_id)
+    await validate_tournament_exists(match.tournament_id)
 
-    if not player1 or not player2:
-        raise HTTPException(status_code=404, detail="One or both players not found in player microservice")
-
-    # Record the tournament match with scores set to -1 and other details
+    # Record the tournament match with initial scores set to -1 and other details
     new_match = Match(
-        tournament_id=match.tournament_id,   # New field
+        tournament_id=match.tournament_id,
         player1_id=match.player1_id,
         player2_id=match.player2_id,
-        scheduled_at=match.scheduled_at,     # New field
-        status=match.status,                   # New field
-        player1_score=-1,                     # Set initial scores for future match
-        player2_score=-1,                     # Set initial scores for future match
+        scheduled_at=match.scheduled_at,
+        status=match.status,
+        player1_score=-1,
+        player2_score=-1,
     )
     
     db.add(new_match)
@@ -60,50 +73,9 @@ async def update_match_scores(match_id: int, scores: MatchUpdate, db: AsyncSessi
 
     # Update player ratings in the local database
     for player_id, new_rating in updated_ratings.items():
-        print(player_id)
-        print(new_rating)
         player = await db.get(Player, int(player_id))
-        player.rating = new_rating[len(new_rating) - 1][1]
+        if player:
+            player.rating = new_rating[-1][1]  # Set the most recent rating
 
     await db.commit()
     return {"message": "Match scores updated and ratings recalculated"}
-
-@router.post("/ratings/{player_id}", response_model=dict)
-async def add_player(player_id: int, username: str, db: AsyncSession = Depends(get_db)):
-    """
-    Adds a new player to the rating database when a new account is created.
-
-    Args:
-        player_id (int): ID of the player.
-        username (str): Username of the player.
-        db (AsyncSession): Database session.
-
-    Returns:
-        dict: Success message.
-    """
-    # Check if the player already exists in the rating database
-    existing_player = await db.get(Player, player_id)
-    if existing_player:
-        raise HTTPException(status_code=400, detail="Player already exists in the rating database")
-
-    # Use the util function to add the player to the database
-    await create_player_in_db(player_id, username, db)
-    return {"message": "Player added successfully to the rating database"}
-
-@router.get("/ratings/{player_id}", response_model=dict)
-async def get_player_rating(player_id: int, db: AsyncSession = Depends(get_db)):
-    """
-    Retrieves the rating of a player by their ID.
-
-    Args:
-        player_id (int): ID of the player.
-        db (AsyncSession): Database session.
-
-    Returns:
-        dict: Player's rating information.
-    """
-    player = await db.get(Player, player_id)
-    if not player:
-        raise HTTPException(status_code=404, detail="Player not found in the rating database")
-
-    return {"player_id": player.id, "username": player.username, "rating": player.rating}

@@ -16,7 +16,10 @@ async def root():
 
 @router.post("/login/", response_model=LoginResponse)
 async def verify_user(auth_data: UserLogin, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
-    return await auth_service.login(auth_data, db)
+    try:
+        return await auth_service.login(auth_data, db)
+    except HTTPException as e:
+        raise HTTPException(status_code=e.status_code, detail=str(e))
 
 @router.post("/register/")
 async def register_user(auth_data: UserReg, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):

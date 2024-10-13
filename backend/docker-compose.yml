@@ -32,6 +32,7 @@ services:
       - ./tournament-service/.env
     depends_on:
       - auth-service
+      - player-service
     networks:
       - microservices-network
 
@@ -49,20 +50,41 @@ services:
     networks:
       - microservices-network
 
+  rating-service:
+    build:
+      context: ./rating-service
+    ports:
+      - "8005:8000"
+    env_file:
+      - ./rating-service/.env
+    depends_on:
+      - auth-service
+      - player-service
+      - tournament-service
+    networks:
+      - microservices-network
+    environment:
+      PLAYER_SERVICE_URL: "http://player-service:8000"
+      TOURNAMENT_SERVICE_URL: "http://tournament-service:8000"
+
+  database:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tournament_db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+
 networks:
   microservices-network:
     driver: bridge
 
+volumes:
+  db-data:
+
   
-  # rating-service:
-  #   build:
-  #     context: ./rating-service
-  #   ports:
-  #     - "8005:8000"
-  #   env_file:
-  #     - ./rating-service/.env
-  #   depends_on:
-  #     - auth-service
-  #     - player-service
-  #     - tournament-service
-  #     - matchmaking-service

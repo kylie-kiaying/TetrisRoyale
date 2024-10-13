@@ -3,3 +3,6 @@ pydantic==2.9.0
 starlette==0.38.5
 uvicorn==0.30.6
 python-jose
+sqlalchemy
+asyncpg
+whr

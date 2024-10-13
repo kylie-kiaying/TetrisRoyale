@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, Boolean, Integer
+from sqlalchemy import Column, String, Boolean, Integer, ForeignKey
+from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 
 class User(Base):
@@ -11,3 +12,5 @@ class User(Base):
     verification_token = Column(String, nullable=True)
     email_verified = Column(Boolean, default=False)
     role = Column(String, default="player")
+
+    player = relationship("Player", back_populates="user")
