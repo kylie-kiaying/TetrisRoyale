@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation"; // Correct import to get the pathname
 import Link from "next/link";
 import { Button } from '@/components/ui/button';
@@ -8,17 +9,22 @@ import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/h
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { IoTrophy, IoSearch, IoPerson, IoMenu, IoClose } from 'react-icons/io5';
 import { PiRankingBold } from "react-icons/pi";
-
+import { IoNotifications } from "react-icons/io5";
+import { useAuthStore } from "@/store/authStore";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname(); // Get the current pathname
+  const [playerData, setPlayerData] = useState({ username: "User Name", rating: 1234 }); // State for player details
+  const token = useAuthStore((state) => state.token); // Get the JWT token from the auth store
+  const username = useAuthStore((state) => state.username); // Get username from the auth store
 
   // Toggle function for the menu
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   // Check if the current route matches the link path
   const isActive = (path) => pathname === path;
+
 
   return (
     <div className="sticky top-3 z-50 w-full flex justify-center mt-3">
@@ -80,6 +86,14 @@ export default function Navbar() {
 
         {/* Profile Section */}
         <div className="hidden md:flex items-center gap-4">
+          
+          <Button
+            variant="ghost" 
+            className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+          >
+            <IoNotifications className="h-6 w-6"/>
+          </Button>
+
           <HoverCard> 
             <HoverCardTrigger asChild>
               <div className="flex items-center gap-2 cursor-pointer">
@@ -88,8 +102,8 @@ export default function Navbar() {
                   <AvatarFallback>user</AvatarFallback>
                 </Avatar>
                 <div className="text-primary-foreground">
-                  <h4 className="font-medium">User Name</h4>
-                  <p className="text-xs text-muted-foreground">ELO: 1234</p>
+                  <h4 className="font-medium">{username}</h4>
+                  <p className="text-xs text-muted-foreground">ELO: {playerData.rating}</p>
                 </div>
               </div>
             </HoverCardTrigger>
@@ -100,17 +114,25 @@ export default function Navbar() {
                 <div className="flex justify-between items-center space-x-4">
                   <Avatar>
                     <AvatarImage src="/placeholder-user.jpg" />
-                    <AvatarFallback>user</AvatarFallback>
+                    <AvatarFallback>{username.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div className="space-y-1">
-                    <h4 className="text-sm font-semibold">User Name</h4>
-                    <p className="text-sm">ELO: 1234</p>
+                    <h4 className="text-sm font-semibold">{username}</h4>
+                    <p className="text-sm">ELO: {playerData.rating}</p>
                   </div>
                 </div>
 
                 {/* Sign out Button */}
                 <div className="flex justify-center mt-4">
-                  <Button>Sign Out</Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      useAuthStore.getState().clearToken();
+                      useAuthStore.getState().clearUsername();
+                      window.location.href = "/"
+                    }}>
+                    Sign Out
+                  </Button>
                 </div>
               </div>
             </HoverCardContent>
@@ -125,13 +147,26 @@ export default function Navbar() {
           isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         }`}
       >
-        <Button 
-          variant="ghost" 
-          className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
-          onClick={() => setIsMobileMenuOpen(false)}
+
+        <Link href="/tournaments">
+          <Button 
+            variant="ghost" 
+            className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoTrophy className="w-6 h-6" />
+          </Button>
+        </Link>
+
+        {/* Rankings button */}
+        <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
         >
-          <IoTrophy className="w-6 h-6" />
+            <PiRankingBold className="w-6 h-6" />
         </Button>
+
         <Button 
           variant="ghost" 
           className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
@@ -139,13 +174,27 @@ export default function Navbar() {
         >
           <IoSearch className="w-6 h-6" />
         </Button>
-        <Button 
-          variant="ghost" 
-          className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <IoPerson className="w-6 h-6" />
+
+        <Link href="/profile">
+          <Button
+            variant="ghost" 
+            className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoPerson className="w-6 h-6" />
+          </Button>
+        </Link>
+
+        <Button
+          variant="destructive"
+          onClick={() => {
+            useAuthStore.getState().clearToken();
+            useAuthStore.getState().clearUsername();
+            window.location.href = "/"
+          }}>
+          Sign out
         </Button>
+
       </nav>
     </div>
   );
