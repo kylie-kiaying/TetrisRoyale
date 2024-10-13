@@ -7,6 +7,8 @@ from app.utils.token_utils import create_access_token
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.model.user_model import User
 import uuid
+import httpx
+import os
 
 class AuthService:
 
@@ -47,6 +49,10 @@ class AuthService:
     async def register(self, auth_data, db: AsyncSession):
         user_repository = UserRepository()
 
+        player_service_url = os.getenv("PLAYER_SERVICE_URL")
+        if not player_service_url:
+            raise RuntimeError("PLAYER_SERVICE_URL is not set")
+        
         # Check if username or email already exists
         existing_user = await user_repository.get_user_by_username(auth_data.username, db)
         if existing_user:
@@ -64,7 +70,27 @@ class AuthService:
         )
 
         await user_repository.create_user(user, db)
+        await db.refresh(user)
         send_verification_email(auth_data.email, verification_token)
+
+        try:
+            async with httpx.AsyncClient() as client:
+                player_data = {
+                    "user_id": user.id,
+                    "username": auth_data.username,
+                    "email": auth_data.email,
+                }
+                response = await client.post(f"{player_service_url}/players", json=player_data)
+                response.raise_for_status()
+        except httpx.RequestError as req_err:
+            print(f"Request error occurred: {req_err}")
+            raise HTTPException(status_code=500, detail="Failed to create player profile: Request error")
+        except httpx.HTTPStatusError as http_err:
+            print(f"HTTP error occurred: {http_err.response.status_code} - {http_err.response.text}")
+            raise HTTPException(status_code=http_err.response.status_code, detail="Failed to create player profile: HTTP error")
+        except Exception as e:
+            print(f"Error creating player profile: {e}")
+            raise HTTPException(status_code=500, detail="Failed to create player profile")
 
         return {"message": "User registered successfully. Please check your email to verify your account."}
 

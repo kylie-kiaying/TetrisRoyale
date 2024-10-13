@@ -8,6 +8,8 @@ services:
       - "8001:8000"
     env_file:
       - ./auth-service/.env
+    networks:
+      - microservices-network
 
   player-service:
     build:
@@ -18,6 +20,8 @@ services:
       - ./player-service/.env
     depends_on:
       - auth-service
+    networks:
+      - microservices-network
 
   tournament-service:
     build:
@@ -28,6 +32,8 @@ services:
       - ./tournament-service/.env
     depends_on:
       - auth-service
+    networks:
+      - microservices-network
 
   matchmaking-service:
     build:
@@ -40,3 +46,23 @@ services:
       - auth-service
       - player-service
       - tournament-service
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+  
+  # rating-service:
+  #   build:
+  #     context: ./rating-service
+  #   ports:
+  #     - "8005:8000"
+  #   env_file:
+  #     - ./rating-service/.env
+  #   depends_on:
+  #     - auth-service
+  #     - player-service
+  #     - tournament-service
+  #     - matchmaking-service
