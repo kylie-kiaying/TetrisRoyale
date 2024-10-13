@@ -4,6 +4,7 @@ import { useState } from "react";
 import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/authStore";
 
 const enrolledTournaments = [
     { id: "1", tournament_name: "Tetris Championship", start: "June 1", end: "June 10", status: "Ongoing", organizer: "WTFC" },
@@ -20,7 +21,7 @@ const completedTournaments = [
 
 export default function HomePage() {
     const [visibleTable, setVisibleTable] = useState('enrolled');
-
+    const username = useAuthStore((state) => state.username);
     const toggleTable = (table) => {
         setVisibleTable(table);
     };

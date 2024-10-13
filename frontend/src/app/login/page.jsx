@@ -26,7 +26,6 @@ import { useAuthStore } from "@/store/authStore";
 
 export default function LoginPage() {
     const router = useRouter();
-
     const [formData, setFormData] = useState({
         username: "",
         password: "",

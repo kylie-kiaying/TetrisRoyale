@@ -15,7 +15,7 @@ import { useAuthStore } from "@/store/authStore";
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname(); // Get the current pathname
-  const [playerData, setPlayerData] = useState({ name: "User Name", elo: 1234 }); // State for player details
+  const [playerData, setPlayerData] = useState({ username: "User Name", rating: 1234 }); // State for player details
   const token = useAuthStore((state) => state.token); // Get the JWT token from the auth store
   const username = useAuthStore((state) => state.username); // Get username from the auth store
 
@@ -25,30 +25,6 @@ export default function Navbar() {
   // Check if the current route matches the link path
   const isActive = (path) => pathname === path;
 
-  // TODO: NOT WORKING AS INTENEDD Fetch player details whenever the token changes
-  useEffect(() => {
-    const fetchPlayerData = async () => {
-      if (token && username) {
-        try {
-          const response = await fetch(`http://localhost:8002/players/by-username/${username}`, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setPlayerData({ name: data.username, elo: data.rating });
-          } else {
-            console.error("Failed to fetch player data");
-          }
-        } catch (error) {
-          console.error("Error fetching player data:", error);
-        }
-      }
-    };
-    fetchPlayerData();
-  }, [token, username]);
 
   return (
     <div className="sticky top-3 z-50 w-full flex justify-center mt-3">
@@ -126,8 +102,8 @@ export default function Navbar() {
                   <AvatarFallback>user</AvatarFallback>
                 </Avatar>
                 <div className="text-primary-foreground">
-                  <h4 className="font-medium">{playerData.name}</h4>
-                  <p className="text-xs text-muted-foreground">ELO: {playerData.elo}</p>
+                  <h4 className="font-medium">{username}</h4>
+                  <p className="text-xs text-muted-foreground">ELO: {playerData.rating}</p>
                 </div>
               </div>
             </HoverCardTrigger>
@@ -138,17 +114,18 @@ export default function Navbar() {
                 <div className="flex justify-between items-center space-x-4">
                   <Avatar>
                     <AvatarImage src="/placeholder-user.jpg" />
-                    <AvatarFallback>{playerData.name.charAt(0).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>{username.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div className="space-y-1">
-                    <h4 className="text-sm font-semibold">{playerData.name}</h4>
-                    <p className="text-sm">ELO: {playerData.elo}</p>
+                    <h4 className="text-sm font-semibold">{username}</h4>
+                    <p className="text-sm">ELO: {playerData.rating}</p>
                   </div>
                 </div>
 
                 {/* Sign out Button */}
                 <div className="flex justify-center mt-4">
                   <Button
+                    variant="destructive"
                     onClick={() => {
                       useAuthStore.getState().clearToken();
                       useAuthStore.getState().clearUsername();
@@ -207,6 +184,16 @@ export default function Navbar() {
             <IoPerson className="w-6 h-6" />
           </Button>
         </Link>
+
+        <Button
+          variant="destructive"
+          onClick={() => {
+            useAuthStore.getState().clearToken();
+            useAuthStore.getState().clearUsername();
+            window.location.href = "/"
+          }}>
+          Sign out
+        </Button>
 
       </nav>
     </div>
