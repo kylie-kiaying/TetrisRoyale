@@ -8,7 +8,8 @@ import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/h
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { IoTrophy, IoSearch, IoPerson, IoMenu, IoClose } from 'react-icons/io5';
 import { PiRankingBold } from "react-icons/pi";
-
+import { IoNotifications } from "react-icons/io5";
+import { useAuthStore } from "@/store/authStore";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -80,6 +81,14 @@ export default function Navbar() {
 
         {/* Profile Section */}
         <div className="hidden md:flex items-center gap-4">
+          
+          <Button
+            variant="ghost" 
+            className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+          >
+            <IoNotifications className="h-6 w-6"/>
+          </Button>
+
           <HoverCard> 
             <HoverCardTrigger asChild>
               <div className="flex items-center gap-2 cursor-pointer">
@@ -110,7 +119,13 @@ export default function Navbar() {
 
                 {/* Sign out Button */}
                 <div className="flex justify-center mt-4">
-                  <Button>Sign Out</Button>
+                  <Button
+                    onClick={() => {
+                      useAuthStore.getState().clearToken();
+                      window.location.href = "/"
+                    }}>
+                    Sign Out
+                  </Button>
                 </div>
               </div>
             </HoverCardContent>
@@ -125,13 +140,26 @@ export default function Navbar() {
           isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         }`}
       >
-        <Button 
-          variant="ghost" 
-          className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
-          onClick={() => setIsMobileMenuOpen(false)}
+
+        <Link href="/tournaments">
+          <Button 
+            variant="ghost" 
+            className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoTrophy className="w-6 h-6" />
+          </Button>
+        </Link>
+
+        {/* Rankings button */}
+        <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
         >
-          <IoTrophy className="w-6 h-6" />
+            <PiRankingBold className="w-6 h-6" />
         </Button>
+
         <Button 
           variant="ghost" 
           className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
@@ -139,13 +167,17 @@ export default function Navbar() {
         >
           <IoSearch className="w-6 h-6" />
         </Button>
-        <Button 
-          variant="ghost" 
-          className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <IoPerson className="w-6 h-6" />
-        </Button>
+
+        <Link href="/profile">
+          <Button
+            variant="ghost" 
+            className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoPerson className="w-6 h-6" />
+          </Button>
+        </Link>
+
       </nav>
     </div>
   );

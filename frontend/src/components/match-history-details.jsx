@@ -1,5 +1,5 @@
 // components/ExpandedMatchDetails.jsx
-
+import useAuthStore from "@/store/authStore";
 import React from "react";
 
 export function ExpandedMatchDetails({ rowData }) {
