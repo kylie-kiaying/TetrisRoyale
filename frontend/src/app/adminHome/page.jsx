@@ -27,16 +27,20 @@ const tournaments = [
 
 export default function adminPage() {
     return (
-        <div className="min-h-screen bg-[#0b051d] items-center">
+        <div className="min-h-full flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat bg-top"
+                style={{
+                    backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')",
+                    minHeight: "100%"
+                }}>
             <div className='h-screen text-white align-middle'>
                 <Navbar></Navbar>
-                <div className="flex justify-center min-w-full items-start h-screen bg-[#0b051d] pt-14">
-                        <Card className="bg-opacity-40 w-[1000px] max-w-screen-xl backdrop-blur-md  rounded-lg shadow-lg items-center">
+                <div className="flex justify-center rounded-lg shadow-lg min-w-full items-start h-screen bg-[#0b051d] pt-14">
+                        <Card className="border-0 bg-[#1c1132] w-[1000px] max-w-screen-xl backdrop-blur-md  rounded-lg shadow-lg items-center">
                             <CardHeader>
                                 <span>
                                     <CardTitle>Current Tournaments</CardTitle>
                                     <span className="absolute top-3 right-5">
-                                    <Button variant="outline" className="bg-white text-[#1e0b38] hover:bg-gray-300/70">Create</Button>
+                                    <Button variant="outline" className="border-0 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 transition-all duration-200 bg-purple-700 text-white">Create</Button>
                                     </span>
                                 </span>
                             </CardHeader>
@@ -49,7 +53,7 @@ export default function adminPage() {
                                                         {tournament.tournament_name}
                                                     </CardTitle>
                                                     <span className="absolute top-5 right-14">
-                                                        <Button variant="outline" className="bg-white text-[#1e0b38] hover:bg-gray-300/70">Details</Button>
+                                                        <Button variant="outline" className="border-0 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 transition-all duration-200 bg-purple-700 text-white">Details</Button>
                                                     </span>
                                                 </span>
                                                 <span className="text-xs inline">Status: 
@@ -65,8 +69,8 @@ export default function adminPage() {
                                             <CardContent>
                                                 <span className="hidden sm:inline">Estimated Start-End Date: </span><span>{tournament.tournament_start} - {tournament.tournament_end}</span>
                                                 <span className="absolute bottom-4 right-5">  
-                                                    <Button variant="outline" className="bg-white text-[#1e0b38] hover:bg-gray-300/70">Edit</Button>
-                                                    <Button variant="outline" className="ml-2 bg-white text-[#1e0b38] hover:bg-gray-300/70">Delete</Button>
+                                                    <Button variant="outline" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 transition-all duration-200 border-purple-500 text-purple-500">Edit</Button>
+                                                    <Button variant="outline" className="ml-2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 transition-all duration-200 border-purple-500 text-purple-500">Delete</Button>
                                                 </span>
                                             </CardContent>
                                         </Card>

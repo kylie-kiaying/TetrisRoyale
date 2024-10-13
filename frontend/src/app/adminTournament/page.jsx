@@ -37,7 +37,7 @@ export default function adminPage() {
             <div className='h-screen text-white align-middle'>
                 <Navbar></Navbar>
                 <div className="flex justify-center min-w-full items-start h-screen bg-[#0b051d] pt-14">
-                    <Card className="bg-opacity-40 w-[1000px] max-w-screen-xl backdrop-blur-md  rounded-lg shadow-lg items-center">
+                    <Card className="border-0 w-[1000px] max-w-screen-xl backdrop-blur-md  rounded-lg shadow-lg items-center">
                         <CardHeader>
                             <span>
                                 <CardTitle>Tournament 1</CardTitle>
@@ -53,7 +53,7 @@ export default function adminPage() {
                                 <CardContent className="grid grid-cols-4 gap-4">
                                     <div className="col-start-1 col-span-2"><span></span></div>
                                         {matches.map(function(match, i){
-                                            return <div className="col-start-3 col-span-2 bg-black" key={i}>
+                                            return <div className="col-start-3 col-span-2 border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted" key={i}>
                                                         {match.status === "Finished" 
                                                         ? match.player1_id === match.winner_id 
                                                             ? <span className="text-green-200">{players.find((player) => player.user_id === match.player1_id).username} (Win)</span>
