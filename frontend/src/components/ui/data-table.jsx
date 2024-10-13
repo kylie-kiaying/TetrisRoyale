@@ -1,7 +1,8 @@
 "use client";
 
-import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
-import { columns } from "@/components/tournament-columns"; // Import the tournament columns
+import React from "react";
+import { useReactTable, getCoreRowModel, getExpandedRowModel, flexRender } from "@tanstack/react-table";
+import { columns } from "@/components/tournament-columns";
 import {
   Table,
   TableBody,
@@ -12,14 +13,13 @@ import {
 } from "@/components/ui/table"; // Assuming you're using shadcn/ui Table components
 
 export function DataTable({ type, data }) {
-  // Use the appropriate columns based on the table type (enrolled or completed)
-  const tableColumns = type === "enrolled" ? columns.enrolled : columns.completed;
+  const tableColumns = columns[type];
 
-  // Ensure that the columns and data are passed correctly
   const table = useReactTable({
     data,
     columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
   });
 
   return (
@@ -41,13 +41,54 @@ export function DataTable({ type, data }) {
         <TableBody className="bg-[#1c1132]">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="px-6 py-4 border-b border-gray-600 text-gray-300">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
+              <React.Fragment key={row.id}>
+                <TableRow>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="px-6 py-4 border-b border-gray-600 text-gray-300">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+
+                {/* Expanded Row with Detailed Stats */}
+                {row.getIsExpanded() && (
+                  <TableRow key={`${row.id}-expanded`} className="bg-[#1c1132] text-white">
+                    <TableCell colSpan={tableColumns.length} className="px-6 py-4 border-b border-gray-600">
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Row 1 */}
+                        <div className="border-b border-gray-700 py-2">
+                          <p className="text-sm font-semibold">Pieces Placed</p>
+                          <p className="text-lg">{row.original.pieces_placed}</p>
+                        </div>
+                        <div className="border-b border-gray-700 py-2">
+                          <p className="text-sm font-semibold">PPS (Pieces Per Second)</p>
+                          <p className="text-lg">{row.original.pps}</p>
+                        </div>
+
+                        {/* Row 2 */}
+                        <div className="border-b border-gray-700 py-2">
+                          <p className="text-sm font-semibold">APM (Attacks Per Minute)</p>
+                          <p className="text-lg">{row.original.apm}</p>
+                        </div>
+                        <div className="border-b border-gray-700 py-2">
+                          <p className="text-sm font-semibold">KPP (Keys Per Piece)</p>
+                          <p className="text-lg">{row.original.kpp}</p>
+                        </div>
+
+                        {/* Row 3 */}
+                        <div className="border-b border-gray-700 py-2">
+                          <p className="text-sm font-semibold">Finesse %</p>
+                          <p className="text-lg">{row.original.finesse_percentage}</p>
+                        </div>
+                        <div className="border-b border-gray-700 py-2">
+                          <p className="text-sm font-semibold">Lines Cleared</p>
+                          <p className="text-lg">{row.original.lines_cleared}</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
             ))
           ) : (
             <TableRow>

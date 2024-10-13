@@ -21,9 +21,9 @@ class PlayerCreate(PlayerBase):
     pass
 
 class PlayerUpdate(BaseModel):
-    username: Optional[str]
-    email: Optional[EmailStr]
-    profile_picture: Optional[str]
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    profile_picture: Optional[str] = None
 
 class PlayerAvailabilityUpdate(BaseModel):
     availability_status: str
