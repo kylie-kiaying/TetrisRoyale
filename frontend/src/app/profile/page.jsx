@@ -1,5 +1,8 @@
+"use client"
+
 import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
+import { useAuthStore } from '@/store/authStore';
 
 const matchHistory = [
     {
@@ -33,6 +36,9 @@ const matchHistory = [
 ];
 
 export default function PlayerProfile() {
+
+    const username = useAuthStore((state) => state.username); // Get username from the auth store
+
     return (
         <div className="min-h-screen flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat text-white"
             style={{
@@ -54,7 +60,7 @@ export default function PlayerProfile() {
                     </div>
 
                     <div className='flex flex-col items-center space-y-4 w-full px-2'>
-                        <h1 className="text-3xl md:text-4xl font-semibold">Username</h1>
+                        <h1 className="text-3xl md:text-4xl font-semibold">{username}</h1>
                         <div className="flex flex-col md:flex-row justify-between items-center w-full md:px-6 space-y-4 md:space-y-0">
                             <p className="text-xl md:text-2xl text-gray-400">ELO: 1234</p>
                             <div className="flex flex-col items-center md:items-start space-y-2">
