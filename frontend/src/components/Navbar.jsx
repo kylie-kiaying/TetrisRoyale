@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation"; // Correct import to get the pathname
 import Link from "next/link";
 import { Button } from '@/components/ui/button';
@@ -14,12 +15,40 @@ import { useAuthStore } from "@/store/authStore";
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname(); // Get the current pathname
+  const [playerData, setPlayerData] = useState({ name: "User Name", elo: 1234 }); // State for player details
+  const token = useAuthStore((state) => state.token); // Get the JWT token from the auth store
+  const username = useAuthStore((state) => state.username); // Get username from the auth store
 
   // Toggle function for the menu
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   // Check if the current route matches the link path
   const isActive = (path) => pathname === path;
+
+  // TODO: NOT WORKING AS INTENEDD Fetch player details whenever the token changes
+  useEffect(() => {
+    const fetchPlayerData = async () => {
+      if (token && username) {
+        try {
+          const response = await fetch(`http://localhost:8002/players/by-username/${username}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setPlayerData({ name: data.username, elo: data.rating });
+          } else {
+            console.error("Failed to fetch player data");
+          }
+        } catch (error) {
+          console.error("Error fetching player data:", error);
+        }
+      }
+    };
+    fetchPlayerData();
+  }, [token, username]);
 
   return (
     <div className="sticky top-3 z-50 w-full flex justify-center mt-3">
@@ -97,8 +126,8 @@ export default function Navbar() {
                   <AvatarFallback>user</AvatarFallback>
                 </Avatar>
                 <div className="text-primary-foreground">
-                  <h4 className="font-medium">User Name</h4>
-                  <p className="text-xs text-muted-foreground">ELO: 1234</p>
+                  <h4 className="font-medium">{playerData.name}</h4>
+                  <p className="text-xs text-muted-foreground">ELO: {playerData.elo}</p>
                 </div>
               </div>
             </HoverCardTrigger>
@@ -109,11 +138,11 @@ export default function Navbar() {
                 <div className="flex justify-between items-center space-x-4">
                   <Avatar>
                     <AvatarImage src="/placeholder-user.jpg" />
-                    <AvatarFallback>user</AvatarFallback>
+                    <AvatarFallback>{playerData.name.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div className="space-y-1">
-                    <h4 className="text-sm font-semibold">User Name</h4>
-                    <p className="text-sm">ELO: 1234</p>
+                    <h4 className="text-sm font-semibold">{playerData.name}</h4>
+                    <p className="text-sm">ELO: {playerData.elo}</p>
                   </div>
                 </div>
 
@@ -122,6 +151,7 @@ export default function Navbar() {
                   <Button
                     onClick={() => {
                       useAuthStore.getState().clearToken();
+                      useAuthStore.getState().clearUsername();
                       window.location.href = "/"
                     }}>
                     Sign Out

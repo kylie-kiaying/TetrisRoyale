@@ -71,23 +71,24 @@ export default function LoginPage() {
             if (response.ok) {
                 const data = await response.json();
     
-                // Store the token in Zustand state
                 useAuthStore.getState().setToken(data.access_token);
+                useAuthStore.getState().setUsername(payload.username);
     
                 successToast("Login successful!");
-                // alert("Login successful!");
-                router.push("/playerHome");
+                if (payload.role === "admin") {
+                    router.push("/adminHome");
+                } else {
+                    router.push("/playerHome")
+                }
     
             } else {
                 const errorData = await response.json();
                 console.error("Login failed:", errorData);
-                // alert("Login failed: " + (errorData.detail || "Unknown error"));
                 errorToast("Login failed:" + (errorData.detail || "Unknown error"));
             }
         } catch (error) {
             console.error("Error during login:", error);
             errorToast("An error occurred during login. Please try again.");
-            // alert("An error occurred during login. Please try again.");
         }
     };
     
@@ -104,7 +105,6 @@ export default function LoginPage() {
                     <form onSubmit={handleSubmit}>
                         <div className="grid w-full items-center gap-4">
                             <div className="flex flex-col space-y-1.5">
-                                {/* <Label htmlfor="userType" >I am a</Label> */}
                                 <Select onValueChange={handleRoleChange}>
                                     <SelectTrigger id="userType">
                                         <SelectValue  placeholder="I am a..."></SelectValue>
