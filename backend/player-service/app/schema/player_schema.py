@@ -9,6 +9,7 @@ class MatchHistory(BaseModel):
     date: datetime
 
 class PlayerBase(BaseModel):
+    user_id: int
     username: str
     email: EmailStr
     rating: int = 1200
