@@ -44,16 +44,17 @@ export default function adminPage() {
                             </span>
                         </CardHeader>
                         <CardContent>
-                            <Card className="justify-center bg-black/25 max-w-[1000px] backdrop-blur-md  rounded-lg shadow-lg items-center">
+                            <Card className="justify-center border-none bg-black/25 max-w-[1000px] backdrop-blur-md  rounded-lg shadow-lg items-center">
                                 <CardHeader>
                                     <span className="absolute top-3 right-48">
                                         <CardTitle>Match List</CardTitle>
                                     </span>
                                 </CardHeader>
+                                <img src="/tournamentPlaceholder.png" className="absolute left-40 top-2 max-w-48"/>
                                 <CardContent className="grid grid-cols-4 gap-4">
-                                    <div className="col-start-1 col-span-2"><span></span></div>
                                         {matches.map(function(match, i){
-                                            return <div className="col-start-3 col-span-2 border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted" key={i}>
+                                            return <Link href="/adminTournament/match" className="col-start-3 col-span-2" key={i}>
+                                                    <div className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                                                         {match.status === "Finished" 
                                                         ? match.player1_id === match.winner_id 
                                                             ? <span className="text-green-200">{players.find((player) => player.user_id === match.player1_id).username} (Win)</span>
@@ -70,6 +71,7 @@ export default function adminPage() {
                                                             {match.status}
                                                         </span>
                                                     </div>
+                                            </Link>
                                         })}
                                     {/*<div className="col-start-3 col-span-2 bg-black">
                                         <span className="">

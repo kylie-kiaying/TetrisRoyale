@@ -6,6 +6,7 @@ import {
     CardTitle
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const tournaments = [
     { tournament_id: "1", tournament_name: "Tetris Championship", tournament_start: "June 1", tournament_end: "June 10", status: "Ongoing"},
@@ -26,15 +27,18 @@ export default function AdminPage() {
                 <Card className="w-full max-w-4xl bg-[#1c1132] bg-opacity-90 backdrop-blur-md rounded-lg shadow-lg border-none">
                     <CardHeader className="flex flex-row justify-between items-center">
                         <CardTitle className="align-middle">Your Tournaments</CardTitle>
-                        <Button variant="outline" className="bg-purple-700 text-white hover:bg-purple-600 transition-all duration-200">Create</Button>
-                        
+                        <Link href="/adminCreate">
+                            <Button variant="outline" className="bg-purple-700 border-none text-white hover:bg-purple-600 transition-all duration-200">Create</Button>
+                        </Link>
                     </CardHeader>
                     <CardContent>
                         {tournaments.map((tournament) => (
                             <Card key={tournament.tournament_id} className="bg-black/25 backdrop-blur-md rounded-lg shadow-lg mb-6 p-4 border-none">
                                 <CardHeader className="flex flex-row justify-between items-center">
                                     <CardTitle>{tournament.tournament_name}</CardTitle>
-                                    <Button variant="outline" className="bg-purple-700 text-white hover:bg-purple-600 transition-all duration-200">Details</Button>
+                                    <Link href="/adminTournament">
+                                        <Button variant="outline" className="bg-purple-700 border-none text-white hover:bg-purple-600 transition-all duration-200">Details</Button>
+                                    </Link>
                                 </CardHeader>
                                 <CardContent className="flex justify-between items-center">
                                     <div>
@@ -51,7 +55,9 @@ export default function AdminPage() {
                                         </div>
                                     </div>
                                     <div className="flex gap-2">
-                                        <Button variant="outline" className="border-purple-500 text-purple-500 hover:bg-gray-300/70 transition-all duration-200">Edit</Button>
+                                        <Link href="/adminEdit">
+                                            <Button variant="outline" className="border-purple-500 text-purple-500 hover:bg-gray-300/70 transition-all duration-200">Edit</Button>
+                                        </Link>
                                         <Button variant="outline" className="border-purple-500 text-purple-500 hover:bg-gray-300/70 transition-all duration-200">Delete</Button>
                                     </div>
                                 </CardContent>
