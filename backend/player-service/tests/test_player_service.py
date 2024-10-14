@@ -30,7 +30,7 @@ async def test_get_all_players():
 async def test_create_player_success():
     # Arrange
     player_repo = AsyncMock(PlayerRepository)
-    player_data = PlayerCreate(username="newplayer", email="newplayer@example.com")
+    player_data = PlayerCreate(user_id=1, username="newplayer", email="newplayer@example.com")
     
     player_repo.create_player.return_value = AsyncMock(
         user_id=1, username="newplayer", email="newplayer@example.com", rating=1200, profile_picture=None, availability_status="available", date_created=datetime.now(timezone.utc), last_updated=datetime.now(timezone.utc)
@@ -50,7 +50,7 @@ async def test_create_player_success():
 async def test_create_player_failure():
     # Arrange
     player_repo = AsyncMock(PlayerRepository)
-    player_data = PlayerCreate(username="newplayer", email="newplayer@example.com")
+    player_data = PlayerCreate(user_id=1, username="newplayer", email="newplayer@example.com")
     
     player_repo.create_player.side_effect = ValueError("Invalid data")
     
