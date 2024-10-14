@@ -1,4 +1,4 @@
-from whr import Base, Evaluate
+import whr
 
 def calculate_whr(players, matches):
     """
@@ -10,7 +10,7 @@ def calculate_whr(players, matches):
         dict: Player ID to updated rating.
     """
     # Initialize the WHR model (use Base or Evaluate as appropriate)
-    whr_model = Base()  # or Evaluate() if this is the correct class
+    whr_model = whr.Base()  # or Evaluate() if this is the correct class
 
 
     for match in matches:
