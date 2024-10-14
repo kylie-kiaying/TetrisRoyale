@@ -123,7 +123,9 @@ async def test_register_success():
     # Patch hash_password and email sending
     with patch('app.service.auth_service.hash_password', return_value="hashed_password"), \
          patch('app.service.auth_service.send_verification_email', return_value=None), \
-         patch('app.service.auth_service.UserRepository', return_value=mock_user_repo):
+         patch('app.service.auth_service.UserRepository', return_value=mock_user_repo), \
+         patch.dict('os.environ', {'PLAYER_SERVICE_URL': 'http://mock-player-service-url'}), \
+         patch('httpx.AsyncClient.post', return_value=AsyncMock(status_code=200)):
 
         # Act
         response = await auth_service.register(auth_data, mock_db)
