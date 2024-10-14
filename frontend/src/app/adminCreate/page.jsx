@@ -49,7 +49,7 @@ export default function CreationPage() {
                 </CardContent>
                 <CardFooter className="flex flex-col items-start space-y-2">
                     <div className = "flex w-full space-x-2 items-center justify-center ">
-                        <Link href="/">
+                        <Link href="/adminHome">
                             <Button variant="outline" className=" text-white bg-[#1e0b38] hover:bg-gray-300/70"> Cancel</Button>
                         </Link>
                         <Button variant="outline" className= " bg-white text-[#1e0b38] hover:bg-gray-300/70"> Create</Button>
