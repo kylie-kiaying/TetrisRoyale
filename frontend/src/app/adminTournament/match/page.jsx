@@ -65,10 +65,14 @@ function clickTrophyP2(){
 
 export default function matchPage() {
     return (
-        <div className="min-h-screen bg-[#0b051d] items-center">
-            <div className='h-screen text-white align-middle'>
-                <Navbar></Navbar>
-                <div className="flex justify-center min-w-full items-start h-screen bg-[#0b051d] pt-14">
+        <div className="min-h-screen flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat"
+        style={{
+            backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')"
+        }}>
+            <div className='w-full'>
+                <Navbar />
+            </div>
+                <div className="flex justify-center w-full items-start flex-grow pt-14 pb-10">
                         <Card className="border-none w-[1000px] max-w-screen-xl backdrop-blur-md  rounded-lg shadow-lg items-center">
                             <CardHeader>
                                 <span>
@@ -102,6 +106,5 @@ export default function matchPage() {
                         </Card>
                 </div>
             </div>
-        </div>
     )
 }

@@ -33,10 +33,14 @@ const players = [
 
 export default function adminPage() {
     return (
-        <div className="min-h-screen bg-[#0b051d] items-center">
-            <div className='h-screen text-white align-middle'>
-                <Navbar></Navbar>
-                <div className="flex justify-center min-w-full items-start h-screen bg-[#0b051d] pt-14">
+        <div className="min-h-screen flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat"
+        style={{
+            backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')"
+        }}>
+            <div className='w-full'>
+                <Navbar />
+            </div>
+                <div className="flex justify-center w-full items-start flex-grow pt-14 pb-10">
                     <Card className="border-0 w-[1000px] max-w-screen-xl backdrop-blur-md  rounded-lg shadow-lg items-center">
                         <CardHeader>
                             <span>
@@ -73,28 +77,11 @@ export default function adminPage() {
                                                     </div>
                                             </Link>
                                         })}
-                                    {/*<div className="col-start-3 col-span-2 bg-black">
-                                        <span className="">
-                                            P1 vs P2
-                                        </span>
-                                        <span className="float-right">
-                                            Upcoming
-                                        </span>
-                                    </div>
-                                    <div className="col-start-3 col-span-2 bg-black">
-                                        <span className=""> 
-                                            <span className="text-green-200">P3 (Win)</span> vs <span className="text-red-200">P4 (Lose)</span>
-                                        </span>
-                                        <span className="float-right">
-                                            Finished
-                                        </span>
-                                    </div>*/}
                                 </CardContent>
                             </Card>
                         </CardContent>
                     </Card>
                 </div>
             </div>
-        </div>
     );
 }

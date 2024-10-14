@@ -20,7 +20,11 @@ import Link from "next/link";
 
 export default function CreationPage() {
     return (
-        <div className="flex justify-center items-center h-screen bg-[#0b051d]">
+        <div className="min-h-screen flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat"
+        style={{
+            backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')"
+        }}>
+            <div className="flex justify-center w-full items-start flex-grow pt-14 pb-10">
             <Card className="bg-opacity-40 w-[350px] max-w-md backdrop-blur-md  rounded-lg shadow-lg items-center">
                 <CardHeader>
                     <CardTitle >Edit Tournament</CardTitle>
@@ -56,6 +60,7 @@ export default function CreationPage() {
                     </div>
                 </CardFooter>   
             </Card>
+      </div>
       </div>
     );
   }
