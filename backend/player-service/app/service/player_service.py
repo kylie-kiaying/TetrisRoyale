@@ -15,16 +15,16 @@ class PlayerService:
     async def create_player(self, player_data: PlayerCreate) -> PlayerResponse:
         try:
             player = await self.player_repository.create_player(player_data)
-            try:
-                async with httpx.AsyncClient() as client:
-                    rating_data = {
-                        "player_id": player.user_id,
-                        "username": player.username
-                    }
-                    response = await client.post("http://rating-service:8005/ratings/", json=rating_data)
-                    response.raise_for_status()
-            except Exception as e:
-                print(f"Error initializing player rating: {e}")
+            # try:
+            #     async with httpx.AsyncClient() as client:
+            #         rating_data = {
+            #             "player_id": player.user_id,
+            #             "username": player.username
+            #         }
+            #         response = await client.post("http://rating-service:8005/ratings/", json=rating_data)
+            #         response.raise_for_status()
+            # except Exception as e:
+            #     print(f"Error initializing player rating: {e}")
             return PlayerResponse.from_orm(player)
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))

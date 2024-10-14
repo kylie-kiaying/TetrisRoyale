@@ -5,7 +5,7 @@ import jwt
 from jwt import PyJWTError, decode
 from typing import Optional
 
-def create_access_token(username: str, role: str):
+def create_access_token(username: str, role: str, id: int):
     SECRET_KEY = os.getenv("SECRET_KEY")
     ALGORITHM = os.getenv("ALGORITHM", "HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
@@ -13,6 +13,7 @@ def create_access_token(username: str, role: str):
     payload = {
         "username": username,
         "role": role,
+        "id": id,
         "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     }
 
@@ -70,10 +71,14 @@ def retrieve_username(request: Request) -> str:
 
         payload = decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("username")
+        id = payload.get("id")
         exp = payload.get("exp")
 
         if username is None:
             raise HTTPException(status_code=403, detail="Username is missing in token")
+        
+        if id is None:
+            raise HTTPException(status_code=403, detail="ID is missing in token")
         
         if exp is None:
             raise HTTPException(status_code=403, detail="Expiration time is missing in token")
@@ -82,7 +87,7 @@ def retrieve_username(request: Request) -> str:
         if current_time >= datetime.datetime.fromtimestamp(exp):
             raise HTTPException(status_code=403, detail="Access token has expired")
 
-        return username
+        return [username,id]
 
 
     except PyJWTError:
