@@ -81,17 +81,19 @@ export default function matchPage() {
                             </CardHeader>
                             {match.map(function(data, i){
                                 return <CardContent className="grid grid-cols-5 gap-4 text-center" key={i}> 
-                                    {(data.status === "Finished" && data.winner_id === data.player1_id)
+                                    {data.status === "Finished" ? data.winner_id === data.player1_id
                                     ? <div className="col-start-2" id="player1div"><img id="player1" onClick={clickTrophyP1} src="/trophyOn.png" className="inline w-7 mr-1"/> {players.find((player) => player.user_id === data.player1_id).username + " (Win)"}</div>
                                     : <div className="col-start-2" id="player1div"><img id="player1" onClick={clickTrophyP1} src="/trophyOff.png" className="inline w-7 mr-1"/>{players.find((player) => player.user_id === data.player1_id).username + " (Lose)"}</div>
+                                    : <div className="col-start-2" id="player1div"><img id="player1" onClick={clickTrophyP1} src="/trophyOff.png" className="inline w-7 mr-1"/>{players.find((player) => player.user_id === data.player1_id).username}</div>
                                     }
                                     <div className="col-start-3">
                                         vs
                                     </div>
                                     <div className="col-start-4">
-                                    {(data.status === "Finished" && data.winner_id === data.player2_id)
+                                    {data.status === "Finished" ? data.winner_id === data.player2_id
                                         ? <div className="col-start-2" id="player2div">{players.find((player) => player.user_id === data.player2_id).username + " (Win)"} <img onClick={clickTrophyP2} id="player2" src="/trophyOn.png" className="inline w-7 ml-1"/></div>
                                         : <div className="col-start-2" id="player2div">{players.find((player) => player.user_id === data.player2_id).username + " (Lose)"} <img onClick={clickTrophyP2} id="player2" src="/trophyOff.png" className="inline w-7 ml-1"/></div>
+                                        : <div className="col-start-2" id="player2div">{players.find((player) => player.user_id === data.player2_id).username} <img onClick={clickTrophyP2} id="player2" src="/trophyOff.png" className="inline w-7 ml-1"/></div>
                                     }
                                     </div>
                                     <div className="col-start-2 col-span-3">Click the trophy to toggle winner, then submit using the button</div>
