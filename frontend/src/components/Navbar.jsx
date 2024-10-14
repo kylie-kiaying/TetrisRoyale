@@ -2,7 +2,7 @@
 
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation"; // Correct import to get the pathname
+import { usePathname, useRouter } from "next/navigation"; // Correct import to get the pathname
 import Link from "next/link";
 import { Button } from '@/components/ui/button';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
@@ -11,6 +11,7 @@ import { IoTrophy, IoSearch, IoPerson, IoMenu, IoClose } from 'react-icons/io5';
 import { PiRankingBold } from "react-icons/pi";
 import { IoNotifications } from "react-icons/io5";
 import { useAuthStore } from "@/store/authStore";
+import { errorToast } from "@/utils/toastUtils";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,12 +19,21 @@ export default function Navbar() {
   const [playerData, setPlayerData] = useState({ username: "User Name", rating: 1234 }); // State for player details
   const token = useAuthStore((state) => state.token); // Get the JWT token from the auth store
   const username = useAuthStore((state) => state.username); // Get username from the auth store
-
+  const router = useRouter();
+  
   // Toggle function for the menu
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   // Check if the current route matches the link path
   const isActive = (path) => pathname === path;
+
+  // Redirect to root if username is null (user is not logged in)
+  useEffect(() => {
+    if (!username) {
+      router.push("/");
+      errorToast("You have been signed out, please log in again")
+    }
+  }, [username, router]);
 
 
   return (
@@ -99,7 +109,7 @@ export default function Navbar() {
               <div className="flex items-center gap-2 cursor-pointer">
                 <Avatar>
                   <AvatarImage src="/user.png" />
-                  <AvatarFallback>user</AvatarFallback>
+                  <AvatarFallback>{username ? username.charAt(0).toUpperCase() : "U"}</AvatarFallback>
                 </Avatar>
                 <div className="text-primary-foreground">
                   <h4 className="font-medium">{username}</h4>
@@ -114,7 +124,7 @@ export default function Navbar() {
                 <div className="flex justify-between items-center space-x-4">
                   <Avatar>
                     <AvatarImage src="/placeholder-user.jpg" />
-                    <AvatarFallback>{username.charAt(0).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>{username ? username.charAt(0).toUpperCase() : "U"}</AvatarFallback>
                   </Avatar>
                   <div className="space-y-1">
                     <h4 className="text-sm font-semibold">{username}</h4>
