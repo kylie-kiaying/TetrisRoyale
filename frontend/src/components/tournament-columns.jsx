@@ -145,6 +145,32 @@ export const columns = {
         {
             accessorKey: "status",
             header: "Status",
+            cell: (info) => {
+                const status = info.getValue().toLowerCase();
+
+                let color = "inherit"; // Default color
+                let label = status.charAt(0).toUpperCase() + status.slice(1); // Capitalize the first letter
+
+                // Apply different colors for each status
+                if (status === "upcoming") {
+                    color = "orange";
+                } else if (status === "ongoing") {
+                    color = "green";
+                } else if (status === "completed") {
+                    color = "gray";
+                }
+
+                return (
+                    <span
+                        style={{
+                            color: color,
+                            fontWeight: "bold",
+                        }}
+                    >
+                        {label}
+                    </span>
+                );
+            },
         },
         {
             accessorKey: "organizer",
