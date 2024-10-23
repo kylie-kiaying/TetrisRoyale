@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import {
     DropdownMenu,
@@ -18,9 +18,31 @@ export default function SearchBar({
     setSelectedOption,
     handleSearch,
 }) {
+    const [focused, setFocused] = useState(false);
+    const formRef = useRef(null); // Reference to the form element
+
+    const handleFocus = () => {
+        setFocused(true);
+    };
+
+    const handleBlur = () => {
+        // Delay blur handling to check if the new focus is inside the form
+        setTimeout(() => {
+            if (
+                formRef.current &&
+                !formRef.current.contains(document.activeElement)
+            ) {
+                setFocused(false);
+            }
+        }, 100);
+    };
+
     return (
         <form
+            ref={formRef} // Attach the ref to the form
             onSubmit={handleSearch}
+            onFocus={handleFocus} // Track focus for any child element
+            onBlur={handleBlur} // Track blur and ensure that focus moved outside the form
             className="relative flex flex-wrap items-center w-full"
         >
             <div className="relative flex-grow w-full sm:w-auto">
@@ -29,7 +51,11 @@ export default function SearchBar({
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 pr-32 py-2 w-full rounded-r-none border-r-0 bg-gray-800 text-gray-100 placeholder-gray-400 border-gray-700 focus:border-purple-500 focus:ring-purple-500"
+                    className={`pl-10 pr-32 py-2 w-full rounded-r-none border-r-0 bg-gray-800 text-gray-100 placeholder-gray-400 border-gray-700 ${
+                        focused
+                            ? "border-purple-500 focus:ring-purple-500"
+                            : "focus:border-gray-700 focus:ring-gray-700"
+                    }`}
                 />
                 <Search
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -41,7 +67,11 @@ export default function SearchBar({
                     <DropdownMenuTrigger asChild>
                         <Button
                             variant="outline"
-                            className="rounded-l-none border border-l-0 h-[36px] min-w-[100px] font-normal justify-between bg-gray-800 text-gray-100 border-gray-700 hover:bg-gray-700 focus:bg-gray-700 w-full"
+                            className={`rounded-l-none border border-l-0 h-[36px] min-w-[100px] font-normal justify-between bg-gray-800 text-gray-100 ${
+                                focused
+                                    ? "border-purple-500"
+                                    : "border-gray-700"
+                            } hover:bg-gray-700 w-full`}
                         >
                             {selectedOption}
                             <ChevronDown size={16} />
