@@ -17,7 +17,7 @@ export default function Home() {
 
       {/* Content */}
       <div className="relative z-10 flex h-full flex-col items-center justify-center p-4 text-center">
-        <h1 className="font-bebas mb-4 text-4xl text-white/90 sm:text-6xl md:text-7xl">
+        <h1 className="mb-4 font-bebas text-4xl text-white/90 sm:text-6xl md:text-7xl">
           Welcome to TetriTracker
         </h1>
         <p className="mb-4 font-serif text-base text-white/75 sm:text-lg md:text-xl lg:text-2xl">
