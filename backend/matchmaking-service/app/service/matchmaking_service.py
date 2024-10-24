@@ -2,11 +2,20 @@ import random
 from app.repository.matchmaking_repository import MatchmakingRepository
 from app.repository.tournament_repository import TournamentRepository
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
+from app.utils.db import engine
+from app.model.matchmaking_model import Match
 
 class MatchmakingService:
     def __init__(self, matchmaking_repository: MatchmakingRepository, tournament_repository: TournamentRepository):
         self.matchmaking_repository = matchmaking_repository
         self.tournament_repository = tournament_repository
+        self.AsyncSessionLocal = sessionmaker(
+            bind=engine,
+            class_=AsyncSession,
+            expire_on_commit=False,
+        )
 
     async def pair_players(self, tournament_id: int):
         registered_player_ids = await self.tournament_repository.get_tournament_registrants(tournament_id)
@@ -33,11 +42,12 @@ class MatchmakingService:
         return await self.matchmaking_repository.get_player_matches(player_id)
 
     async def submit_match_result(self, match_id: int, winner_id: int):
-        try:
-            updated_match = await self.matchmaking_repository.update_match_result(match_id, winner_id)
-            if not updated_match:
-                raise ValueError(f"Match with id {match_id} not found")
-            return updated_match
-        except Exception as e:
-            # Log the error here if you have a logging system
-            raise ValueError(f"Error updating match result: {str(e)}")
+        async with self.AsyncSessionLocal() as session:
+            async with session.begin():
+                match = await session.get(Match, match_id)
+                if match:
+                    match.winner_id = winner_id
+                    await session.commit()
+                    return self.matchmaking_repository._match_to_dict(match)
+        return None
+        
