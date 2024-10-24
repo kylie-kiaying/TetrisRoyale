@@ -15,7 +15,7 @@ class Player(Base):
 
 class Match(Base):
     __tablename__ = 'ratings_matches'
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     player1_id = Column(Integer)
     player2_id = Column(Integer)
     player1_score = Column(Float)  # -1 for future match, else score

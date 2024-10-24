@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 class MatchCreate(BaseModel):
+    id: int
     player1_id: int
     player2_id: int
     status: str

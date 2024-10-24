@@ -34,6 +34,7 @@ class MatchmakingRepository:
         return [self._match_to_dict(match) for match in matches]
 
     async def update_match_result(self, match_id: int, winner_id: int):
+        
         stmt = (
             update(Match)
             .where(Match.id == match_id)
@@ -42,7 +43,10 @@ class MatchmakingRepository:
         )
         result = await self.db_session.execute(stmt)
         await self.db_session.commit()
-        updated_match = result.scalar_one()
+        updated_match = result.scalar_one_or_none()  # Use scalar_one_or_none for safety
+        
+        if not updated_match:
+            raise ValueError(f"No match found with id {match_id}")
         return self._match_to_dict(updated_match)
 
     async def get_match_by_id(self, match_id: int):

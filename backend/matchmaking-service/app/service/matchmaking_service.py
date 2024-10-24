@@ -43,6 +43,19 @@ class MatchmakingService:
             updated_match = await self.matchmaking_repository.update_match_result(match_id, winner_id)
             if not updated_match:
                 raise ValueError(f"Match with id {match_id} not found")
+            
+            match = await self.matchmaking_repository.get_match_by_id(match_id)
+            match_update = {
+                "player1_score": 1 if match["player1_id"] == winner_id else 0,
+                "player2_score": 1 if match["player2_id"] == winner_id else 0 
+            }
+
+            async with httpx.AsyncClient() as client:
+                await client.put(
+                    f"http://rating-service:8000/matches/{match_id}/",  
+                    json=match_update
+                )
+    
             return updated_match
         except Exception as e:
             # Log the error here if you have a logging system
@@ -61,6 +74,7 @@ class MatchmakingService:
         # Add to the database session
 
         match_data = {
+            "id": match_id,
             "tournament_id": new_match.tournament_id,
             "player1_id": new_match.player1_id,
             "player2_id": new_match.player2_id,

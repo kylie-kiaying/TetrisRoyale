@@ -24,6 +24,7 @@ async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends
     try:
         # Record the tournament match with scores set to -1 and other details
         new_match = Match(
+            id=match.id,
             tournament_id=match.tournament_id,   # New field
             player1_id=match.player1_id,
             player2_id=match.player2_id,
@@ -32,6 +33,7 @@ async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends
             player1_score=-1,                     # Set initial scores for future match
             player2_score=-1,                     # Set initial scores for future match
         )
+        print(new_match)
         
         db.add(new_match)
         await db.commit()
