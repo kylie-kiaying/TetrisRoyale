@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BackgroundWrapper from "@/components/BackgroundWrapper";
 import Navbar from "@/components/Navbar";
 import SearchBar from "@/components/ui/SearchBar";
@@ -19,6 +19,11 @@ export default function SearchPage() {
     const [hasFetchedPlayers, setHasFetchedPlayers] = useState(false);
     const [hasFetchedTournaments, setHasFetchedTournaments] = useState(false);
     const [hasFetchedOrganizers, setHasFetchedOrganizers] = useState(false);
+
+    useEffect( () => {
+        setFilteredResults([]);
+        setHasSearched(false);
+    }, [selectedOption]);
 
     const fetchData = async (selectedOption) => {
         if (selectedOption === "Players" && !hasFetchedPlayers) {
@@ -70,6 +75,11 @@ export default function SearchPage() {
         setHasSearched(true);
     };
 
+     const isResultsValid = filteredResults.length > 0 && (
+        (selectedOption === "Players" && filteredResults.every(item => item.username)) ||
+        (selectedOption === "Tournaments" && filteredResults.every(item => item.tournament_name))
+    );
+
     return (
         <BackgroundWrapper>
             <Navbar />
@@ -88,12 +98,14 @@ export default function SearchPage() {
                 <div className="mt-8 max-w-4xl mx-auto w-full">
                     {selectedOption === "Players" &&
                         hasSearched &&
+                        isResultsValid &&
                         filteredResults.length > 0 && (
                             <DataTable type="players" data={filteredResults} />
                         )}
 
                     {selectedOption === "Tournaments" &&
                         hasSearched &&
+                        isResultsValid &&
                         filteredResults.length > 0 && (
                             <DataTable type="all" data={filteredResults} />
                         )}
