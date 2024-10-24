@@ -105,5 +105,9 @@ async def get_player_rating(player_id: int, db: AsyncSession = Depends(get_db)):
     player = await db.get(Player, player_id)
     if not player:
         raise HTTPException(status_code=404, detail="Player not found in the rating database")
+    
+    player.rating += 1000
+    if(player.rating < 0):
+        player.rating = 0
 
     return {"player_id": player.id, "username": player.username, "rating": player.rating}
