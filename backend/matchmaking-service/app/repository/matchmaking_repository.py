@@ -4,11 +4,21 @@ from app.model.matchmaking_model import Match
 from app.schema.matchmaking_schema import MatchResponse
 from app.utils.checks import check_player_exists, check_tournament_exists
 from fastapi import HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
+from app.utils.db import engine
+from app.model.matchmaking_model import Match
 
 
 class MatchmakingRepository:
     def __init__(self, db_session: AsyncSession):
         self.db_session = db_session
+        self.AsyncSessionLocal = sessionmaker(
+            bind=engine,
+            class_=AsyncSession,
+            expire_on_commit=False,
+        )
+
 
     async def create_match(self, tournament_id: int, player1_id: int, player2_id: int):
         new_match = Match(tournament_id=tournament_id, player1_id=player1_id, player2_id=player2_id)
@@ -34,20 +44,14 @@ class MatchmakingRepository:
         return [self._match_to_dict(match) for match in matches]
 
     async def update_match_result(self, match_id: int, winner_id: int):
-        
-        stmt = (
-            update(Match)
-            .where(Match.id == match_id)
-            .values(status="completed", winner_id=winner_id)
-            .returning(Match)
-        )
-        result = await self.db_session.execute(stmt)
-        await self.db_session.commit()
-        updated_match = result.scalar_one_or_none()  # Use scalar_one_or_none for safety
-        
-        if not updated_match:
-            raise ValueError(f"No match found with id {match_id}")
-        return self._match_to_dict(updated_match)
+        async with self.AsyncSessionLocal() as session:
+            async with session.begin():
+                match = await session.get(Match, match_id)
+                if match:
+                    match.winner_id = winner_id
+                    await session.commit()
+                    return self._match_to_dict(match)
+                return None
 
     async def get_match_by_id(self, match_id: int):
         result = await self.db_session.execute(
