@@ -6,7 +6,7 @@ from app.model.models import Base
 app = FastAPI()
 
 # Include the ratings controller
-app.include_router(ratings_router, prefix="/ratings", tags=["ratings"])
+app.include_router(ratings_router)
 
 @app.on_event("startup")
 async def startup():

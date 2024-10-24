@@ -1,7 +1,7 @@
 # app/controller/matchmaking_controller.py
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from app.schema.matchmaking_schema import MatchResultUpdate
+from app.schema.matchmaking_schema import MatchResultUpdate, MatchCreate, MatchResponse
 from app.service.matchmaking_service import MatchmakingService
 from app.utils.dependencies import get_matchmaking_service
 from typing import List
@@ -33,3 +33,15 @@ async def submit_match_result(match_id: int, result: MatchResultUpdate, matchmak
         return JSONResponse(content=updated_match)  # Return JSON response directly
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    
+@router.post("/matchmaking/{match_id}", response_model=MatchResponse)
+async def create_new_match(
+    match_id: int,
+    new_match: MatchCreate,
+    matchmaking_service: MatchmakingService = Depends(get_matchmaking_service)
+):
+    try:
+        created_match = await matchmaking_service.create_match(match_id, new_match)
+        return created_match
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

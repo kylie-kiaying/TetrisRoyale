@@ -1,6 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from app.model.matchmaking_model import Match
+from app.schema.matchmaking_schema import MatchResponse
+from app.utils.checks import check_player_exists, check_tournament_exists
+from fastapi import HTTPException
+
 
 class MatchmakingRepository:
     def __init__(self, db_session: AsyncSession):
@@ -47,6 +51,41 @@ class MatchmakingRepository:
         )
         match = result.scalar_one_or_none()
         return self._match_to_dict(match) if match else None
+    
+    async def create_match(self, new_match: Match):
+        
+        player1_exists = await check_player_exists(new_match.player1_id)
+        player2_exists = await check_player_exists(new_match.player2_id)
+
+        if not player1_exists:
+            raise HTTPException(status_code=404, detail=f"Player with ID {new_match.player1_id} does not exist.")
+        
+        if not player2_exists:
+            raise HTTPException(status_code=404, detail=f"Player with ID {new_match.player2_id} does not exist.")
+
+        tournament_exists = await check_tournament_exists(new_match.tournament_id)
+
+        if not tournament_exists:
+            raise HTTPException(status_code=404, detail=f"Tournament with ID {new_match.tournament_id} does not exist.")
+        
+        existing_match = await self.get_match_by_id(new_match.id)
+        if existing_match:
+            raise HTTPException(status_code=400, detail=f"Match with ID {new_match.id} already exists.")
+
+        self.db_session.add(new_match)
+        await self.db_session.commit()
+        await self.db_session.refresh(new_match)
+
+
+        return MatchResponse(
+            id=new_match.id,
+            tournament_id=new_match.tournament_id,
+            player1_id=new_match.player1_id,
+            player2_id=new_match.player2_id,
+            scheduled_at=new_match.scheduled_at,
+            status=new_match.status,
+            winner_id=new_match.winner_id
+        )
 
     def _match_to_dict(self, match):
         """

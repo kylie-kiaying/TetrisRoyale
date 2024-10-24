@@ -6,6 +6,9 @@ from app.schema.schemas import MatchCreate, MatchUpdate, PlayerRating  # Ensure 
 from app.db.database import get_db
 from app.utils.player_util import get_player_by_id, create_player_in_db
 from app.whr.whr_logic import calculate_whr
+from datetime import datetime
+from fastapi import HTTPException
+
 
 router = APIRouter()
 
@@ -18,21 +21,24 @@ async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends
     if not player1 or not player2:
         raise HTTPException(status_code=404, detail="One or both players not found in player microservice")
 
-    # Record the tournament match with scores set to -1 and other details
-    new_match = Match(
-        tournament_id=match.tournament_id,   # New field
-        player1_id=match.player1_id,
-        player2_id=match.player2_id,
-        scheduled_at=match.scheduled_at,     # New field
-        status=match.status,                   # New field
-        player1_score=-1,                     # Set initial scores for future match
-        player2_score=-1,                     # Set initial scores for future match
-    )
+    try:
+        # Record the tournament match with scores set to -1 and other details
+        new_match = Match(
+            tournament_id=match.tournament_id,   # New field
+            player1_id=match.player1_id,
+            player2_id=match.player2_id,
+            scheduled_at=datetime.fromisoformat(match.scheduled_at),     # New field
+            status=match.status,                   # New field
+            player1_score=-1,                     # Set initial scores for future match
+            player2_score=-1,                     # Set initial scores for future match
+        )
+        
+        db.add(new_match)
+        await db.commit()
+        await db.refresh(new_match)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     
-    db.add(new_match)
-    await db.commit()
-    await db.refresh(new_match)
-
     return {"message": "Tournament match created successfully", "match_id": new_match.id}
 
 @router.put("/matches/{match_id}/", response_model=dict)
