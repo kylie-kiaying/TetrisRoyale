@@ -49,6 +49,7 @@ class MatchmakingRepository:
                 match = await session.get(Match, match_id)
                 if match:
                     match.winner_id = winner_id
+                    match.status = "completed"
                     await session.commit()
                     return self._match_to_dict(match)
                 return None
