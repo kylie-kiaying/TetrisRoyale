@@ -120,16 +120,18 @@ export default function SearchBar({
 
             {/* Suggestions dropdown */}
             {focused && suggestions.length > 0 && (
-                <ul className="absolute top-full left-0 w-full bg-white border border-gray-300 mt-1 rounded shadow-lg z-10">
+                <ul className="absolute top-full left-0 w-full bg-white border border-gray-300 mt-1 rounded shadow-lg z-20 overflow-hidden">
                     {suggestions.map((suggestion, index) => (
                         <li
                             key={index}
                             onClick={() => onSuggestionClick(suggestion)}
-                            className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                            className="px-4 py-2 hover:bg-purple-100 cursor-pointer transition-all duration-200 ease-in-out"
                         >
-                            {selectedOption === "Players"
-                                ? suggestion.username
-                                : suggestion.tournament_name}
+                            <span className="text-gray-5700">
+                                {selectedOption === "Players"
+                                    ? suggestion.username
+                                    : suggestion.tournament_name}
+                            </span>
                         </li>
                     ))}
                 </ul>
