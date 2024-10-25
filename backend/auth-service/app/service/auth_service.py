@@ -50,8 +50,13 @@ class AuthService:
         user_repository = UserRepository()
 
         player_service_url = os.getenv("PLAYER_SERVICE_URL")
+        rating_service_url = os.getenv("RATING_SERVICE_URL")
+
         if not player_service_url:
             raise RuntimeError("PLAYER_SERVICE_URL is not set")
+        
+        if not rating_service_url:
+            raise RuntimeError("RATING_SERVICE_URL is not set")
         
         # Check if username or email already exists
         existing_user = await user_repository.get_user_by_username(auth_data.username, db)
@@ -82,6 +87,14 @@ class AuthService:
                 }
                 response = await client.post(f"{player_service_url}/players", json=player_data)
                 response.raise_for_status()
+
+                
+                response = await client.post(
+                    f"{rating_service_url}/ratings/{user.id}",
+                    params={"username": auth_data.username}
+                )
+                response.raise_for_status()
+
         except httpx.RequestError as req_err:
             print(f"Request error occurred: {req_err}")
             raise HTTPException(status_code=500, detail="Failed to create player profile: Request error")
