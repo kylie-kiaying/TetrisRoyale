@@ -107,7 +107,12 @@ export default function SearchBar({
                 </div>
                 <Button
                     type="submit"
-                    className="ml-0 sm:ml-2 bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 text-white w-full sm:w-auto mt-2 sm:mt-0"
+                    disabled={!searchQuery.trim()}
+                    className={`ml-0 sm:ml-2 w-full sm:w-auto mt-2 sm:mt-0 ${
+                        searchQuery.trim()
+                            ? "bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 text-white"
+                            : "bg-gray-500 text-gray-300 cursor-not-allowed"
+                    }`}
                 >
                     Search
                 </Button>
