@@ -3,6 +3,8 @@ from app.schema.player_schema import PlayerCreate, PlayerUpdate, PlayerResponse,
 from app.repository.player_repository import PlayerRepository
 from fastapi import HTTPException
 import httpx
+from sqlalchemy.exc import IntegrityError
+
 
 class PlayerService:
     def __init__(self, player_repository: PlayerRepository):
@@ -15,19 +17,12 @@ class PlayerService:
     async def create_player(self, player_data: PlayerCreate) -> PlayerResponse:
         try:
             player = await self.player_repository.create_player(player_data)
-            # try:
-            #     async with httpx.AsyncClient() as client:
-            #         rating_data = {
-            #             "player_id": player.user_id,
-            #             "username": player.username
-            #         }
-            #         response = await client.post("http://rating-service:8005/ratings/", json=rating_data)
-            #         response.raise_for_status()
-            # except Exception as e:
-            #     print(f"Error initializing player rating: {e}")
+    
             return PlayerResponse.from_orm(player)
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
+        except IntegrityError as e:
+            raise HTTPException(status_code=400, detail="Email already exists.")
 
     async def get_player(self, player_id: int) -> PlayerResponse:
         player = await self.player_repository.get_player_by_id(player_id)
