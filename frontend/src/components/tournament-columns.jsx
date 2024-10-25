@@ -1,87 +1,91 @@
 // components/tournament-columns.js
-import { IoChevronForward, IoChevronDown } from "react-icons/io5";
+import { IoChevronForward, IoChevronDown } from 'react-icons/io5';
 
 export const columns = {
   enrolled: [
     {
-      accessorKey: "tournament_name",
-      header: "Name",
+      accessorKey: 'tournament_name',
+      header: 'Name',
     },
     {
-      accessorKey: "start",
-      header: "Start",
+      accessorKey: 'start',
+      header: 'Start',
     },
     {
-      accessorKey:"end",
-      header: "End"
+      accessorKey: 'end',
+      header: 'End',
     },
     {
-      accessorKey: "status",
-      header: "Status",
+      accessorKey: 'status',
+      header: 'Status',
     },
     {
-      accessorKey: "organizer",
-      header: "Organizer",
+      accessorKey: 'organizer',
+      header: 'Organizer',
     },
   ],
   completed: [
     {
-      accessorKey: "tournament_name",
-      header: "Name",
+      accessorKey: 'tournament_name',
+      header: 'Name',
     },
     {
-      accessorKey: "start",
-      header: "Start",
+      accessorKey: 'start',
+      header: 'Start',
     },
     {
-      accessorKey:"end",
-      header: "End"
+      accessorKey: 'end',
+      header: 'End',
     },
     {
-      accessorKey: "status",
-      header: "Status",
+      accessorKey: 'status',
+      header: 'Status',
     },
     {
-      accessorKey: "organizer",
-      header: "Organizer",
+      accessorKey: 'organizer',
+      header: 'Organizer',
     },
   ],
   match_history: [
     {
-      accessorKey: "opponent",
-      header: "Opponent",
+      accessorKey: 'opponent',
+      header: 'Opponent',
       cell: ({ row }) => (
         <div className="flex items-center">
           {/* Circular Profile Image */}
           <img
             src={row.original.opponent_img}
             alt={row.original.opponent}
-            className="w-8 h-8 rounded-full mr-2"
+            className="mr-2 h-8 w-8 rounded-full"
           />
           <span>{row.original.opponent}</span>
         </div>
       ),
     },
     {
-      accessorKey: "result",
-      header: "Result",
+      accessorKey: 'result',
+      header: 'Result',
       cell: ({ row }) => (
-        <span className={row.original.result === "Win" ? "text-green-500" : "text-red-500"}>
+        <span
+          className={
+            row.original.result === 'Win' ? 'text-green-500' : 'text-red-500'
+          }
+        >
           {row.original.result}
         </span>
       ),
     },
     {
-      accessorKey: "tournament",
-      header: "Tournament",
+      accessorKey: 'tournament',
+      header: 'Tournament',
     },
     {
-      accessorKey: "date",
-      header: "Date",
+      accessorKey: 'date',
+      header: 'Date',
     },
     // Expandable row to show detailed statistics
     {
-      id: "expander",
+      id: 'expander',
       header: () => null,
       cell: ({ row }) => (
         <button
@@ -89,9 +93,9 @@ export const columns = {
           className="flex items-center"
         >
           {row.getIsExpanded() ? (
-            <IoChevronDown className="text-gray-400 w-5 h-5" />
+            <IoChevronDown className="h-5 w-5 text-gray-400" />
           ) : (
-            <IoChevronForward className="text-gray-400 w-5 h-5" /> 
+            <IoChevronForward className="h-5 w-5 text-gray-400" />
           )}
         </button>
       ),
@@ -99,24 +103,24 @@ export const columns = {
   ],
   all: [
     {
-      accessorKey: "tournament_name",
-      header: "Name",
+      accessorKey: 'tournament_name',
+      header: 'Name',
     },
     {
-      accessorKey: "start",
-      header: "Start",
+      accessorKey: 'start',
+      header: 'Start',
     },
     {
-      accessorKey:"end",
-      header: "End"
+      accessorKey: 'end',
+      header: 'End',
     },
     {
-      accessorKey: "status",
-      header: "Status",
+      accessorKey: 'status',
+      header: 'Status',
     },
     {
-      accessorKey: "organizer",
-      header: "Organizer",
+      accessorKey: 'organizer',
+      header: 'Organizer',
     },
   ],
 };
