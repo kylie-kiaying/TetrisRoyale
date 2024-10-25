@@ -16,7 +16,7 @@ class Tournament(Base):
     remarks = Column(String)
     date_created = Column(DateTime(timezone=True), server_default=func.now())
     last_updated = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-
+    recommended_rating = Column(Integer, server_default="1000")
     registrants = relationship("Registrant", back_populates="tournament")
 
 
