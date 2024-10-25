@@ -1,8 +1,11 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, Float, String, DateTime
-from datetime import datetime
+from datetime import datetime, timezone
 
 Base = declarative_base()
+
+def utcnow():
+    return datetime.now(timezone.utc)
 
 class Player(Base):
     __tablename__ = 'ratings_players'
@@ -12,12 +15,12 @@ class Player(Base):
 
 class Match(Base):
     __tablename__ = 'ratings_matches'
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     player1_id = Column(Integer)
     player2_id = Column(Integer)
     player1_score = Column(Float)  # -1 for future match, else score
     player2_score = Column(Float)  # -1 for future match, else score
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime(timezone=True), default=utcnow)
     status = Column(String, nullable=False)
-    scheduled_at = Column(DateTime, default=datetime.utcnow)
+    scheduled_at = Column(DateTime(timezone=True), default=utcnow)
     tournament_id = Column(Integer, nullable=False)
