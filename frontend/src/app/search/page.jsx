@@ -5,6 +5,7 @@ import BackgroundWrapper from "@/components/BackgroundWrapper";
 import Navbar from "@/components/Navbar";
 import SearchBar from "@/components/ui/SearchBar";
 import { DataTable } from "@/components/ui/data-table";
+import { distance } from "fastest-levenshtein";
 
 export default function SearchPage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -20,10 +21,37 @@ export default function SearchPage() {
     const [hasFetchedTournaments, setHasFetchedTournaments] = useState(false);
     const [hasFetchedOrganizers, setHasFetchedOrganizers] = useState(false);
 
-    useEffect( () => {
+    useEffect(() => {
         setFilteredResults([]);
         setHasSearched(false);
     }, [selectedOption]);
+
+    const [suggestions, setSuggestions] = useState([]);
+    useEffect(() => {
+        if (searchQuery.trim() === "") {
+            setSuggestions([]);
+            return;
+        }
+
+        const dataToSearch =
+            selectedOption === "Players" ? players : tournaments;
+        const key =
+            selectedOption === "Players" ? "username" : "tournament_name";
+
+        const filteredSuggestions = dataToSearch
+            .map((item) => ({
+                item,
+                similarity: distance(
+                    searchQuery.toLowerCase(),
+                    item[key].toLowerCase()
+                ),
+            }))
+            .sort((a, b) => a.similarity - b.similarity)
+            .slice(0, 3)
+            .map((entry) => entry.item);
+
+        setSuggestions(filteredSuggestions);
+    }, [searchQuery, selectedOption, players, tournaments]);
 
     const fetchData = async (selectedOption) => {
         if (selectedOption === "Players" && !hasFetchedPlayers) {
@@ -75,10 +103,21 @@ export default function SearchPage() {
         setHasSearched(true);
     };
 
-     const isResultsValid = filteredResults.length > 0 && (
-        (selectedOption === "Players" && filteredResults.every(item => item.username)) ||
-        (selectedOption === "Tournaments" && filteredResults.every(item => item.tournament_name))
-    );
+    const isResultsValid =
+        filteredResults.length > 0 &&
+        ((selectedOption === "Players" &&
+            filteredResults.every((item) => item.username)) ||
+            (selectedOption === "Tournaments" &&
+                filteredResults.every((item) => item.tournament_name)));
+
+    // Handle click on a suggestion
+    const handleSuggestionClick = (suggestion) => {
+        const key =
+            selectedOption === "Players" ? "username" : "tournament_name";
+        setSearchQuery(suggestion[key]); // Update search query with the suggestion
+        setFilteredResults([suggestion]); // Update search results to show the clicked suggestion
+        setSuggestions([]); // Clear suggestions
+    };
 
     return (
         <BackgroundWrapper>
@@ -91,6 +130,8 @@ export default function SearchPage() {
                         selectedOption={selectedOption}
                         setSelectedOption={setSelectedOption}
                         handleSearch={handleSearch}
+                        suggestions={suggestions}
+                        onSuggestionClick={handleSuggestionClick}
                     />
                 </div>
 
