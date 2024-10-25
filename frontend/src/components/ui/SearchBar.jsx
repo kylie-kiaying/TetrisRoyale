@@ -114,7 +114,7 @@ export default function SearchBar({
             </form>
 
             {/* Suggestions dropdown */}
-            {suggestions.length > 0 && (
+            {focused && suggestions.length > 0 && (
                 <ul className="absolute top-full left-0 w-full bg-white border border-gray-300 mt-1 rounded shadow-lg z-10">
                     {suggestions.map((suggestion, index) => (
                         <li

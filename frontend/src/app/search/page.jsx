@@ -26,6 +26,11 @@ export default function SearchPage() {
         setHasSearched(false);
     }, [selectedOption]);
 
+    // Fetch initial data based on selectedOption
+    useEffect(() => {
+        fetchData(selectedOption);
+    }, [selectedOption]);
+
     const [suggestions, setSuggestions] = useState([]);
     useEffect(() => {
         if (searchQuery.trim() === "") {
