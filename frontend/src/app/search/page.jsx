@@ -43,7 +43,12 @@ export default function SearchPage() {
         const key =
             selectedOption === "Players" ? "username" : "tournament_name";
 
-        const filteredSuggestions = dataToSearch
+        const exactMatches = dataToSearch.filter((item) =>
+            item[key].toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        const similarMatches = dataToSearch
+            .filter((item) => !exactMatches.includes(item))
             .map((item) => ({
                 item,
                 similarity: distance(
@@ -52,8 +57,12 @@ export default function SearchPage() {
                 ),
             }))
             .sort((a, b) => a.similarity - b.similarity)
-            .slice(0, 3)
             .map((entry) => entry.item);
+
+        const filteredSuggestions = [...exactMatches, ...similarMatches].slice(
+            0,
+            3
+        );
 
         setSuggestions(filteredSuggestions);
     }, [searchQuery, selectedOption, players, tournaments]);
