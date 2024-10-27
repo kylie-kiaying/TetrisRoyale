@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
@@ -35,58 +35,55 @@ export default function TournamentsPage() {
                 backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')"
             }}>
 
-            {/* Sticky Navbar */}
-            <div className="w-full sticky top-0 z-50">
-                <Navbar />
-            </div>
-
-            {/* Main Content */}
-            <div className="flex flex-col items-center w-full flex-grow mt-8 space-y-6">
-                <div className="flex items-center justify-between w-full max-w-6xl px-6">
-                    <h1 className="text-4xl md:text-5xl font-bold text-white">All Tournaments</h1>
-                    <button className="text-white text-3xl bg-purple-700 p-2 rounded-full hover:bg-purple-600 transition duration-300">
-                        <IoCalendar />
-                    </button>
-                </div>
-                <div className="w-full max-w-6xl bg-[#1c1132] p-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
-                    <div className="overflow-x-auto w-full custom-scrollbar">
-                        <div className="min-w-[600px]">
-                            <DataTable type="all" data={tournaments} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Add custom CSS for scrollbar */}
-            <style jsx global>{`
-                .custom-scrollbar {
-                    scrollbar-width: thin;
-                }
-
-                .custom-scrollbar::-webkit-scrollbar {
-                    height: 10px;
-                }
-
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: #1c1132;
-                }
-
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background-color: #6b7280;
-                    border-radius: 10px;
-                    border: 2px solid #1c1132;
-                }
-
-                @media (max-width: 768px) {
-                    .custom-scrollbar {
-                        overflow-x: scroll; /* Force scrollbar visibility on mobile */
-                    }
-
-                    .custom-scrollbar::-webkit-scrollbar {
-                        height: 12px; /* Larger scrollbar for better visibility on mobile */
-                    }
-                }
-            `}</style>
+      {/* Main Content */}
+      <div className="mt-8 flex w-full flex-grow flex-col items-center space-y-6">
+        <div className="flex w-full max-w-6xl items-center justify-between px-6">
+          <h1 className="text-4xl font-bold text-white md:text-5xl">
+            All Tournaments
+          </h1>
+          <button className="rounded-full bg-purple-700 p-2 text-3xl text-white transition duration-300 hover:bg-purple-600">
+            <IoCalendar />
+          </button>
         </div>
-    );
+        <div className="w-full max-w-6xl transform rounded-lg bg-[#1c1132] p-6 shadow-lg transition-all duration-300 hover:scale-105">
+          <div className="custom-scrollbar w-full overflow-x-auto">
+            <div className="min-w-[600px]">
+              <DataTable type="all" data={tournaments} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Add custom CSS for scrollbar */}
+      <style jsx global>{`
+        .custom-scrollbar {
+          scrollbar-width: thin;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+          height: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #1c1132;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background-color: #6b7280;
+          border-radius: 10px;
+          border: 2px solid #1c1132;
+        }
+
+        @media (max-width: 768px) {
+          .custom-scrollbar {
+            overflow-x: scroll; /* Force scrollbar visibility on mobile */
+          }
+
+          .custom-scrollbar::-webkit-scrollbar {
+            height: 12px; /* Larger scrollbar for better visibility on mobile */
+          }
+        }
+      `}</style>
+    </div>
+  );
 }

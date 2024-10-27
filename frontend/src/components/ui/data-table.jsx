@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 import {
-    useReactTable,
-    getCoreRowModel,
-    getExpandedRowModel,
-    flexRender,
-} from "@tanstack/react-table";
-import { columns } from "@/components/tournament-columns";
+  useReactTable,
+  getCoreRowModel,
+  getExpandedRowModel,
+  flexRender,
+} from '@tanstack/react-table';
+import { columns } from '@/components/tournament-columns';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"; // Assuming you're using shadcn/ui Table components
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'; // Assuming you're using shadcn/ui Table components
 
 export function DataTable({ type, data }) {
     const tableColumns = columns[type];

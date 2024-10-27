@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 import Navbar from "@/components/Navbar.jsx";
@@ -155,31 +155,35 @@ export default function HomePage() {
                         )}
                     </div>
                 </div>
+              </div>
+            )}
+          </div>
+        </div>
 
-                {/* Add custom CSS for scrollbar */}
-                <style jsx global>{`
-                    .custom-scrollbar {
-                        scrollbar-width: thin;
-                    }
+        {/* Add custom CSS for scrollbar */}
+        <style jsx global>{`
+          .custom-scrollbar {
+            scrollbar-width: thin;
+          }
 
-                    .custom-scrollbar::-webkit-scrollbar {
-                        height: 10px;
-                    }
+          .custom-scrollbar::-webkit-scrollbar {
+            height: 10px;
+          }
 
-                    .custom-scrollbar::-webkit-scrollbar-track {
-                        background: #1c1132;
-                    }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1c1132;
+          }
 
-                    .custom-scrollbar::-webkit-scrollbar-thumb {
-                        background-color: #6b7280;
-                        border-radius: 10px;
-                        border: 2px solid #1c1132;
-                    }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #6b7280;
+            border-radius: 10px;
+            border: 2px solid #1c1132;
+          }
 
-                    @media (max-width: 768px) {
-                        .custom-scrollbar {
-                            overflow-x: scroll; /* Force scrollbar visibility on mobile */
-                        }
+          @media (max-width: 768px) {
+            .custom-scrollbar {
+              overflow-x: scroll; /* Force scrollbar visibility on mobile */
+            }
 
                         .custom-scrollbar::-webkit-scrollbar {
                             height: 12px; /* Larger scrollbar for better visibility on mobile */
