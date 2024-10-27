@@ -2,38 +2,65 @@
 
 import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
-import { IoCalendar } from "react-icons/io5";
-import React, { useEffect, useState } from 'react';
+import { IoCalendar } from 'react-icons/io5';
 
+// Sample data for all tournaments
+const tournaments = [
+  {
+    id: '1',
+    tournament_name: 'Tetris World Championship',
+    start: 'July 1',
+    end: 'July 10',
+    status: 'Upcoming',
+    organizer: 'WTFC',
+  },
+  {
+    id: '2',
+    tournament_name: 'Spring Showdown',
+    start: 'March 5',
+    end: 'March 15',
+    status: 'Completed',
+    organizer: 'Spring Events',
+  },
+  {
+    id: '3',
+    tournament_name: 'Winter Bash',
+    start: 'January 10',
+    end: 'January 20',
+    status: 'Completed',
+    organizer: 'Winter Games',
+  },
+  {
+    id: '4',
+    tournament_name: 'Summer Sizzle',
+    start: 'August 1',
+    end: 'August 15',
+    status: 'Ongoing',
+    organizer: 'Summer Events',
+  },
+  {
+    id: '5',
+    tournament_name: 'Autumn Clash',
+    start: 'October 5',
+    end: 'October 15',
+    status: 'Upcoming',
+    organizer: 'Autumn League',
+  },
+];
 
 export default function TournamentsPage() {
-
-    const [tournaments, setTournaments] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch("http://localhost:8003/tournaments");
-                if (response.ok) {
-                    const data = await response.json();
-                    setTournaments(data); // Set the data to state
-                } else {
-                    console.error('Failed to fetch tournaments:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching tournaments:', error);
-            }
-        };
-
-        fetchData();
-    }, []); // Empty dependency array ensures this runs once when the component mounts
-
-    return (
-
-        <div className="min-h-screen flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat"
-            style={{
-                backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')"
-            }}>
+  return (
+    <div
+      className="flex min-h-screen flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat px-4"
+      style={{
+        backgroundImage:
+          "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')",
+      }}
+    >
+      {/* Sticky Navbar */}
+      <div className="sticky top-0 z-50 w-full">
+        <Navbar />
+      </div>
 
       {/* Main Content */}
       <div className="mt-8 flex w-full flex-grow flex-col items-center space-y-6">
