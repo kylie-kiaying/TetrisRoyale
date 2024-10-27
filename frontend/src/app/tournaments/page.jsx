@@ -2,39 +2,34 @@
 
 import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
-import { IoCalendar } from "react-icons/io5";
+import { IoCalendar } from 'react-icons/io5';
 import React, { useEffect, useState } from 'react';
-
+import BackgroundWrapper from '@/components/BackgroundWrapper';
 
 export default function TournamentsPage() {
+  const [tournaments, setTournaments] = useState([]);
 
-    const [tournaments, setTournaments] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8003/tournaments');
+        if (response.ok) {
+          const data = await response.json();
+          setTournaments(data); // Set the data to state
+        } else {
+          console.error('Failed to fetch tournaments:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching tournaments:', error);
+      }
+    };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch("http://localhost:8003/tournaments");
-                if (response.ok) {
-                    const data = await response.json();
-                    setTournaments(data); // Set the data to state
-                } else {
-                    console.error('Failed to fetch tournaments:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching tournaments:', error);
-            }
-        };
+    fetchData();
+  }, []); // Empty dependency array ensures this runs once when the component mounts
 
-        fetchData();
-    }, []); // Empty dependency array ensures this runs once when the component mounts
-
-    return (
-
-        <div className="min-h-screen flex flex-col items-center px-4 bg-fixed bg-center bg-cover bg-no-repeat"
-            style={{
-                backgroundImage: "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')"
-            }}>
-
+  return (
+    <BackgroundWrapper>
+      <Navbar />
       {/* Main Content */}
       <div className="mt-8 flex w-full flex-grow flex-col items-center space-y-6">
         <div className="flex w-full max-w-6xl items-center justify-between px-6">
@@ -84,6 +79,6 @@ export default function TournamentsPage() {
           }
         }
       `}</style>
-    </div>
+    </BackgroundWrapper>
   );
 }
