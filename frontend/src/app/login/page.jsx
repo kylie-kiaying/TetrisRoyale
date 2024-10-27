@@ -100,7 +100,7 @@ export default function LoginPage() {
           "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')",
       }}
     >
-      <Card className="w-full max-w-md rounded-2xl bg-opacity-50 p-6 shadow-lg backdrop-blur-lg">
+      <Card className="w-full max-w-md rounded-2xl border-none bg-opacity-50 p-6 shadow-lg backdrop-blur-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-white">
             Sign in
