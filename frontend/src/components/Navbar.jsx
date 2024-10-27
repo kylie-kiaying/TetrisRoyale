@@ -117,7 +117,7 @@ export default function Navbar() {
                 <div className="hidden md:flex items-center gap-4">
                     <Button
                         variant="ghost"
-                        className={`text-primary-foreground ${isActive("/tournaments") ? "bg-accent text-accent-foreground" : ""}`}
+                        className={`text-primary-foreground ${isActive("/notifications") ? "bg-accent text-accent-foreground" : ""}`}
                     >
                         <IoNotifications className="h-6 w-6" />
                     </Button>
