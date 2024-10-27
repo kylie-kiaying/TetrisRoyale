@@ -113,68 +113,79 @@ export default function Navbar() {
             {isMobileMenuOpen ? <IoClose /> : <IoMenu />}
           </button>
         </div>
+                {/* Profile Section */}
+                <div className="hidden md:flex items-center gap-4">
+                    <Button
+                        variant="ghost"
+                        className={`text-primary-foreground ${isActive("/notifications") ? "bg-accent text-accent-foreground" : ""}`}
+                    >
+                        <IoNotifications className="h-6 w-6" />
+                    </Button>
 
-        {/* Profile Section */}
-        <div className="hidden items-center gap-4 md:flex">
-          <Button
-            variant="ghost"
-            className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
-          >
-            <IoNotifications className="h-6 w-6" />
-          </Button>
+                    <HoverCard>
+                        <HoverCardTrigger asChild>
+                            <div className="flex items-center gap-2 cursor-pointer">
+                                <Avatar>
+                                    <AvatarImage src="/user.png" />
+                                    <AvatarFallback>
+                                        {username
+                                            ? username.charAt(0).toUpperCase()
+                                            : "U"}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="text-primary-foreground">
+                                    <h4 className="font-medium">{username}</h4>
+                                    <p className="text-xs text-muted-foreground">
+                                        ELO: {playerData.rating}
+                                    </p>
+                                </div>
+                            </div>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-80 bg-white/80">
+                            <div className="flex flex-col space-y-4">
+                                {/* Avatar and User Information */}
+                                <div className="flex justify-between items-center space-x-4">
+                                    <Avatar>
+                                        <AvatarImage src="/placeholder-user.jpg" />
+                                        <AvatarFallback>
+                                            {username
+                                                ? username
+                                                      .charAt(0)
+                                                      .toUpperCase()
+                                                : "U"}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className="space-y-1">
+                                        <h4 className="text-sm font-semibold">
+                                            {username}
+                                        </h4>
+                                        <p className="text-sm">
+                                            ELO: {playerData.rating}
+                                        </p>
+                                    </div>
+                                </div>
 
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <div className="flex cursor-pointer items-center gap-2">
-                <Avatar>
-                  <AvatarImage src="/user.png" />
-                  <AvatarFallback>
-                    {username ? username.charAt(0).toUpperCase() : 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="text-primary-foreground">
-                  <h4 className="font-medium">{username}</h4>
-                  {role === 'player' && (
-                    <p className="text-xs text-muted-foreground">
-                      ELO: {playerData.rating}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-80 bg-white/80">
-              <div className="flex flex-col space-y-4">
-                {/* Avatar and User Information */}
-                <div className="flex items-center justify-between space-x-4">
-                  <Avatar>
-                    <AvatarImage src="/placeholder-user.jpg" />
-                    <AvatarFallback>
-                      {username ? username.charAt(0).toUpperCase() : 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-semibold">{username}</h4>
-                    {role === 'player' && (
-                      <p className="text-sm">ELO: {playerData.rating}</p>
-                    )}
-                  </div>
-                </div>
+                                {/* Sign out Button */}
+                                <div className="flex justify-center mt-4">
+                                    <Button
+                                        variant="destructive"
+                                        onClick={() => {
+                                            useAuthStore
+                                                .getState()
+                                                .clearToken();
+                                            useAuthStore
+                                                .getState()
+                                                .clearUsername();
+                                            window.location.href = "/";
+                                        }}
+                                    >
+                                        Sign Out
+                                    </Button>
+                                </div>
+                            </div>
+                        </HoverCardContent>
+                    </HoverCard>
 
-                {/* Sign out Button */}
-                <div className="mt-4 flex justify-center">
-                  <Button
-                    variant="destructive"
-                    onClick={() => {
-                      clearStore();
-                      window.location.href = '/';
-                    }}
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
         </div>
       </header>
 
