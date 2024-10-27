@@ -83,12 +83,14 @@ export default function Navbar() {
           </Button>
 
           {/* Search button */}
-          <Button
-            variant="ghost"
-            className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
-          >
-            <IoSearch className="h-6 w-6" />
-          </Button>
+          <Link href="/search">
+            <Button
+              variant="ghost"
+              className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
+            >
+              <IoSearch className="h-6 w-6" />
+            </Button>
+          </Link>
 
           {/* Profile button button */}
           <Link href="/profile">
