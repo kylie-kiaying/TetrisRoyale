@@ -14,5 +14,11 @@ class MatchResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class MatchCreate(BaseModel):
+    tournament_id: int
+    player1_id: int
+    player2_id: int
+    scheduled_at: Optional[datetime] = None
+
 class MatchResultUpdate(BaseModel):
     winner_id: int

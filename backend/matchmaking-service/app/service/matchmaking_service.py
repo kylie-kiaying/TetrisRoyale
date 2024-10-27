@@ -2,6 +2,12 @@ import random
 from app.repository.matchmaking_repository import MatchmakingRepository
 from app.repository.tournament_repository import TournamentRepository
 from sqlalchemy.exc import NoResultFound
+from app.model.matchmaking_model import Match
+from app.schema.matchmaking_schema import MatchCreate, MatchResponse
+import httpx
+from fastapi import HTTPException
+from datetime import datetime
+
 
 class MatchmakingService:
     def __init__(self, matchmaking_repository: MatchmakingRepository, tournament_repository: TournamentRepository):
@@ -14,17 +20,23 @@ class MatchmakingService:
         if len(registered_player_ids) < 2:
             raise ValueError("Not enough players registered for pairing")
 
-        random.shuffle(registered_player_ids)
+        players = []
+        async with httpx.AsyncClient() as client:
+            for i in range(0, len(registered_player_ids)):
+                response = await client.get(f"http://rating-service:8000/ratings/{registered_player_ids[i]}")
+                response.raise_for_status()
+                player_rating = response.json()
+                players.append({"id":registered_player_ids[i], "rating":player_rating["rating"]})
 
-        player_pairs = []
-        for i in range(0, len(registered_player_ids), 2):
-            if i + 1 < len(registered_player_ids):
-                player1_id = registered_player_ids[i]
-                player2_id = registered_player_ids[i + 1]
-                match = await self.matchmaking_repository.create_match(tournament_id, player1_id, player2_id)
-                player_pairs.append(match)
+        players = sorted(players, key=lambda x: x["rating"])
 
-        return player_pairs
+        matches = []
+        for i in range(0, len(players) - 1, 2):
+            player1 = players[i]
+            player2 = players[i + 1]
+            matches.append([tournament_id, player1['id'], player1['rating'], player2['id'], player2['rating']])
+
+        return matches
 
     async def get_matches_by_tournament(self, tournament_id: int):
         return await self.matchmaking_repository.get_matches_by_tournament(tournament_id)
@@ -37,7 +49,58 @@ class MatchmakingService:
             updated_match = await self.matchmaking_repository.update_match_result(match_id, winner_id)
             if not updated_match:
                 raise ValueError(f"Match with id {match_id} not found")
+            
+            match = await self.matchmaking_repository.get_match_by_id(match_id)
+            match_update = {
+                "player1_score": 1 if match["player1_id"] == winner_id else 0,
+                "player2_score": 1 if match["player2_id"] == winner_id else 0 
+            }
+
+            async with httpx.AsyncClient() as client:
+                await client.put(
+                    f"http://rating-service:8000/matches/{match_id}/",  
+                    json=match_update
+                )
+    
             return updated_match
         except Exception as e:
             # Log the error here if you have a logging system
             raise ValueError(f"Error updating match result: {str(e)}")
+
+    async def create_match(self, match_id: int, new_match: MatchCreate):
+        # Create a new Match instance based on new_match data
+        match = Match(
+            id=match_id,
+            tournament_id=new_match.tournament_id,
+            player1_id=new_match.player1_id,
+            player2_id=new_match.player2_id,
+            scheduled_at=new_match.scheduled_at or datetime.utcnow()  # Use current time if not provided
+        )
+        
+        # Add to the database session
+
+        match_data = {
+            "id": match_id,
+            "tournament_id": new_match.tournament_id,
+            "player1_id": new_match.player1_id,
+            "player2_id": new_match.player2_id,
+            "scheduled_at": new_match.scheduled_at.isoformat(),
+            "status": "pending"
+        }
+
+        try:
+            async with httpx.AsyncClient() as client:
+                await client.post(
+                    "http://rating-service:8000/matches/",  
+                    json=match_data
+                )
+        except httpx.HTTPStatusError as exc:
+            # Handle errors from the ratings service
+            raise HTTPException(status_code=exc.response.status_code, detail=exc.response.text)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+        # Return the created match details using the MatchResponse model
+        response = await self.matchmaking_repository.create_match(match)
+
+        return response

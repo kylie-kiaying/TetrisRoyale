@@ -1,5 +1,5 @@
 // components/tournament-columns.js
-import { IoChevronForward, IoChevronDown } from "react-icons/io5";
+import { IoChevronForward, IoChevronDown } from 'react-icons/io5';
 
 export const columns = {
     enrolled: [
