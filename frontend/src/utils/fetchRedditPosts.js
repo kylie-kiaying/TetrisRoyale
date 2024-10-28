@@ -1,6 +1,6 @@
 export async function fetchHotPosts() {
   const response = await fetch(
-    'https://www.reddit.com/r/tetris/hot.json?limit=5'
+    'https://www.reddit.com/r/tetris/hot.json?limit=10'
   );
   const data = await response.json();
 

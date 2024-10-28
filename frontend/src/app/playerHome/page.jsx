@@ -119,7 +119,14 @@ export default function HomePage() {
         {/* Main Content Container */}
         <div className="mt-4 flex max-w-full flex-col space-y-6 overflow-x-hidden overflow-y-hidden px-4 md:flex-row md:space-x-6 md:space-y-0">
           {/* Left Sidebar for Trending Posts */}
-          <aside className="order-1 w-full max-w-full md:w-1/4 md:pr-4">
+          <aside className="relative order-1 w-full max-w-full md:w-1/4 md:pr-4">
+            {/* Reddit Logo in Top Right */}
+            <img
+              src="/reddit-logo.png" // Path to Reddit logo in the public folder
+              alt="Reddit Logo"
+              className="absolute right-4 top-4 h-6 w-6 md:h-8 md:w-8"
+            />
+
             <div className="rounded-lg bg-[#1a1a1b] p-4 shadow-lg md:p-6">
               <h2 className="mb-4 text-lg font-semibold text-[#d7dadc]">
                 Trending on r/tetris
@@ -127,39 +134,38 @@ export default function HomePage() {
 
               {/* Scrollable Post List */}
               <ul className="custom-scrollbar max-h-[300px] space-y-4 overflow-y-auto">
-                {hotPosts.slice(0, 5).map((post, index) => (
+                {hotPosts.slice(0, 10).map((post, index) => (
                   <li
                     key={index}
                     className="relative flex w-full max-w-full items-start rounded-lg bg-[#272729] p-4 shadow-sm transition hover:bg-[#333335]"
                   >
-                    {/* Reddit Logo */}
-                    <img
-                      src="/reddit-logo.png" // Path to Reddit logo in the public folder
-                      alt="Reddit Logo"
-                      className="absolute right-2 top-2 h-4 w-4 md:h-5 md:w-5"
-                    />
-
-                    {/* Thumbnail or Fallback Image */}
-                    <div className="mr-4 h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-[#d7dadc] bg-[#1a1a1b]">
-                      <img
-                        src={post.thumbnail || '/path-to-fallback-image.png'}
-                        alt="Post Thumbnail"
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
+                    {/* Conditionally Render Thumbnail */}
+                    {post.thumbnail &&
+                    post.thumbnail !== 'self' &&
+                    post.thumbnail !== 'default' ? (
+                      <div className="mr-4 h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-[#d7dadc] bg-[#1a1a1b]">
+                        <img
+                          src={post.thumbnail}
+                          alt="Post Thumbnail"
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : null}
 
                     {/* Post Details */}
-                    <div className="flex w-full max-w-[calc(100%-4rem)] flex-col justify-between">
+                    <div
+                      className={`flex w-full flex-col justify-between ${post.thumbnail && post.thumbnail !== 'self' && post.thumbnail !== 'default' ? 'max-w-[calc(100%-4rem)]' : ''}`}
+                    >
                       <a
                         href={post.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="truncate text-sm font-semibold text-[#ff4500] hover:underline md:text-base"
+                        className="truncate px-2 text-sm font-semibold text-[#ff4500] hover:underline md:text-base"
                         style={{ maxWidth: '100%' }}
                       >
                         {post.title}
                       </a>
-                      <p className="mt-1 text-xs text-gray-400 md:text-sm">
+                      <p className="mt-1 px-2 text-xs text-gray-400 md:text-sm">
                         Score: {post.score}
                       </p>
                     </div>
