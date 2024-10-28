@@ -74,7 +74,7 @@ export default function AdminPage() {
                             >
                               <div className="bg-[#1c1132] px-4 pb-4 pt-5 sm:p-6 sm:pb-4 text-white">
                                 <div className="sm:items-start">
-                                  <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                  <div className="mt-3 text-center sm:mt-0 sm:text-left">
                                     <DialogTitle as="h3" className="text-base font-semibold leading-6 text-white">
                                       Create Tournament
                                     </DialogTitle>
