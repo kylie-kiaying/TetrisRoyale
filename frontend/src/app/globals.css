@@ -52,6 +52,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -78,13 +79,54 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Reddit-inspired Custom Scrollbar for Trending Posts */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #ff4500 #1a1a1b; /* Orange thumb, dark gray track */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #1a1a1b;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #ff4500; /* Orange */
+    border-radius: 8px;
+    border: 2px solid #1a1a1b;
+  }
+
+  /* Original Table Scrollbar for Data Tables */
+  .table-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #6b7280 #1c1132; /* Gray thumb, dark background */
+  }
+
+  .table-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .table-scrollbar::-webkit-scrollbar-track {
+    background: #1c1132;
+  }
+
+  .table-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #6b7280;
+    border-radius: 8px;
+    border: 2px solid #1c1132;
   }
 }
