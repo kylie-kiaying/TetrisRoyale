@@ -60,7 +60,7 @@ export default function AdminPage() {
             >
               Create
             </Button>
-            <Dialog open={create} onClose={() => setCreate(false)} className="relative z-10">
+            <Dialog open={create} onClose={() => setCreate(false)} className="relative z-10 rounded-lg">
                         <DialogBackdrop
                           transition
                           className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
@@ -70,12 +70,12 @@ export default function AdminPage() {
                           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                             <DialogPanel
                               transition
-                              className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+                              className="relative transform overflow-hidden rounded-lg bg-[#1c1132] text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
                             >
-                              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                                <div className="sm:flex sm:items-start">
+                              <div className="bg-[#1c1132] px-4 pb-4 pt-5 sm:p-6 sm:pb-4 text-white">
+                                <div className="sm:items-start">
                                   <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                    <DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                                    <DialogTitle as="h3" className="text-base font-semibold leading-6 text-white">
                                       Create Tournament
                                     </DialogTitle>
                                     <div className="mt-2">
@@ -87,11 +87,11 @@ export default function AdminPage() {
                                         <Label htmlFor="remark">Remarks</Label>
                                         <Input id="remark" placeholder="" />
                                       </div>
-                                      <div className="flex flex-col space-y-1.5 mb-3">
+                                      <div className="flex flex-col space-y-1.5 mb-3 w-fit">
                                         <Label htmlFor="startTime">Tournament Start DateTime</Label>
                                         <Input id="startTime" type="datetime-local" />
                                       </div>
-                                      <div className="flex flex-col space-y-1.5 mb-3">
+                                      <div className="flex flex-col space-y-1.5 mb-3 w-fit">
                                         <Label htmlFor="endTime">Tournament End DateTime</Label>
                                         <Input id="endTime" type="datetime-local" />
                                       </div>
@@ -99,7 +99,7 @@ export default function AdminPage() {
                                   </div>
                                 </div>
                               </div>
-                              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                              <div className="bg-black/25 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                                 <button
                                   type="button"
                                   onClick={() => setCreate(false)}
@@ -111,7 +111,7 @@ export default function AdminPage() {
                                   type="button"
                                   data-autofocus
                                   onClick={() => setCreate(false)}
-                                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                  className="mt-3 border border-purple-500 text-purple-500 transition-all duration-200 hover:bg-gray-300/70 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm sm:mt-0 sm:w-auto"
                                 >
                                   Cancel
                                 </button>
