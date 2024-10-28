@@ -124,7 +124,7 @@ export default function HomePage() {
             <img
               src="/reddit-logo.png" // Path to Reddit logo in the public folder
               alt="Reddit Logo"
-              className="absolute right-4 top-4 h-6 w-6 md:h-8 md:w-8"
+              className="absolute right-8 top-6 h-6 w-6 md:h-8 md:w-8"
             />
 
             <div className="rounded-lg bg-[#1a1a1b] p-4 shadow-lg md:p-6">
