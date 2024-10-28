@@ -19,17 +19,18 @@ class AuthService:
         user_record = await user_repository.get_user_by_username(auth_data.username, db)
 
         if user_record:
-            stored_password_hash, email_verified, role = (
+            stored_password_hash, email_verified, role, id = (
                 user_record.password_hash,
                 user_record.email_verified,
-                user_record.role
+                user_record.role,
+                user_record.id
             )
 
             if not email_verified:
                 raise HTTPException(status_code=403, detail="Email not verified")
 
             if verify_password(auth_data.password, stored_password_hash):
-                token = create_access_token(auth_data.username, role)
+                token = create_access_token(auth_data.username, role, id)
                 response = {"message": "Login successful"}
                 
                 from fastapi.responses import JSONResponse
