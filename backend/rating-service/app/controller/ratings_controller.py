@@ -8,6 +8,7 @@ from app.utils.player_util import get_player_by_id, create_player_in_db
 from app.whr.whr_logic import calculate_whr
 from datetime import datetime
 from fastapi import HTTPException
+from typing import List
 
 
 router = APIRouter()
@@ -97,6 +98,43 @@ async def add_player(player_id: int, username: str, db: AsyncSession = Depends(g
     # Use the util function to add the player to the database
     await create_player_in_db(player_id, username, db)
     return {"message": "Player added successfully to the rating database"}
+
+@router.get("/ratings", response_model=List[dict])
+async def get_all_player_ratings(db: AsyncSession = Depends(get_db)):
+    """
+    Retrieves the ratings of all players.
+
+    Args:
+        db (AsyncSession): Database session.
+
+    Returns:
+        List[dict]: A list of all players' rating information.
+    """
+    # Retrieve all players from the database
+    result = await db.execute(select(Player))
+    players = result.scalars().all()
+
+    # Check if players exist in the database
+    if not players:
+        raise HTTPException(status_code=404, detail="No players found in the database")
+    
+    # Prepare the list of players' rating information
+    players_ratings = []
+    for player in players:
+        # Adjust rating if necessary
+        player.rating += 1000
+        if player.rating < 0:
+            player.rating = 0
+
+        # Add player rating info to the list
+        players_ratings.append({
+            "player_id": player.id,
+            "username": player.username,
+            "rating": player.rating
+        })
+
+    return players_ratings
+
 
 @router.get("/ratings/{player_id}", response_model=dict)
 async def get_player_rating(player_id: int, db: AsyncSession = Depends(get_db)):

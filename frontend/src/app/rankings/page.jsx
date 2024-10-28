@@ -73,16 +73,22 @@ export default function RankingsPage() {
                 </thead>
                 <tbody>
                   {playersToDisplay.map((player, index) => (
-                    <tr
-                      key={index}
-                      className={`${
-                        index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'
-                      } transition-all duration-150 hover:bg-gray-600`}
-                    >
-                      <td className="p-2 text-gray-300 sm:p-4">
+                   <tr key={index} className={`${
+                    player.rank === 1
+                      ? 'border-l-4 border-yellow-500 bg-gray-800 text-yellow-500 font-bold'
+                      : player.rank === 2
+                      ? 'border-l-4 border-gray-300 bg-gray-700 text-gray-300 font-bold'
+                      : player.rank === 3
+                      ? 'border-l-4 border-orange-500 bg-gray-800 text-orange-500 font-bold'
+                      : index % 2 === 0
+                      ? 'bg-gray-800 text-gray-300'
+                      : 'bg-gray-700 text-gray-300'
+                  } transition-all duration-200 hover:bg-gray-600`}>
+                  
+                      <td className="p-2 sm:p-4">
                         {player.rank}
                       </td>
-                      <td className="flex items-center p-2 text-gray-200 sm:p-4">
+                      <td className="flex items-center p-2 sm:p-4">
                         {player.avatar && (
                           <div className="mr-3 h-6 w-6 overflow-hidden rounded-full sm:h-8 sm:w-8">
                             <Image
@@ -98,7 +104,7 @@ export default function RankingsPage() {
                           {player.username || 'Empty'}
                         </span>
                       </td>
-                      <td className="p-2 text-sm text-gray-300 sm:p-4 sm:text-base">
+                      <td className="p-2 text-sm sm:p-4 sm:text-base">
                         {player.rating || '-'}
                       </td>
                       <td className="p-2 text-sm sm:p-4 sm:text-base">
@@ -113,5 +119,6 @@ export default function RankingsPage() {
         </Card>
       </div>
     </BackgroundWrapper>
+
   );
 }
