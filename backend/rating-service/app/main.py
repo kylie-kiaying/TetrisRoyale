@@ -2,8 +2,6 @@ from fastapi import FastAPI
 from app.controller.ratings_controller import router as ratings_router
 from app.db.database import engine
 from app.model.models import Base
-from app.db.database import get_db
-from app.controller.ratings_controller import store_daily_ratings
 
 app = FastAPI()
 

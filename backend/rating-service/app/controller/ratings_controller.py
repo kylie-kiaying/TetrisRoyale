@@ -1,17 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.model.models import Player, Match, PlayerRatingHistory
+from app.model.models import Player, Match
 from app.schema.schemas import MatchCreate, MatchUpdate, PlayerRating  # Ensure MatchCreate includes new fields
 from app.db.database import get_db
 from app.utils.player_util import get_player_by_id, create_player_in_db
 from app.whr.whr_logic import calculate_whr
-from datetime import datetime, date
+from datetime import datetime
 from fastapi import HTTPException
 
 
 router = APIRouter()
-
 
 @router.post("/matches/", response_model=dict)
 async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends(get_db)):
@@ -69,10 +68,10 @@ async def update_match_scores(match_id: int, scores: MatchUpdate, db: AsyncSessi
 
     # Update player ratings in the local database
     for player_id, new_rating in updated_ratings.items():
+        print(player_id)
+        print(new_rating)
         player = await db.get(Player, int(player_id))
-        # print(new_rating)
-        if new_rating:
-            player.rating = new_rating[len(new_rating) - 1][1]
+        player.rating = new_rating[len(new_rating) - 1][1]
 
     await db.commit()
     return {"message": "Match scores updated and ratings recalculated"}
@@ -120,7 +119,6 @@ async def get_player_rating(player_id: int, db: AsyncSession = Depends(get_db)):
         player.rating = 0
 
     return {"player_id": player.id, "username": player.username, "rating": player.rating}
-
 
 async def store_daily_ratings(db: AsyncSession = Depends(get_db)):
     # Check if today's ratings are already stored
