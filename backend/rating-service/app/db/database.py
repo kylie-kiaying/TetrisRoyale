@@ -15,7 +15,6 @@ SessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
 )
 
-@asynccontextmanager
 async def get_db():
     async with SessionLocal() as session:
         yield session

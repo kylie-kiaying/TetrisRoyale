@@ -122,7 +122,7 @@ async def get_player_rating(player_id: int, db: AsyncSession = Depends(get_db)):
     return {"player_id": player.id, "username": player.username, "rating": player.rating}
 
 
-async def store_daily_ratings(db: AsyncSession):
+async def store_daily_ratings(db: AsyncSession = Depends(get_db)):
     # Check if today's ratings are already stored
     existing_ratings = await db.execute(
         select(PlayerRatingHistory).where(PlayerRatingHistory.date == date.today())
