@@ -26,6 +26,10 @@ async def register_user(auth_data: UserReg, db: AsyncSession = Depends(get_db), 
 async def verify_email(token: str, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
     return await auth_service.verify_email(token, db)
 
+# @router.post("/logout/", status_code=204)
+# async def logout_user(token_data: LoginResponse,db: AsyncSession = Depends(get_db),auth_service: AuthService = Depends()):
+#     return await auth_service.logout(token_data.access_token, db)
+
 # @router.get("/protected-route")
 # async def protected_route(request: Request):
 #     # Verify if the user has the required role to access this route
