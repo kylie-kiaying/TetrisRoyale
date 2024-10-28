@@ -119,3 +119,38 @@ async def get_player_rating(player_id: int, db: AsyncSession = Depends(get_db)):
         player.rating = 0
 
     return {"player_id": player.id, "username": player.username, "rating": player.rating}
+
+
+async def store_daily_ratings(db: AsyncSession = Depends(get_db)):
+    # Check if today's ratings are already stored
+    existing_ratings = await db.execute(
+        select(PlayerRatingHistory).where(PlayerRatingHistory.date == date.today())
+    )
+    existing_ratings = existing_ratings.scalars().all()
+
+    if existing_ratings:
+        print("Ratings for today already stored.")
+        return
+
+    # Fetch all players and matches for WHR calculation
+    players = (await db.execute(select(Player))).scalars().all()
+    matches = (await db.execute(select(Match))).scalars().all()
+
+    # Calculate ratings using WHR logic
+    updated_ratings = calculate_whr(players, matches)
+    
+        # Update player ratings in the local database
+    for player_id, new_rating in updated_ratings.items():
+        player = await db.get(Player, int(player_id))
+        if new_rating:
+            updated_rating = new_rating[len(new_rating) - 1][1]
+            player.rating = updated_rating
+            rating_history_entry = PlayerRatingHistory(
+                player_id=int(player_id),
+                date=date.today(),
+                rating=updated_rating
+            )
+            db.add(rating_history_entry)
+
+    await db.commit()
+    print("Stored daily ratings for all players.")
