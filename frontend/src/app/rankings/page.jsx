@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import Podium from '@/components/Podium';
 import Image from 'next/image';
+import { getPlayerTier } from '@/utils/getPlayerTier';
 
 export default function RankingsPage() {
   // Sample data for the top players with real names
@@ -57,7 +58,7 @@ export default function RankingsPage() {
               <table className="w-full table-auto text-white">
                 <thead className="border-b border-gray-600 bg-transparent">
                   <tr>
-                    <th className="p-2 text-left font-semibold text-gray-400 sm:p-4">
+                    <th className="w-16 p-2 text-left font-semibold text-gray-400 sm:p-4">
                       Rank
                     </th>
                     <th className="p-2 text-left font-semibold text-gray-400 sm:p-4">
@@ -73,21 +74,21 @@ export default function RankingsPage() {
                 </thead>
                 <tbody>
                   {playersToDisplay.map((player, index) => (
-                   <tr key={index} className={`${
-                    player.rank === 1
-                      ? 'border-l-4 border-yellow-500 bg-gray-800 text-yellow-500 font-bold'
-                      : player.rank === 2
-                      ? 'border-l-4 border-gray-300 bg-gray-700 text-gray-300 font-bold'
-                      : player.rank === 3
-                      ? 'border-l-4 border-orange-500 bg-gray-800 text-orange-500 font-bold'
-                      : index % 2 === 0
-                      ? 'bg-gray-800 text-gray-300'
-                      : 'bg-gray-700 text-gray-300'
-                  } transition-all duration-200 hover:bg-gray-600`}>
-                  
-                      <td className="p-2 sm:p-4">
-                        {player.rank}
-                      </td>
+                    <tr
+                      key={index}
+                      className={`${
+                        player.rank === 1
+                          ? 'border-l-4 border-yellow-500 bg-gray-800 font-bold text-yellow-500'
+                          : player.rank === 2
+                            ? 'border-l-4 border-gray-300 bg-gray-700 font-bold text-gray-300'
+                            : player.rank === 3
+                              ? 'border-l-4 border-orange-500 bg-gray-800 font-bold text-orange-500'
+                              : index % 2 === 0
+                                ? 'bg-gray-800 text-gray-300'
+                                : 'bg-gray-700 text-gray-300'
+                      } transition-all duration-200 hover:bg-gray-600`}
+                    >
+                      <td className="p-2 sm:p-4">{player.rank}</td>
                       <td className="flex items-center p-2 sm:p-4">
                         {player.avatar && (
                           <div className="mr-3 h-6 w-6 overflow-hidden rounded-full sm:h-8 sm:w-8">
@@ -108,7 +109,17 @@ export default function RankingsPage() {
                         {player.rating || '-'}
                       </td>
                       <td className="p-2 text-sm sm:p-4 sm:text-base">
-                        {/* Placeholder for Tier Logic */}
+                        <span
+                          className={
+                            player.rating
+                              ? getPlayerTier(player.rating).colorClass
+                              : ''
+                          }
+                        >
+                          {player.rating
+                            ? getPlayerTier(player.rating).tier
+                            : '-'}
+                        </span>
                       </td>
                     </tr>
                   ))}
@@ -119,6 +130,5 @@ export default function RankingsPage() {
         </Card>
       </div>
     </BackgroundWrapper>
-
   );
 }
