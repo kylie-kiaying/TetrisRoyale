@@ -64,6 +64,22 @@ services:
     networks:
       - microservices-network
 
+  # ranking-service:
+  #   build:
+  #     context: ./ranking-service
+  #   ports:
+  #     - "8006:8000"
+  #   env_file:
+  #     - ./ranking-service/.env
+  #   depends_on:
+  #     - auth-service
+  #     - player-service
+  #     - tournament-service
+  #     - matchmaking-service
+  #     - rating-service
+  #   networks:
+  #     - microservices-network
+    
 networks:
   microservices-network:
     driver: bridge

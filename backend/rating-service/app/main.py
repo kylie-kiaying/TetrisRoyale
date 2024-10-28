@@ -15,6 +15,9 @@ async def startup():
         await conn.run_sync(Base.metadata.create_all)
         print("All tables created")
 
+    async for db in get_db():
+        await store_daily_ratings(db)
+
         
 @app.on_event("shutdown")
 async def shutdown():
