@@ -26,6 +26,21 @@ async def register_user(auth_data: UserReg, db: AsyncSession = Depends(get_db), 
 async def verify_email(token: str, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
     return await auth_service.verify_email(token, db)
 
+@router.post("/logout/")
+async def logout_user(request: Request, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()
+):
+    # Get the cookie from the request headers
+    token = request.cookies.get("session_token")
+
+    if not token:
+        return JSONResponse(status_code=400, content={"message": "No authentication cookie found."})
+
+    # Call the logout method of the AuthService
+    return await auth_service.logout(token, db)
+
+    
+
+
 # @router.get("/protected-route")
 # async def protected_route(request: Request):
 #     # Verify if the user has the required role to access this route
