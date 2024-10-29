@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.model.models import Player, Match
+from app.model.models import Player, Match, PlayerRatingHistory
 from app.schema.schemas import MatchCreate, MatchUpdate, PlayerRating  # Ensure MatchCreate includes new fields
 from app.db.database import get_db
 from app.utils.player_util import get_player_by_id, create_player_in_db
 from app.whr.whr_logic import calculate_whr
-from datetime import datetime
+from datetime import datetime, date
 from fastapi import HTTPException
 
 
@@ -70,8 +70,9 @@ async def update_match_scores(match_id: int, scores: MatchUpdate, db: AsyncSessi
     for player_id, new_rating in updated_ratings.items():
         print(player_id)
         print(new_rating)
-        player = await db.get(Player, int(player_id))
-        player.rating = new_rating[len(new_rating) - 1][1]
+        if new_rating:
+            player = await db.get(Player, int(player_id))
+            player.rating = new_rating[len(new_rating) - 1][1]
 
     await db.commit()
     return {"message": "Match scores updated and ratings recalculated"}

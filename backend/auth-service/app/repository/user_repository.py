@@ -20,3 +20,7 @@ class UserRepository:
         user.email_verified = True
         user.verification_token = None
         await db.commit()
+
+    async def get_user_by_jwt_token(self, token: str, db: AsyncSession):
+        result = await db.execute(select(User).where(User.jwt_token == token))
+        return result.scalar_one_or_none()
