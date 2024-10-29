@@ -24,3 +24,11 @@ class UserRepository:
     async def get_user_by_jwt_token(self, token: str, db: AsyncSession):
         result = await db.execute(select(User).where(User.jwt_token == token))
         return result.scalar_one_or_none()
+    
+    async def set_jwt_token(self, user: User, token: str, db:AsyncSession):
+        user.jwt_token = token
+        await db.commit()
+
+    async def remove_jwt_token(self, user: User, token: str, db:AsyncSession):
+        user.jwt_token = None
+        await db.commit()

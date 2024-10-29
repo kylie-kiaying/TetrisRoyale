@@ -43,7 +43,7 @@ class AuthService:
                     samesite="lax"
                 )
 
-                user_record.jwt_token=token
+                await user_repository.set_jwt_token(user_record, token, db)
                 
                 return response
             else:
@@ -132,7 +132,8 @@ class AuthService:
         user = await user_repository.get_user_by_jwt_token(token, db)
 
         if user:
-            user.jwt_token=None
+            await user_repository.remove_jwt_token(user, token, db)
+
             return JSONResponse(status_code=200, content={"message": "Logged out successfully."})
 
         raise HTTPException(status_code=400, detail="Invalid or expired JWT token")
