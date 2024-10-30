@@ -43,8 +43,8 @@ export default function Navbar() {
   }, [username, router]);
 
   return (
-    <div className="sticky top-3 z-50 mt-3 flex w-full justify-center">
-      <header className="flex h-12 w-10/12 items-center justify-between rounded-full border-muted bg-inherit px-6 py-4 shadow-[inset_0_0_0_3000px_rgba(150,150,150,0.192)] backdrop-blur-md">
+    <div className="sticky top-4 z-50 mt-3 w-full">
+      <header className="mx-auto flex h-12 max-w-5xl items-center justify-between rounded-full border-muted bg-inherit px-6 py-4 shadow-[inset_0_0_0_3000px_rgba(150,150,150,0.192)] backdrop-blur-md">
         {/* Left Side - Logo */}
         <div className="flex items-center gap-4">
           <Link
@@ -64,7 +64,6 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-4 md:flex">
-          {/* Tournaments button */}
           <Link href="/tournaments">
             <Button
               variant="ghost"
@@ -73,16 +72,12 @@ export default function Navbar() {
               <IoTrophy className="h-6 w-6" />
             </Button>
           </Link>
-
-          {/* Rankings button */}
           <Button
             variant="ghost"
             className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
           >
             <PiRankingBold className="h-6 w-6" />
           </Button>
-
-          {/* Search button */}
           <Link href="/search">
             <Button
               variant="ghost"
@@ -91,8 +86,6 @@ export default function Navbar() {
               <IoSearch className="h-6 w-6" />
             </Button>
           </Link>
-
-          {/* Profile button button */}
           <Link href="/profile">
             <Button
               variant="ghost"
@@ -103,6 +96,38 @@ export default function Navbar() {
           </Link>
         </nav>
 
+        {/* Profile Section */}
+        <div className="hidden items-center gap-4 md:flex">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/notifications') ? 'bg-accent text-accent-foreground' : ''}`}
+          >
+            <IoNotifications className="h-6 w-6" />
+          </Button>
+
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <div className="flex cursor-pointer items-center gap-2">
+                <Avatar>
+                  <AvatarImage src="/user.png" />
+                  <AvatarFallback>
+                    {username ? username.charAt(0).toUpperCase() : 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-primary-foreground">
+                  <h4 className="font-medium">{username}</h4>
+                  <p className="text-xs text-muted-foreground">
+                    ELO: {playerData.rating}
+                  </p>
+                </div>
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80 bg-white/80">
+              {/* ... other profile content */}
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+
         {/* Mobile Menu Icon */}
         <div className="md:hidden">
           <button
@@ -112,80 +137,6 @@ export default function Navbar() {
           >
             {isMobileMenuOpen ? <IoClose /> : <IoMenu />}
           </button>
-        </div>
-                {/* Profile Section */}
-                <div className="hidden md:flex items-center gap-4">
-                    <Button
-                        variant="ghost"
-                        className={`text-primary-foreground ${isActive("/notifications") ? "bg-accent text-accent-foreground" : ""}`}
-                    >
-                        <IoNotifications className="h-6 w-6" />
-                    </Button>
-
-                    <HoverCard>
-                        <HoverCardTrigger asChild>
-                            <div className="flex items-center gap-2 cursor-pointer">
-                                <Avatar>
-                                    <AvatarImage src="/user.png" />
-                                    <AvatarFallback>
-                                        {username
-                                            ? username.charAt(0).toUpperCase()
-                                            : "U"}
-                                    </AvatarFallback>
-                                </Avatar>
-                                <div className="text-primary-foreground">
-                                    <h4 className="font-medium">{username}</h4>
-                                    <p className="text-xs text-muted-foreground">
-                                        ELO: {playerData.rating}
-                                    </p>
-                                </div>
-                            </div>
-                        </HoverCardTrigger>
-                        <HoverCardContent className="w-80 bg-white/80">
-                            <div className="flex flex-col space-y-4">
-                                {/* Avatar and User Information */}
-                                <div className="flex justify-between items-center space-x-4">
-                                    <Avatar>
-                                        <AvatarImage src="/placeholder-user.jpg" />
-                                        <AvatarFallback>
-                                            {username
-                                                ? username
-                                                      .charAt(0)
-                                                      .toUpperCase()
-                                                : "U"}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="space-y-1">
-                                        <h4 className="text-sm font-semibold">
-                                            {username}
-                                        </h4>
-                                        <p className="text-sm">
-                                            ELO: {playerData.rating}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Sign out Button */}
-                                <div className="flex justify-center mt-4">
-                                    <Button
-                                        variant="destructive"
-                                        onClick={() => {
-                                            useAuthStore
-                                                .getState()
-                                                .clearToken();
-                                            useAuthStore
-                                                .getState()
-                                                .clearUsername();
-                                            window.location.href = "/";
-                                        }}
-                                    >
-                                        Sign Out
-                                    </Button>
-                                </div>
-                            </div>
-                        </HoverCardContent>
-                    </HoverCard>
-
         </div>
       </header>
 

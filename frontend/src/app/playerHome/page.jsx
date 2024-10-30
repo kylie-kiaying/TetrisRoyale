@@ -96,10 +96,7 @@ const completedTournaments = [
 
 export default function HomePage() {
   const [visibleTable, setVisibleTable] = useState('enrolled');
-  const username = useAuthStore((state) => state.username);
-  const toggleTable = (table) => {
-    setVisibleTable(table);
-  };
+  const toggleTable = (table) => setVisibleTable(table);
 
   const [hotPosts, setHotPosts] = useState([]);
 
@@ -112,156 +109,104 @@ export default function HomePage() {
   }, []);
 
   return (
-    <>
-      <BackgroundWrapper>
-        <Navbar />
+    <BackgroundWrapper className="w-full overflow-hidden">
+      <Navbar />
 
-        {/* Main Content Container */}
-        <div className="mt-4 flex max-w-full flex-col space-y-6 overflow-x-hidden overflow-y-hidden px-4 md:flex-row md:space-x-6 md:space-y-0">
-          {/* Left Sidebar for Trending Posts */}
-          <aside className="relative order-1 w-full max-w-full md:w-1/4 md:pr-4">
-            {/* Reddit Logo in Top Right */}
-            <img
-              src="/reddit-logo.png" // Path to Reddit logo in the public folder
-              alt="Reddit Logo"
-              className="absolute right-8 top-6 h-6 w-6 md:h-8 md:w-8"
-            />
-
-            <div className="rounded-lg bg-[#1a1a1b] p-4 shadow-lg md:p-6">
-              <h2 className="mb-4 text-lg font-semibold text-[#d7dadc]">
-                Trending on r/tetris
-              </h2>
-
-              {/* Scrollable Post List */}
-              <ul className="custom-scrollbar max-h-[300px] space-y-4 overflow-y-auto">
-                {hotPosts.slice(0, 10).map((post, index) => (
-                  <li
-                    key={index}
-                    className="relative flex w-full max-w-full items-start rounded-lg bg-[#272729] p-4 shadow-sm transition hover:bg-[#333335]"
-                  >
-                    {/* Conditionally Render Thumbnail */}
-                    {post.thumbnail &&
-                    post.thumbnail !== 'self' &&
-                    post.thumbnail !== 'default' ? (
-                      <div className="mr-4 h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-[#d7dadc] bg-[#1a1a1b]">
-                        <img
-                          src={post.thumbnail}
-                          alt="Post Thumbnail"
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    ) : null}
-
-                    {/* Post Details */}
-                    <div
-                      className={`flex w-full flex-col justify-between ${post.thumbnail && post.thumbnail !== 'self' && post.thumbnail !== 'default' ? 'max-w-[calc(100%-4rem)]' : ''}`}
-                    >
-                      <a
-                        href={post.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="truncate px-2 text-sm font-semibold text-[#ff4500] hover:underline md:text-base"
-                        style={{ maxWidth: '100%' }}
-                      >
-                        {post.title}
-                      </a>
-                      <p className="mt-1 px-2 text-xs text-gray-400 md:text-sm">
-                        Score: {post.score}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </aside>
-
-          {/* Main Content */}
-          <main className="order-2 flex w-full max-w-full flex-col items-center space-y-4 md:w-1/2 md:space-y-6">
-            {/* Toggle Buttons */}
-            <div className="mb-4 flex w-full justify-center gap-3 overflow-hidden px-4 md:gap-4 md:px-0">
-              <Button
-                variant={visibleTable === 'enrolled' ? 'solid' : 'outline'}
-                className={`text-sm transition-all duration-200 hover:shadow-lg md:text-base ${
-                  visibleTable === 'enrolled'
-                    ? 'bg-purple-700 text-white'
-                    : 'border-purple-500 text-purple-500'
-                }`}
-                onClick={() => toggleTable('enrolled')}
-              >
-                Enrolled
-              </Button>
-              <Button
-                variant={visibleTable === 'completed' ? 'solid' : 'outline'}
-                className={`text-sm transition-all duration-200 hover:shadow-lg md:text-base ${
-                  visibleTable === 'completed'
-                    ? 'bg-purple-700 text-white'
-                    : 'border-purple-500 text-purple-500'
-                }`}
-                onClick={() => toggleTable('completed')}
-              >
-                Recent Tournaments
-              </Button>
-            </div>
-
-            {/* Conditional Rendering of Tables */}
-            <div className="w-full max-w-full transform overflow-hidden rounded-lg bg-[#1c1132] p-4 shadow-lg transition-all duration-300 hover:scale-105 md:p-6">
-              <h2 className="mb-4 text-center text-lg font-semibold text-white md:text-xl">
-                {visibleTable === 'enrolled'
-                  ? 'Currently Enrolled Tournaments'
-                  : 'Recently Completed Tournaments'}
-              </h2>
-              <div className="table-scrollbar w-full overflow-x-auto">
-                <div className="min-w-[500px] md:min-w-[600px]">
-                  <DataTable
-                    type={visibleTable}
-                    data={
-                      visibleTable === 'enrolled'
-                        ? enrolledTournaments
-                        : completedTournaments
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          </main>
-
-          {/* Right Sidebar Placeholder for Future Content */}
-          <aside className="order-3 w-full max-w-full md:w-1/4 md:pl-4">
-            <div className="rounded-lg bg-[#1c1132] p-4 text-center text-white shadow-lg md:p-6">
-              <h2 className="mb-4 text-lg font-semibold">More coming soon!</h2>
-              <p className="text-sm md:text-base">
-                Reserved for future content
-              </p>
-            </div>
-          </aside>
+      {/* Centered Toggle Buttons */}
+      <div className="mt-8 flex justify-center">
+        <div className="flex gap-3">
+          <Button
+            variant={visibleTable === 'enrolled' ? 'solid' : 'outline'}
+            className={`text-sm transition-all duration-200 hover:shadow-lg ${
+              visibleTable === 'enrolled'
+                ? 'bg-purple-700 text-white'
+                : 'border-purple-500 text-purple-500'
+            }`}
+            onClick={() => toggleTable('enrolled')}
+          >
+            Enrolled
+          </Button>
+          <Button
+            variant={visibleTable === 'completed' ? 'solid' : 'outline'}
+            className={`text-sm transition-all duration-200 hover:shadow-lg ${
+              visibleTable === 'completed'
+                ? 'bg-purple-700 text-white'
+                : 'border-purple-500 text-purple-500'
+            }`}
+            onClick={() => toggleTable('completed')}
+          >
+            Recent Tournaments
+          </Button>
         </div>
+      </div>
 
-        {/* Custom Scrollbar Styling */}
-        <style jsx global>{`
-          .custom-scrollbar {
-            scrollbar-width: thin;
-          }
-          .custom-scrollbar::-webkit-scrollbar {
-            height: 8px;
-          }
-          .custom-scrollbar::-webkit-scrollbar-track {
-            background: #1c1132;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #6b7280;
-            border-radius: 10px;
-            border: 2px solid #1c1132;
-          }
-          @media (max-width: 768px) {
-            .custom-scrollbar {
-              overflow-x: scroll;
-            }
-            .custom-scrollbar::-webkit-scrollbar {
-              height: 10px;
-            }
-          }
-        `}</style>
-      </BackgroundWrapper>
-    </>
+      {/* Main Content Container */}
+      <div className="mt-4 flex w-full max-w-full flex-col items-center space-y-6 overflow-hidden px-4 md:flex-row md:justify-center md:space-x-6">
+        {/* Responsive Wrapper for Aligned Height of Sidebar and DataTable */}
+        <div className="flex w-full max-w-full flex-col items-center overflow-hidden md:flex-row md:items-start md:space-x-6">
+          {/* Left Sidebar - Reddit Content */}
+          <div className="w-full max-w-full overflow-hidden rounded-lg bg-[#1a1a1b] p-4 shadow-lg md:w-1/3 lg:w-1/4">
+            <h2 className="mb-4 text-lg font-semibold text-[#d7dadc]">
+              Trending on r/tetris
+            </h2>
+            {/* Reddit Posts */}
+            <ul className="custom-scrollbar max-h-[300px] space-y-4 overflow-y-auto">
+              {hotPosts.slice(0, 10).map((post, index) => (
+                <li
+                  key={index}
+                  className="flex items-start rounded-lg bg-[#272729] p-4 hover:bg-[#333335]"
+                >
+                  {post.thumbnail &&
+                    post.thumbnail !== 'self' &&
+                    post.thumbnail !== 'default' && (
+                      <img
+                        src={post.thumbnail}
+                        alt="Thumbnail"
+                        className="mr-4 h-16 w-16 rounded-md border border-[#d7dadc]"
+                      />
+                    )}
+                  <div className="flex flex-col">
+                    <a
+                      href={post.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-[#ff4500]"
+                    >
+                      {post.title}
+                    </a>
+                    <p className="text-sm text-gray-400">Score: {post.score}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Centered DataTable */}
+          <div className="mt-6 w-full max-w-full overflow-hidden rounded-lg bg-[#1c1132] p-4 shadow-lg md:mt-0 md:w-1/3 lg:w-1/2">
+            <h2 className="mb-4 text-center text-lg font-semibold text-white">
+              {visibleTable === 'enrolled'
+                ? 'Currently Enrolled Tournaments'
+                : 'Recently Completed Tournaments'}
+            </h2>
+            <div className="w-full overflow-x-auto">
+              <DataTable
+                type={visibleTable}
+                data={
+                  visibleTable === 'enrolled'
+                    ? enrolledTournaments
+                    : completedTournaments
+                }
+              />
+            </div>
+          </div>
+
+          {/* Right Sidebar - Future Content */}
+          <div className="mt-6 w-full max-w-full overflow-hidden rounded-lg bg-[#1c1132] p-4 text-center text-white shadow-lg md:mt-0 md:w-1/3 lg:w-1/4">
+            <h2 className="mb-4 text-lg font-semibold">More coming soon!</h2>
+            <p className="text-sm">Reserved for future content</p>
+          </div>
+        </div>
+      </div>
+    </BackgroundWrapper>
   );
 }
