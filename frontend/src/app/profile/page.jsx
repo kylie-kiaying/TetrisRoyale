@@ -1,8 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
 import { useAuthStore } from '@/store/authStore';
+import PlayerStatistics from '@/components/PlayerStatistics';
+import ToggleButtons from '@/components/ui/toggle';
 
 const matchHistory = [
   {
@@ -37,6 +40,17 @@ const matchHistory = [
 
 export default function PlayerProfile() {
   const username = useAuthStore((state) => state.username); // Get username from the auth store
+  const [visiblePlot, setVisiblePlot] = useState('playstyle'); // State to track the visible plot
+
+  const togglePlot = (plot) => {
+    setVisiblePlot(plot);
+  };
+
+  const plotOptions = [
+    { value: 'playstyle', label: 'Playstyle' },
+    { value: 'elo', label: 'ELO Over Time' },
+    { value: 'wins', label: 'Wins Over Time' },
+  ];
 
   return (
     <div
@@ -82,12 +96,18 @@ export default function PlayerProfile() {
             </div>
           </div>
 
+          {/* Toggle Buttons for Plots */}
+          <ToggleButtons
+            options={plotOptions}
+            activeOption={visiblePlot}
+            onToggle={togglePlot}
+          />
+
           {/* ELO Analytics Section */}
           <div className="w-full rounded-lg bg-[#2c1f4c] p-4 md:p-6">
-            <h2 className="mb-4 text-lg font-bold md:text-xl">ELO Analytics</h2>
-            <p className="text-sm text-gray-300 md:text-base">
-              ELO history graph and other analytics will be displayed here.
-            </p>
+            {visiblePlot === 'playstyle' && <PlayerStatistics type="playstyle" />}
+            {visiblePlot === 'elo' && <PlayerStatistics type="elo" />}
+            {visiblePlot === 'wins' && <PlayerStatistics type="wins" />}
           </div>
 
           {/* Match History Section */}
