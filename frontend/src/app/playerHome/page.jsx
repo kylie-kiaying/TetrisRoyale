@@ -7,6 +7,62 @@ import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/authStore';
 import BackgroundWrapper from '@/components/BackgroundWrapper';
 import { fetchHotPosts } from '@/utils/fetchRedditPosts';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from '@/components/ui/carousel';
+import { Card, CardContent } from '@/components/ui/card';
+
+const recommendedTournaments = [
+  {
+    id: '1',
+    tournament_name: 'Summer Slam',
+    start: 'August 1, 2024',
+    end: 'August 10, 2024',
+    status: 'Upcoming',
+    organizer: 'Summer Tetris League',
+    recommended_rating: 1230,
+  },
+  {
+    id: '2',
+    tournament_name: 'Fall Frenzy',
+    start: 'September 15, 2024',
+    end: 'September 25, 2024',
+    status: 'Upcoming',
+    organizer: 'Fall Tetris Association',
+    recommended_rating: 1240,
+  },
+  {
+    id: '3',
+    tournament_name: 'Halloween Havoc',
+    start: 'October 31, 2024',
+    end: 'November 5, 2024',
+    status: 'Upcoming',
+    organizer: 'Spooky Tetris Club',
+    recommended_rating: 1225,
+  },
+  {
+    id: '4',
+    tournament_name: 'Winter Wonderland',
+    start: 'December 20, 2024',
+    end: 'December 30, 2024',
+    status: 'Upcoming',
+    organizer: 'Winter Tetris Federation',
+    recommended_rating: 1235,
+  },
+  {
+    id: '5',
+    tournament_name: 'New Year Bash',
+    start: 'January 1, 2025',
+    end: 'January 10, 2025',
+    status: 'Upcoming',
+    organizer: 'New Year Tetris League',
+    recommended_rating: 1245,
+  },
+];
 
 const enrolledTournaments = [
   {
@@ -100,6 +156,7 @@ export default function HomePage() {
 
   const [hotPosts, setHotPosts] = useState([]);
 
+  // Load hot Reddit posts on component mount
   useEffect(() => {
     async function loadHotPosts() {
       const posts = await fetchHotPosts();
@@ -200,10 +257,55 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Right Sidebar - Future Content */}
-          <div className="mt-6 w-full max-w-full overflow-hidden rounded-lg bg-[#1c1132] p-4 text-center text-white shadow-lg md:mt-0 md:w-1/3 lg:w-1/4">
-            <h2 className="mb-4 text-lg font-semibold">More coming soon!</h2>
-            <p className="text-sm">Reserved for future content</p>
+          {/* Right Sidebar - Recommended tournaments */}
+          {/* Right Sidebar - Recommended Tournaments */}
+          <div className="mb-4 mt-6 w-full max-w-full overflow-hidden rounded-lg bg-[#1a1a1b] p-4 text-center text-white shadow-lg sm:mb-6 md:mb-8 md:mt-0 md:w-1/3 lg:w-1/4">
+            <h2 className="mb-4 text-lg font-semibold text-[#d7dadc]">
+              Recommended Tournaments
+            </h2>
+            <div className="relative mb-4 w-full max-w-4xl px-4 py-4 sm:mb-6 md:mb-8">
+              <Carousel>
+                <CarouselContent>
+                  {recommendedTournaments.map((tournament) => (
+                    <CarouselItem
+                      key={tournament.id}
+                      className="flex items-center justify-center"
+                    >
+                      <div className="w-[250px] p-2">
+                        <Card className="mx-auto aspect-square w-full rounded-lg border border-[#333335] bg-[#1a1a1b] shadow-lg transition duration-300 hover:bg-[#242425] hover:shadow-[0_0_15px_rgba(127,199,248,0.5)]">
+                          <CardContent className="flex flex-col items-center justify-center space-y-3 p-6">
+                            <h3 className="mb-2 text-center text-lg font-semibold text-[#7fc7f8] transition duration-200 hover:text-[#a4ecff]">
+                              {tournament.tournament_name}
+                            </h3>
+
+                            {/* Date Range Format */}
+                            <p className="text-center text-xs text-[#c2c2c7]">
+                              {tournament.start} &mdash; {tournament.end}
+                            </p>
+
+                            <p className="text-center text-xs font-light text-[#c2c2c7]">
+                              Organizer:{' '}
+                              <span className="font-semibold text-[#78dcca] transition duration-200 hover:text-[#afffe1]">
+                                {tournament.organizer}
+                              </span>
+                            </p>
+                            <p className="text-center text-xs font-light text-[#c2c2c7]">
+                              Recommended Rating:{' '}
+                              <span className="font-semibold text-[#f1b85f] transition duration-200 hover:text-[#ffe1a8]">
+                                {tournament.recommended_rating}
+                              </span>
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+
+                <CarouselPrevious className="absolute left-0 top-1/2 hidden -translate-y-1/2 transform rounded-full bg-[#18182f] p-2 text-white shadow-md transition duration-300 hover:bg-[#78dcca] md:block" />
+                <CarouselNext className="absolute right-0 top-1/2 hidden -translate-y-1/2 transform rounded-full bg-[#18182f] p-2 text-white shadow-md transition duration-300 hover:bg-[#78dcca] md:block" />
+              </Carousel>
+            </div>
           </div>
         </div>
       </div>
