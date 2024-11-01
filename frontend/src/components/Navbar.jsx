@@ -1,5 +1,11 @@
 'use client';
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation'; // Correct import to get the pathname
 import Link from 'next/link';
@@ -10,9 +16,16 @@ import {
   HoverCardContent,
 } from '@/components/ui/hover-card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { IoTrophy, IoSearch, IoPerson, IoMenu, IoClose } from 'react-icons/io5';
+import {
+  IoTrophy,
+  IoSearch,
+  IoPerson,
+  IoMenu,
+  IoClose,
+  IoNotifications,
+  IoHome,
+} from 'react-icons/io5';
 import { PiRankingBold } from 'react-icons/pi';
-import { IoNotifications } from 'react-icons/io5';
 import { useAuthStore } from '@/store/authStore';
 import { errorToast } from '@/utils/toastUtils';
 
@@ -64,41 +77,97 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-4 md:flex">
+
+          <Link href="/playerHome">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/playerHome') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoHome className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Home</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Link>
+
+
           <Link href="/tournaments">
-            <Button
-              variant="ghost"
-              className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
-            >
-              <IoTrophy className="h-6 w-6" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoTrophy className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Tournament browser</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </Link>
 
-          {/* Rankings button */}
           <Link href="/rankings">
-            <Button
-              variant="ghost"
-              className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
-            >
-              <PiRankingBold className="h-6 w-6" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <PiRankingBold className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Rankings</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </Link>
 
-          {/* Search button */}
           <Link href="/search">
-            <Button
-              variant="ghost"
-              className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
-            >
-              <IoSearch className="h-6 w-6" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoSearch className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Search</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </Link>
+
+
           <Link href="/profile">
-            <Button
-              variant="ghost"
-              className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
-            >
-              <IoPerson className="h-6 w-6" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoPerson className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Profile</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </Link>
         </nav>
 
