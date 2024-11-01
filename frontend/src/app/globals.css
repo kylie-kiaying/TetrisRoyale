@@ -129,4 +129,9 @@
     border-radius: 8px;
     border: 2px solid #1c1132;
   }
+
+  .Toastify__close-button {
+    color: #ffcc00; /* Customize this color to make it more visible */
+    font-size: 18px; /* Adjust font size for visibility */
+  }
 }

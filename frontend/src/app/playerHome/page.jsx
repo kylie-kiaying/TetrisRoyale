@@ -15,6 +15,7 @@ import {
   CarouselNext,
 } from '@/components/ui/carousel';
 import { Card, CardContent } from '@/components/ui/card';
+import { getRecommendedTournaments } from '@/utils/fetchRecommendedTournaments';
 
 const recommendedTournaments = [
   {
@@ -151,6 +152,19 @@ const completedTournaments = [
 ];
 
 export default function HomePage() {
+  // const [recommendedTournaments, setRecommendedTournaments] = useState([]);
+
+  // useEffect(() => {
+  //   async function loadRecommendedTournaments() {
+  //     const tournaments = await getRecommendedTournaments(
+  //       user.rating,
+  //       user.username
+  //     );
+  //     setRecommendedTournaments(tournaments);
+  //   }
+  //   loadRecommendedTournaments();
+  // }, [user.rating, user.username]);
+
   const [visibleTable, setVisibleTable] = useState('enrolled');
   const toggleTable = (table) => setVisibleTable(table);
 
