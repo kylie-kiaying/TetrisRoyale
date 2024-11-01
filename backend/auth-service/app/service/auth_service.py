@@ -42,6 +42,8 @@ class AuthService:
                     secure=True,    # Use HTTPS in production
                     samesite="lax"
                 )
+
+                user_record.jwt_token=token
                 
                 return response
             else:
@@ -124,3 +126,13 @@ class AuthService:
             return {"message": "Email verified successfully"}
 
         raise HTTPException(status_code=400, detail="Invalid or expired verification token")
+    
+    async def logout(self, token:str, db:AsyncSession):
+        user_repository = UserRepository()
+        user = await user_repository.get_user_by_jwt_token(token, db)
+
+        if user:
+            user.jwt_token=None
+            return JSONResponse(status_code=200, content={"message": "Logged out successfully."})
+
+        raise HTTPException(status_code=400, detail="Invalid or expired JWT token")
