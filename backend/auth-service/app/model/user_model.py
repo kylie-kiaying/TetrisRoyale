@@ -12,3 +12,4 @@ class User(Base):
     email_verified = Column(Boolean, default=False)
     role = Column(String, default="player")
     jwt_token = Column(String, nullable = True)
+    reset_token = Column(String, nullable = True)

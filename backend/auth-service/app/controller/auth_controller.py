@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Request, FastAPI
 from fastapi.responses import JSONResponse
-from app.schema.auth_schema import UserReg, UserLogin, LoginResponse
+from app.schema.auth_schema import UserReg, UserLogin, LoginResponse, ForgotPassword, ResetPassword, UpdateRequest
 from app.service.auth_service import AuthService
 from app.db.session import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,28 +29,21 @@ async def verify_email(token: str, db: AsyncSession = Depends(get_db), auth_serv
 @router.post("/logout/")
 async def logout_user(request: Request, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()
 ):
-    # Get the cookie from the request headers
     token = request.cookies.get("session_token")
 
     if not token:
         return JSONResponse(status_code=400, content={"message": "No authentication cookie found."})
-
-    # Call the logout method of the AuthService
     return await auth_service.logout(token, db)
 
-    
+@router.post("/forgot-password")
+async def forgot_password(data: ForgotPassword, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
+    return await auth_service.forgot_password(data.recovery_email, db)
 
+@router.post("/reset-password/{token}")
+async def reset_password(token: str, data: ResetPassword, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
+    return await auth_service.reset_password(token, data.new_password, db)
 
-# @router.get("/protected-route")
-# async def protected_route(request: Request):
-#     # Verify if the user has the required role to access this route
-    
-#     return verify_user_role(request, required_role="admin")
-
-# @router.get("/username")
-# async def get_username(request: Request):
-#     try:
-#         username = retrieve_username(request)
-#         return JSONResponse(content={"username": username})
-#     except HTTPException as e:
-#         return JSONResponse(status_code=e.status_code, content={"detail": e.detail})
+#put endpoint
+@router.put("/users/{user_id}")
+async def update_user(user_id: int, request:UpdateRequest, db:AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
+    return await auth_service.update_user(user_id, request, db)

@@ -20,6 +20,24 @@ def create_access_token(username: str, role: str, id: int):
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
+def create_recovery_token(email: str):
+        secret_key = os.getenv("SECRET_KEY")
+        ALGORITHM = os.getenv("ALGORITHM", "HS256")
+        ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
+        if not secret_key:
+            raise ValueError("Missing JWT_SECRET_KEY environment variable")
+
+        # Token payload with user ID and expiration time
+        payload = {
+            "email": email,
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        }
+
+        # Generate JWT token with HS256 algorithm
+        token = jwt.encode(payload, secret_key, algorithm=ALGORITHM)
+
+        return token
+
 def verify_user_role(request: Request, required_role: str) -> bool:
     try:
 
