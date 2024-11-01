@@ -77,7 +77,6 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-4 md:flex">
-
           <Link href="/playerHome">
             <TooltipProvider>
               <Tooltip>
@@ -95,7 +94,6 @@ export default function Navbar() {
               </Tooltip>
             </TooltipProvider>
           </Link>
-
 
           <Link href="/tournaments">
             <TooltipProvider>
@@ -151,7 +149,6 @@ export default function Navbar() {
             </TooltipProvider>
           </Link>
 
-
           <Link href="/profile">
             <TooltipProvider>
               <Tooltip>
@@ -170,38 +167,6 @@ export default function Navbar() {
             </TooltipProvider>
           </Link>
         </nav>
-
-        {/* Profile Section */}
-        <div className="hidden items-center gap-4 md:flex">
-          <Button
-            variant="ghost"
-            className={`text-primary-foreground ${isActive('/notifications') ? 'bg-accent text-accent-foreground' : ''}`}
-          >
-            <IoNotifications className="h-6 w-6" />
-          </Button>
-
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <div className="flex cursor-pointer items-center gap-2">
-                <Avatar>
-                  <AvatarImage src="/user.png" />
-                  <AvatarFallback>
-                    {username ? username.charAt(0).toUpperCase() : 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="text-primary-foreground">
-                  <h4 className="font-medium">{username}</h4>
-                  <p className="text-xs text-muted-foreground">
-                    ELO: {playerData.rating}
-                  </p>
-                </div>
-              </div>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-80 bg-white/80">
-              {/* ... other profile content */}
-            </HoverCardContent>
-          </HoverCard>
-        </div>
 
         {/* Mobile Menu Icon */}
         <div className="md:hidden">
