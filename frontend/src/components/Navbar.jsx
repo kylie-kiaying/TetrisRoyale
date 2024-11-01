@@ -248,6 +248,17 @@ export default function Navbar() {
             : 'pointer-events-none -translate-y-4 opacity-0'
         }`}
       >
+        {/* Home button */}
+        <Link href="/playerHome">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/playerHome') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoHome className="h-6 w-6" />
+          </Button>
+        </Link>
+
         <Link href="/tournaments">
           <Button
             variant="ghost"
@@ -259,22 +270,27 @@ export default function Navbar() {
         </Link>
 
         {/* Rankings button */}
-        <Button
-          variant="ghost"
-          className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <PiRankingBold className="h-6 w-6" />
-        </Button>
+        <Link href="/rankings">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <PiRankingBold className="h-6 w-6" />
+          </Button>
+        </Link>
 
-        <Button
-          variant="ghost"
-          className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <IoSearch className="h-6 w-6" />
-        </Button>
+        <Link href="/search">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoSearch className="h-6 w-6" />
+          </Button>
+        </Link>
 
+        {/* Profile button */}
         <Link href="/profile">
           <Button
             variant="ghost"
