@@ -56,8 +56,8 @@ export default function Navbar() {
   }, [username, router]);
 
   return (
-    <div className="sticky top-3 z-50 mt-3 flex w-full justify-center">
-      <header className="flex h-12 w-10/12 items-center justify-between rounded-full border-muted bg-inherit px-6 py-4 shadow-[inset_0_0_0_3000px_rgba(150,150,150,0.192)] backdrop-blur-md">
+    <div className="sticky top-4 z-50 mt-3 w-full">
+      <header className="mx-auto flex h-12 max-w-5xl items-center justify-between rounded-full border-muted bg-inherit px-6 py-4 shadow-[inset_0_0_0_3000px_rgba(150,150,150,0.192)] backdrop-blur-md">
         {/* Left Side - Logo */}
         <div className="flex items-center gap-4">
           <Link
@@ -77,6 +77,7 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-4 md:flex">
+
           <Link href="/playerHome">
             <TooltipProvider>
               <Tooltip>
@@ -94,6 +95,7 @@ export default function Navbar() {
               </Tooltip>
             </TooltipProvider>
           </Link>
+
 
           <Link href="/tournaments">
             <TooltipProvider>
@@ -149,6 +151,7 @@ export default function Navbar() {
             </TooltipProvider>
           </Link>
 
+
           <Link href="/profile">
             <TooltipProvider>
               <Tooltip>
@@ -168,6 +171,38 @@ export default function Navbar() {
           </Link>
         </nav>
 
+        {/* Profile Section */}
+        <div className="hidden items-center gap-4 md:flex">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/notifications') ? 'bg-accent text-accent-foreground' : ''}`}
+          >
+            <IoNotifications className="h-6 w-6" />
+          </Button>
+
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <div className="flex cursor-pointer items-center gap-2">
+                <Avatar>
+                  <AvatarImage src="/user.png" />
+                  <AvatarFallback>
+                    {username ? username.charAt(0).toUpperCase() : 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-primary-foreground">
+                  <h4 className="font-medium">{username}</h4>
+                  <p className="text-xs text-muted-foreground">
+                    ELO: {playerData.rating}
+                  </p>
+                </div>
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80 bg-white/80">
+              {/* ... other profile content */}
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+
         {/* Mobile Menu Icon */}
         <div className="md:hidden">
           <button
@@ -178,6 +213,7 @@ export default function Navbar() {
             {isMobileMenuOpen ? <IoClose /> : <IoMenu />}
           </button>
         </div>
+
         {/* Profile Section */}
         <div className="hidden items-center gap-4 md:flex">
           <Button
