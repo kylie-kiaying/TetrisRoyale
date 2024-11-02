@@ -62,7 +62,7 @@ export default function TournamentDetails() {
         {/* Upcoming/Completed Matches Card */}
         <Card className="w-full flex-shrink-0 space-y-4 rounded-xl border-none bg-gradient-to-br from-[#3b1a56] to-[#1c1132] p-6 text-center text-white shadow-lg md:w-1/4">
           <CardHeader className="mb-4 text-gray-200">
-            <h2 className="text-xl font-bold tracking-wide md:text-2xl">
+            <h2 className="text-xl font-bold tracking-wide text-purple-200 md:text-2xl">
               Matches
             </h2>
             <p className="text-sm opacity-75">Upcoming or Completed Matches</p>
@@ -74,7 +74,7 @@ export default function TournamentDetails() {
 
         {/* Tournament Details Section */}
         <div className="flex-1 rounded-lg bg-gradient-to-br from-[#45234d] to-[#23132c] p-6 shadow-md md:w-1/2">
-          <h1 className="mb-6 text-center text-4xl font-bold text-white">
+          <h1 className="mb-6 text-center text-4xl font-bold text-pink-100">
             {tournament.tournament_name}
           </h1>
           <div className="space-y-4 text-gray-300">
@@ -125,7 +125,7 @@ export default function TournamentDetails() {
         {/* Players List Section */}
         <Card className="mx-auto w-full max-w-xs flex-shrink-0 space-y-4 rounded-xl border-none bg-gradient-to-br from-[#2a1c48] to-[#1b112e] p-3 text-white shadow-lg sm:max-w-full md:mx-0 md:w-1/4 md:p-6">
           <CardHeader className="mb-4 flex items-center justify-between pb-2 text-gray-200">
-            <h2 className="text-lg font-bold tracking-wide md:text-2xl">
+            <h2 className="text-lg font-bold tracking-wide text-blue-200 md:text-2xl">
               Player List
             </h2>
             <span className="text-xs opacity-75 md:text-sm">
