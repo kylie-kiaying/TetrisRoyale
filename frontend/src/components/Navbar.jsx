@@ -80,7 +80,7 @@ export default function Navbar() {
           <Link href="/playerHome">
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger asChild>
+                <TooltipTrigger>
                   <Button
                     variant="ghost"
                     className={`text-primary-foreground ${isActive('/playerHome') ? 'bg-accent text-accent-foreground' : ''}`}
