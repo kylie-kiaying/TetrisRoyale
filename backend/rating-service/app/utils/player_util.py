@@ -12,7 +12,7 @@ async def create_player_in_db(player_id: int, username: str, db: AsyncSession):
         username (str): The username of the player.
         db (AsyncSession): The database session.
     """
-    new_player = Player(id=player_id, username=username, rating=1000)  # Default starting rating
+    new_player = Player(id=player_id, username=username, rating=0)  # Default starting rating
     db.add(new_player)
     await db.commit()
 
