@@ -1,5 +1,11 @@
 'use client';
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation'; // Correct import to get the pathname
 import Link from 'next/link';
@@ -10,9 +16,16 @@ import {
   HoverCardContent,
 } from '@/components/ui/hover-card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { IoTrophy, IoSearch, IoPerson, IoMenu, IoClose } from 'react-icons/io5';
+import {
+  IoTrophy,
+  IoSearch,
+  IoPerson,
+  IoMenu,
+  IoClose,
+  IoNotifications,
+  IoHome,
+} from 'react-icons/io5';
 import { PiRankingBold } from 'react-icons/pi';
-import { IoNotifications } from 'react-icons/io5';
 import { useAuthStore } from '@/store/authStore';
 import { errorToast } from '@/utils/toastUtils';
 
@@ -43,8 +56,8 @@ export default function Navbar() {
   }, [username, router]);
 
   return (
-    <div className="sticky top-3 z-50 mt-3 flex w-full justify-center">
-      <header className="flex h-12 w-10/12 items-center justify-between rounded-full border-muted bg-inherit px-6 py-4 shadow-[inset_0_0_0_3000px_rgba(150,150,150,0.192)] backdrop-blur-md">
+    <div className="sticky top-4 z-50 mt-3 w-full">
+      <header className="mx-auto flex h-12 max-w-5xl items-center justify-between rounded-full border-muted bg-inherit px-6 py-4 shadow-[inset_0_0_0_3000px_rgba(150,150,150,0.192)] backdrop-blur-md">
         {/* Left Side - Logo */}
         <div className="flex items-center gap-4">
           <Link
@@ -64,40 +77,94 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-4 md:flex">
-          {/* Tournaments button */}
-          <Link href="/tournaments">
-            <Button
-              variant="ghost"
-              className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
-            >
-              <IoTrophy className="h-6 w-6" />
-            </Button>
+          <Link href="/playerHome">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/playerHome') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoHome className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Home</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </Link>
 
-          {/* Rankings button */}
-          <Button
-            variant="ghost"
-            className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
-          >
-            <PiRankingBold className="h-6 w-6" />
-          </Button>
+          <Link href="/tournaments">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoTrophy className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Tournament browser</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Link>
 
-          {/* Search button */}
-          <Button
-            variant="ghost"
-            className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
-          >
-            <IoSearch className="h-6 w-6" />
-          </Button>
+          <Link href="/rankings">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <PiRankingBold className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Rankings</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Link>
 
-          {/* Profile button button */}
+          <Link href="/search">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoSearch className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Search</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Link>
+
           <Link href="/profile">
-            <Button
-              variant="ghost"
-              className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
-            >
-              <IoPerson className="h-6 w-6" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoPerson className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Profile</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </Link>
         </nav>
 
@@ -116,7 +183,7 @@ export default function Navbar() {
         <div className="hidden items-center gap-4 md:flex">
           <Button
             variant="ghost"
-            className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+            className={`text-primary-foreground ${isActive('/notifications') ? 'bg-accent text-accent-foreground' : ''}`}
           >
             <IoNotifications className="h-6 w-6" />
           </Button>
@@ -132,11 +199,9 @@ export default function Navbar() {
                 </Avatar>
                 <div className="text-primary-foreground">
                   <h4 className="font-medium">{username}</h4>
-                  {role === 'player' && (
-                    <p className="text-xs text-muted-foreground">
-                      ELO: {playerData.rating}
-                    </p>
-                  )}
+                  <p className="text-xs text-muted-foreground">
+                    ELO: {playerData.rating}
+                  </p>
                 </div>
               </div>
             </HoverCardTrigger>
@@ -152,9 +217,7 @@ export default function Navbar() {
                   </Avatar>
                   <div className="space-y-1">
                     <h4 className="text-sm font-semibold">{username}</h4>
-                    {role === 'player' && (
-                      <p className="text-sm">ELO: {playerData.rating}</p>
-                    )}
+                    <p className="text-sm">ELO: {playerData.rating}</p>
                   </div>
                 </div>
 
@@ -163,7 +226,8 @@ export default function Navbar() {
                   <Button
                     variant="destructive"
                     onClick={() => {
-                      clearStore();
+                      useAuthStore.getState().clearToken();
+                      useAuthStore.getState().clearUsername();
                       window.location.href = '/';
                     }}
                   >
@@ -184,6 +248,17 @@ export default function Navbar() {
             : 'pointer-events-none -translate-y-4 opacity-0'
         }`}
       >
+        {/* Home button */}
+        <Link href="/playerHome">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/playerHome') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoHome className="h-6 w-6" />
+          </Button>
+        </Link>
+
         <Link href="/tournaments">
           <Button
             variant="ghost"
@@ -195,22 +270,27 @@ export default function Navbar() {
         </Link>
 
         {/* Rankings button */}
-        <Button
-          variant="ghost"
-          className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <PiRankingBold className="h-6 w-6" />
-        </Button>
+        <Link href="/rankings">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <PiRankingBold className="h-6 w-6" />
+          </Button>
+        </Link>
 
-        <Button
-          variant="ghost"
-          className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <IoSearch className="h-6 w-6" />
-        </Button>
+        <Link href="/search">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoSearch className="h-6 w-6" />
+          </Button>
+        </Link>
 
+        {/* Profile button */}
         <Link href="/profile">
           <Button
             variant="ghost"

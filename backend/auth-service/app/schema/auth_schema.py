@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 class UserReg(BaseModel):
     username: str
@@ -13,3 +14,14 @@ class UserLogin(BaseModel):
 class LoginResponse(BaseModel):
     access_token: str
     token_type: str
+
+class ForgotPassword(BaseModel):
+    recovery_email: str
+
+class ResetPassword(BaseModel):
+    new_password: str
+
+class UpdateRequest(BaseModel):
+    username: Optional[str]
+    password:Optional[str]
+    email: Optional[EmailStr]

@@ -1,4 +1,5 @@
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Function for Success Toast
 export const successToast = (message) => {
@@ -16,7 +17,10 @@ export const successToast = (message) => {
       borderRadius: '10px',
       boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.5)',
     },
-    icon: false, // You can add an icon if desired
+    closeButton: (
+      <button style={{ color: '#ffcc00', fontSize: '18px' }}>✕</button>
+    ),
+    icon: false,
   });
 };
 
@@ -36,6 +40,9 @@ export const errorToast = (message) => {
       borderRadius: '10px',
       boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.5)',
     },
-    icon: false, // You can add an icon if desired
+    closeButton: (
+      <button style={{ color: '#ffcc00', fontSize: '18px' }}>✕</button>
+    ),
+    icon: false,
   });
 };

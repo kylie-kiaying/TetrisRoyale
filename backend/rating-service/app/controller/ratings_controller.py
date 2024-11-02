@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.model.models import Player, Match
+from app.model.models import Player, Match, PlayerRatingHistory
 from app.schema.schemas import MatchCreate, MatchUpdate, PlayerRating  # Ensure MatchCreate includes new fields
 from app.db.database import get_db
 from app.utils.player_util import get_player_by_id, create_player_in_db
 from app.whr.whr_logic import calculate_whr
-from datetime import datetime
+from datetime import datetime, date
 from fastapi import HTTPException
+from typing import List
 
 
 router = APIRouter()
@@ -70,8 +71,9 @@ async def update_match_scores(match_id: int, scores: MatchUpdate, db: AsyncSessi
     for player_id, new_rating in updated_ratings.items():
         print(player_id)
         print(new_rating)
-        player = await db.get(Player, int(player_id))
-        player.rating = new_rating[len(new_rating) - 1][1]
+        if new_rating:
+            player = await db.get(Player, int(player_id))
+            player.rating = new_rating[len(new_rating) - 1][1]
 
     await db.commit()
     return {"message": "Match scores updated and ratings recalculated"}
@@ -98,6 +100,43 @@ async def add_player(player_id: int, username: str, db: AsyncSession = Depends(g
     await create_player_in_db(player_id, username, db)
     return {"message": "Player added successfully to the rating database"}
 
+@router.get("/ratings", response_model=List[dict])
+async def get_all_player_ratings(db: AsyncSession = Depends(get_db)):
+    """
+    Retrieves the ratings of all players.
+
+    Args:
+        db (AsyncSession): Database session.
+
+    Returns:
+        List[dict]: A list of all players' rating information.
+    """
+    # Retrieve all players from the database
+    result = await db.execute(select(Player))
+    players = result.scalars().all()
+
+    # Check if players exist in the database
+    if not players:
+        raise HTTPException(status_code=404, detail="No players found in the database")
+    
+    # Prepare the list of players' rating information
+    players_ratings = []
+    for player in players:
+        # Adjust rating if necessary
+        player.rating += 1000
+        if player.rating < 0:
+            player.rating = 0
+
+        # Add player rating info to the list
+        players_ratings.append({
+            "player_id": player.id,
+            "username": player.username,
+            "rating": player.rating
+        })
+
+    return players_ratings
+
+
 @router.get("/ratings/{player_id}", response_model=dict)
 async def get_player_rating(player_id: int, db: AsyncSession = Depends(get_db)):
     """
@@ -119,3 +158,37 @@ async def get_player_rating(player_id: int, db: AsyncSession = Depends(get_db)):
         player.rating = 0
 
     return {"player_id": player.id, "username": player.username, "rating": player.rating}
+
+async def store_daily_ratings(db: AsyncSession = Depends(get_db)):
+    # Check if today's ratings are already stored
+    existing_ratings = await db.execute(
+        select(PlayerRatingHistory).where(PlayerRatingHistory.date == date.today())
+    )
+    existing_ratings = existing_ratings.scalars().all()
+
+    if existing_ratings:
+        print("Ratings for today already stored.")
+        return
+
+    # Fetch all players and matches for WHR calculation
+    players = (await db.execute(select(Player))).scalars().all()
+    matches = (await db.execute(select(Match))).scalars().all()
+
+    # Calculate ratings using WHR logic
+    updated_ratings = calculate_whr(players, matches)
+    
+        # Update player ratings in the local database
+    for player_id, new_rating in updated_ratings.items():
+        player = await db.get(Player, int(player_id))
+        if new_rating:
+            updated_rating = new_rating[len(new_rating) - 1][1]
+            player.rating = updated_rating
+            rating_history_entry = PlayerRatingHistory(
+                player_id=int(player_id),
+                date=date.today(),
+                rating=updated_rating
+            )
+            db.add(rating_history_entry)
+
+    await db.commit()
+    print("Stored daily ratings for all players.")

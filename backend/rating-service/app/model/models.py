@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, Float, String, DateTime
-from datetime import datetime, timezone
+from sqlalchemy import Column, Integer, Float, String, DateTime, Date, ForeignKey
+from datetime import datetime, timezone, date
 
 Base = declarative_base()
 
@@ -24,3 +24,10 @@ class Match(Base):
     status = Column(String, nullable=False)
     scheduled_at = Column(DateTime(timezone=True), default=utcnow)
     tournament_id = Column(Integer, nullable=False)
+
+class PlayerRatingHistory(Base):
+    __tablename__ = "player_rating_history"
+    id = Column(Integer, primary_key=True, index=True)
+    player_id = Column(Integer, ForeignKey("ratings_players.id"), nullable=False)
+    date = Column(Date, default=date.today, nullable=False)
+    rating = Column(Float, nullable=False)
