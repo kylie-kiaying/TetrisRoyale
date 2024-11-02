@@ -135,3 +135,5 @@
     font-size: 18px; /* Adjust font size for visibility */
   }
 }
+
+::-webkit-calendar-picker-indicator { filter: invert(100%); }
