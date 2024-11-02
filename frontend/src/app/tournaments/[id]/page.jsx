@@ -60,7 +60,7 @@ export default function TournamentDetails() {
       <Navbar />
       <div className="container mx-auto mt-10 flex flex-col space-y-8 px-4 md:flex-row md:space-x-8 md:space-y-0">
         {/* Upcoming/Completed Matches Card */}
-        <Card className="w-full flex-shrink-0 space-y-4 rounded-xl border-none bg-gradient-to-br from-[#3b1a56] to-[#1c1132] p-6 text-white shadow-lg md:w-1/4">
+        <Card className="w-full flex-shrink-0 space-y-4 rounded-xl border-none bg-gradient-to-br from-[#3b1a56] to-[#1c1132] p-6 text-center text-white shadow-lg md:w-1/4">
           <CardHeader className="mb-4 text-gray-200">
             <h2 className="text-xl font-bold tracking-wide md:text-2xl">
               Matches
@@ -73,8 +73,8 @@ export default function TournamentDetails() {
         </Card>
 
         {/* Tournament Details Section */}
-        <div className="flex-1 rounded-lg bg-gradient-to-br from-[#45234d] to-[#281633] p-6 shadow-md md:w-1/2">
-          <h1 className="mb-6 text-4xl font-bold text-white">
+        <div className="flex-1 rounded-lg bg-gradient-to-br from-[#45234d] to-[#23132c] p-6 shadow-md md:w-1/2">
+          <h1 className="mb-6 text-center text-4xl font-bold text-white">
             {tournament.tournament_name}
           </h1>
           <div className="space-y-4 text-gray-300">
