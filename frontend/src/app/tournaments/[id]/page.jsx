@@ -1,9 +1,11 @@
-import { useRouter } from 'next/router';
+'use client';
+
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function TournamentDetails() {
   const router = useRouter();
-  const { id } = router.query; // Capture the tournament ID from the URL
+  const { id } = useParams(); // Capture the tournament ID from the URL
   const [tournament, setTournament] = useState(null);
 
   useEffect(() => {
