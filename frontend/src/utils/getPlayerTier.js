@@ -8,7 +8,7 @@ export function getPlayerTier(rating) {
   } else if (rating >= 1400) {
     return { tier: 'Platinum', color: 'text-gray-400' }; // Steel Silver
   } else if (rating >= 1200) {
-    return { tier: 'Gold', color: 'text-yellow-600' }; // Goldenrod
+    return { tier: 'Gold', color: 'text-yellow-500' }; // Adjusted to yellow-500 for brighter gold
   } else if (rating >= 1000) {
     return { tier: 'Silver', color: 'text-gray-600' }; // Slate Gray
   } else if (rating >= 800) {

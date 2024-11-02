@@ -4,6 +4,12 @@ import {
   IoInformationCircleOutline,
 } from 'react-icons/io5';
 import Link from 'next/link';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export const columns = {
   enrolled: [
@@ -159,21 +165,38 @@ export const columns = {
         return <span style={{ color, fontWeight: 'bold' }}>{label}</span>;
       },
     },
+
     {
-      accessorKey: 'organizer',
-      header: 'Organizer',
+      accessorKey: 'recommendedRating',
+      header: 'Rating',
     },
     {
       accessorKey: 'tournament_id',
-      header: 'Actions',
+      header: () => null,
       cell: (info) => (
-        <Link href={`/tournaments/${info.getValue()}`}>
-          <IoInformationCircleOutline
-            size={24}
-            className="text-purple-700 transition duration-300 hover:text-purple-600"
-          />
-        </Link>
+        <TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger>
+              <Link href={`/tournaments/${info.getValue()}`}>
+                <div className="flex justify-center">
+                  <IoInformationCircleOutline
+                    size={26}
+                    className="transform cursor-pointer rounded-full bg-purple-700 p-1 text-white transition duration-200 ease-in-out hover:scale-110 hover:bg-purple-600 hover:shadow-lg"
+                  />
+                </div>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent
+              side="top"
+              align="center"
+              className="rounded-md bg-gray-800 px-2 py-1 text-sm text-white shadow"
+            >
+              View Details
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       ),
+      className: 'w-12 text-center',
     },
   ],
   players: [

@@ -79,7 +79,7 @@ export default function Navbar() {
         <nav className="hidden items-center gap-4 md:flex">
           <Link href="/playerHome">
             <TooltipProvider>
-              <Tooltip>
+              <Tooltip delayDuration={100}>
                 <TooltipTrigger>
                   <Button
                     variant="ghost"
@@ -97,7 +97,7 @@ export default function Navbar() {
 
           <Link href="/tournaments">
             <TooltipProvider>
-              <Tooltip>
+              <Tooltip delayDuration={100}>
                 <TooltipTrigger>
                   <Button
                     variant="ghost"
@@ -115,7 +115,7 @@ export default function Navbar() {
 
           <Link href="/rankings">
             <TooltipProvider>
-              <Tooltip>
+              <Tooltip delayDuration={100}>
                 <TooltipTrigger>
                   <Button
                     variant="ghost"
@@ -133,7 +133,7 @@ export default function Navbar() {
 
           <Link href="/search">
             <TooltipProvider>
-              <Tooltip>
+              <Tooltip delayDuration={100}>
                 <TooltipTrigger>
                   <Button
                     variant="ghost"
@@ -151,7 +151,7 @@ export default function Navbar() {
 
           <Link href="/profile">
             <TooltipProvider>
-              <Tooltip>
+              <Tooltip delayDuration={100}>
                 <TooltipTrigger>
                   <Button
                     variant="ghost"
