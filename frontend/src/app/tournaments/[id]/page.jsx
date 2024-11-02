@@ -73,7 +73,7 @@ export default function TournamentDetails() {
         </Card>
 
         {/* Tournament Details Section */}
-        <div className="flex-1 rounded-lg bg-gradient-to-br from-[#45234d] to-[#281633] p-6 shadow-md md:w-1/2">
+        <div className="flex-1 rounded-xl bg-gradient-to-br from-[#45234d] to-[#281633] p-6 shadow-md md:w-1/2">
           <h1 className="mb-6 text-4xl font-bold text-white">
             {tournament.tournament_name}
           </h1>
