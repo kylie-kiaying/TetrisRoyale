@@ -195,4 +195,38 @@ export const columns = {
             header: () => null,
         },
     ],
+    created: [
+        {
+            accessorKey: "tournament_name",
+            header: "Name",
+        },
+        {
+            accessorKey: "start",
+            header: "Start",
+        },
+        {
+            accessorKey: "end",
+            header: "End",
+        },
+        {
+            accessorKey: "status",
+            header: "Status",
+        },
+        {
+            id: "expander",
+            header: () => null,
+            cell: ({ row }) => (
+                <button
+                    onClick={() => row.toggleExpanded()}
+                    className="flex items-center"
+                >
+                    {row.getIsExpanded() ? (
+                        <IoChevronDown className="text-gray-400 w-5 h-5" />
+                    ) : (
+                        <IoChevronForward className="text-gray-400 w-5 h-5" />
+                    )}
+                </button>
+            ),
+        },
+    ],
 };
