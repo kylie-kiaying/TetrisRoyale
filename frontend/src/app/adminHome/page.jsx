@@ -201,20 +201,20 @@ export default function AdminPage() {
                                   </DialogTitle>
                                   <div className="mt-2">
                                     <div className="flex flex-col space-y-1.5 mb-3">
-                                      <Label htmlFor="name">Tournament Name</Label>
-                                      <Input id="name" defaultValue={tournament.tournament_name}/>
+                                      <Label htmlFor={"name" + tournament.tournament_id}>Tournament Name</Label>
+                                      <Input id={"name" + tournament.tournament_id} defaultValue={tournament.tournament_name}/>
                                     </div>
                                     <div className="flex flex-col space-y-1.5 mb-3">
-                                      <Label htmlFor="remark">Remarks</Label>
-                                      <Input id="remark" defaultValue={tournament.remarks}/>
+                                      <Label htmlFor={"remark" + tournament.tournament_id}>Remarks</Label>
+                                      <Input id={"remark" + tournament.tournament_id} defaultValue={tournament.remarks}/>
                                     </div>
                                     <div className="flex flex-col space-y-1.5 mb-3 w-fit">
-                                      <Label htmlFor="startTime">Tournament Start DateTime</Label>
-                                      <Input id="startTime" type="datetime-local" defaultValue={tournament.tournament_start}/>
+                                      <Label htmlFor={"startTime" + tournament.tournament_id} >Tournament Start DateTime</Label>
+                                      <Input id={"startTime" + tournament.tournament_id} type="datetime-local" defaultValue={tournament.tournament_start}/>
                                     </div>
                                     <div className="flex flex-col space-y-1.5 mb-3 w-fit">
-                                      <Label htmlFor="endTime">Tournament End DateTime</Label>
-                                      <Input id="endTime" type="datetime-local" defaultValue={tournament.tournament_end}/>
+                                      <Label htmlFor={"endTime" + tournament.tournament_id}>Tournament End DateTime</Label>
+                                      <Input id={"endTime" + tournament.tournament_id} type="datetime-local" defaultValue={tournament.tournament_end}/>
                                     </div>
                                   </div>
                                 </div>
