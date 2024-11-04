@@ -5,4 +5,4 @@ uvicorn==0.30.6
 python-jose
 sqlalchemy
 asyncpg
-whr
+whr==1.0.1
