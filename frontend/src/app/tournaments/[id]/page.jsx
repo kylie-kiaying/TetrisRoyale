@@ -83,40 +83,50 @@ return (
                     <p className="text-sm opacity-75">Upcoming or Completed Matches</p>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                    {/* <p className="text-gray-300">No matches available at this time.</p> */}
-                    <ul className="space-y-1">
-                        {matches.map((match, index) => (
+                <ul className="space-y-1">
+                    {matches.map((match, index) => {
+                        const isCompleted = match.status === 'completed';
+                        return (
                             <li
-                            key={match.id}
-                            className={`flex items-center justify-between rounded-lg px-4 py-2 transition-all duration-200 ${
-                                index % 2 === 0 ? 'bg-[#332054]' : 'bg-[#2a1a46]'
-                            } shadow-md hover:scale-105 hover:bg-purple-700`}
+                                key={match.id}
+                                className={`flex items-center justify-between rounded-lg px-4 py-2 transition-all duration-200 ${
+                                    index % 2 === 0 ? 'bg-[#332054]' : 'bg-[#2a1a46]'
+                                } ${isCompleted ? 'border-l-4 border-green-500' : ''} shadow-md hover:scale-105 hover:bg-purple-700`}
+                                style={{ opacity: isCompleted ? 1 : 0.7 }} // Adjust opacity for incomplete matches
                             >
-                            <div className="flex w-full items-center">
-                                {/* Trophy Icon and Player 1 */}
-                                <div className="flex items-center space-x-1 flex-1 text-left">
-                                <FaTrophy className="text-yellow-400" size={14} /> {/* Trophy Icon */}
-                                <span className="text-sm font-semibold sm:text-xs md:text-sm lg:text-base">
-                                    {getPlayerUsername(match.player1_id)}
-                                </span>
+                                <div className="flex w-full items-center">
+                                    {/* Trophy Icon and Player 1 */}
+                                    <div className="flex items-center space-x-1 flex-1 text-left">
+                                        <FaTrophy className={match.winner_id === 1 ? 'text-yellow-400' : 'text-gray-500'} size={14} />
+                                        <span className={`text-sm font-semibold sm:text-xs md:text-sm lg:text-base ${isCompleted ? '' : 'line-through'}`}>
+                                            {getPlayerUsername(match.player1_id)}
+                                        </span>
+                                    </div>
+                                    
+                                    {/* "vs" in the center */}
+                                    <span className="mx-2 text-sm font-semibold text-gray-300 sm:text-xs md:text-sm lg:text-base">
+                                        vs
+                                    </span>
+                                    
+                                    {/* Player 2 and Trophy Icon */}
+                                    <div className="flex items-center space-x-1 flex-1 text-right justify-end">
+                                        <span className={`text-sm font-semibold sm:text-xs md:text-sm lg:text-base ${isCompleted ? '' : 'line-through'}`}>
+                                            {getPlayerUsername(match.player2_id)}
+                                        </span>
+                                        <FaTrophy className={match.winner_id === 2 ? 'text-yellow-400' : 'text-gray-500'} size={14} />
+                                    </div>
                                 </div>
-                                
-                                {/* "vs" in the center */}
-                                <span className="mx-2 text-sm font-semibold text-gray-300 sm:text-xs md:text-sm lg:text-base">
-                                vs
-                                </span>
-                                
-                                {/* Player 2 and Trophy Icon */}
-                                <div className="flex items-center space-x-1 flex-1 text-right justify-end">
-                                <span className="text-sm font-semibold sm:text-xs md:text-sm lg:text-base">
-                                    {getPlayerUsername(match.player2_id)}
-                                </span>
-                                <FaTrophy className="text-yellow-400" size={14} /> {/* Trophy Icon */}
-                                </div>
-                            </div>
+
+                                {/* Status Badge
+                                <span className={`ml-2 px-2 py-1 rounded text-xs font-semibold ${
+                                    isCompleted ? 'bg-green-500 text-white' : 'bg-yellow-500 text-white'
+                                }`}>
+                                    {isCompleted ? 'Completed' : 'In Progress'}
+                                </span> */}
                             </li>
-                        ))}
-                        </ul>
+                        );
+                    })}
+                </ul>
                 </CardContent>
             </Card>
 
