@@ -99,19 +99,19 @@ export default function AdminPage() {
                           <div className="mt-2">
                             <div className="flex flex-col space-y-1.5 mb-3">
                               <Label htmlFor="name">Tournament Name</Label>
-                              <Input id="name" placeholder="" />
+                              <Input id="name" className="bg-white text-gray-700" />
                             </div>
                             <div className="flex flex-col space-y-1.5 mb-3">
                               <Label htmlFor="remark">Remarks</Label>
-                              <Input id="remark" placeholder="" />
+                              <Input id="remark" className="bg-white text-gray-700" />
                             </div>
-                            <div className="flex flex-col space-y-1.5 mb-3 w-fit">
+                            <div className="flex flex-col space-y-1.5 mb-3 w-full">
                               <Label htmlFor="startTime">Tournament Start DateTime</Label>
-                              <Input id="startTime" type="datetime-local" />
+                              <Input id="startTime" type="datetime-local" className="bg-white text-gray-700 sm:text-center sm:pl-32" />
                             </div>
-                            <div className="flex flex-col space-y-1.5 mb-3 w-fit">
+                            <div className="flex flex-col space-y-1.5 mb-3 w-full">
                               <Label htmlFor="endTime">Tournament End DateTime</Label>
-                              <Input id="endTime" type="datetime-local" />
+                              <Input id="endTime" type="datetime-local" className="bg-white text-gray-700 sm:text-center sm:pl-32" />
                             </div>
                           </div>
                         </div>
@@ -174,73 +174,14 @@ export default function AdminPage() {
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    <Link href="/adminEdit">
                     <Button
                       variant="outline"
                       className="border-purple-500 text-purple-500 transition-all duration-200 hover:bg-gray-300/70"
-                      onClick={() => setOpenEdit(tournament.tournament_id)}
                     >
                       Edit
                     </Button>
-                    <Dialog open={openEdit === tournament.tournament_id} onClose={handleCloseEdit} className="relative z-10 rounded-lg">
-                      <DialogBackdrop
-                        transition
-                        className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
-                      />
-
-                      <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-                        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                          <DialogPanel
-                            transition
-                            className="relative transform overflow-hidden rounded-lg bg-[#1c1132] text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
-                          >
-                            <div className="bg-[#1c1132] px-4 pb-4 pt-5 sm:p-6 sm:pb-4 text-white">
-                              <div className="sm:items-start">
-                                <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                                  <DialogTitle as="h3" className="text-base font-semibold leading-6 text-white">
-                                    Edit Tournament
-                                  </DialogTitle>
-                                  <div className="mt-2">
-                                    <div className="flex flex-col space-y-1.5 mb-3">
-                                      <Label htmlFor={"name" + tournament.tournament_id}>Tournament Name</Label>
-                                      <Input id={"name" + tournament.tournament_id} defaultValue={tournament.tournament_name}/>
-                                    </div>
-                                    <div className="flex flex-col space-y-1.5 mb-3">
-                                      <Label htmlFor={"remark" + tournament.tournament_id}>Remarks</Label>
-                                      <Input id={"remark" + tournament.tournament_id} defaultValue={tournament.remarks}/>
-                                    </div>
-                                    <div className="flex flex-col space-y-1.5 mb-3 w-fit">
-                                      <Label htmlFor={"startTime" + tournament.tournament_id} >Tournament Start DateTime</Label>
-                                      <Input id={"startTime" + tournament.tournament_id} type="datetime-local" defaultValue={tournament.tournament_start}/>
-                                    </div>
-                                    <div className="flex flex-col space-y-1.5 mb-3 w-fit">
-                                      <Label htmlFor={"endTime" + tournament.tournament_id}>Tournament End DateTime</Label>
-                                      <Input id={"endTime" + tournament.tournament_id} type="datetime-local" defaultValue={tournament.tournament_end}/>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="bg-black/25 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                              <button
-                                type="button"
-                                onClick={() => setOpenEdit(undefined)}
-                                className="inline-flex w-full justify-center rounded-md bg-purple-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-600 sm:ml-3 sm:w-auto"
-                              >
-                                Create
-                              </button>
-                              <button
-                                type="button"
-                                data-autofocus
-                                onClick={() => setOpenEdit(undefined)}
-                                className="mt-3 border border-purple-500 text-purple-500 transition-all duration-200 hover:bg-gray-300/70 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm sm:mt-0 sm:w-auto"
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          </DialogPanel>
-                        </div>
-                      </div>
-                    </Dialog>
+                    </Link>
                     <>
                       <Button
                         variant="outline"
