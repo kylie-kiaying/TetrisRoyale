@@ -1,6 +1,5 @@
 'use client';
 
-import { successToast, errorToast } from '@/utils/toastUtils';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -12,43 +11,19 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import Link from 'next/link';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/authStore';
-// Import Google icon from a library like react-icons
-import { FcGoogle } from 'react-icons/fc';
+
+const tournament = 
+  {
+    tournament_id: '1',
+    tournament_name: 'Tetris Championship',
+    tournament_start: '2024-11-12T19:30',
+    tournament_end: '2024-11-25T21:00',
+    remarks: 'Champions of Tetris!',
+    status: 'Ongoing',
+  }
 
 export default function EditPage() {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    role: '',
-  });
-
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [id]: value,
-    }));
-  };
-
-  const handleRoleChange = (role) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      role: role,
-    }));
-  };
-
-
   return (
     <div
       className="flex min-h-screen flex-col items-center justify-center bg-cover bg-fixed bg-center bg-no-repeat px-6 py-12"
@@ -68,19 +43,19 @@ export default function EditPage() {
             <div className="grid w-full gap-6">
               <div className="flex flex-col space-y-1.5 mb-3">
                 <Label htmlFor="name">Tournament Name</Label>
-                <Input id="name" className="bg-white text-gray-700" />
+                <Input id="name" className="bg-white text-gray-700" defaultValue={tournament.tournament_name} />
               </div>
               <div className="flex flex-col space-y-1.5 mb-3">
                 <Label htmlFor="remark">Remarks</Label>
-                <Input id="remark" className="bg-white text-gray-700" />
+                <Input id="remark" className="bg-white text-gray-700" defaultValue={tournament.remarks}/>
               </div>
               <div className="flex flex-col space-y-1.5 mb-3 w-full">
                 <Label htmlFor="startTime">Tournament Start DateTime</Label>
-                <Input id="startTime" type="datetime-local" className="text-center pl-16 bg-white text-gray-700" />
+                <Input id="startTime" type="datetime-local" className="text-center pl-16 bg-white text-gray-700" defaultValue={tournament.tournament_start} />
               </div>
               <div className="flex flex-col space-y-1.5 mb-3 w-full">
                 <Label htmlFor="endTime">Tournament End DateTime</Label>
-                <Input id="endTime" type="datetime-local" className="text-center pl-16 bg-white text-gray-700" />
+                <Input id="endTime" type="datetime-local" className="text-center pl-16 bg-white text-gray-700" defaultValue={tournament.tournament_end}/>
               </div>
             </div>
             <CardFooter className="mt-8 flex flex-row-reverse justify-center items-center">
