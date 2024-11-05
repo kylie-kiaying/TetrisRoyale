@@ -22,3 +22,9 @@ class MatchCreate(BaseModel):
 
 class MatchResultUpdate(BaseModel):
     winner_id: int
+
+class MatchUpdate(BaseModel):
+    tournament_id: Optional[int]
+    player1_id: Optional[int]
+    player2_id: Optional[int]
+    scheduled_at: Optional[datetime]
