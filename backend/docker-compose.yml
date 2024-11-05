@@ -64,6 +64,18 @@ services:
     networks:
       - microservices-network
 
+  admin-service:
+    build:
+      context: ./admin-service
+    ports:
+      - "8006:8000"
+    env_file:
+      - ./admin-service/.env
+    depends_on:
+      - auth-service
+    networks:
+      - microservices-network
+
   # ranking-service:
   #   build:
   #     context: ./ranking-service
