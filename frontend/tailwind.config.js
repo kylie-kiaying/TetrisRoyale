@@ -66,4 +66,7 @@ module.exports = {
   	}
   },
   plugins: [require("tailwindcss-animate")],
+  safelist: [
+    'text-blue-300'
+  ],
 };
