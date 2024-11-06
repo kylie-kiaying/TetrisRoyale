@@ -45,3 +45,17 @@ async def register_player(id: int, player_id: int, tournament_service: Tournamen
 @router.get("/tournaments/{id}/matches", response_model=List[RegistrantSchema])
 async def get_tournament_matches(id: int, tournament_service: TournamentService = Depends(get_tournament_service)):
     return await tournament_service.get_tournament_matches(id)
+
+@router.delete("/tournaments/{id}/registrants/{player_id}", response_model=dict)
+async def delete_registrant(id: int, player_id: int, tournament_service: TournamentService = Depends(get_tournament_service)):
+    try:
+        return await tournament_service.delete_registrant(id, player_id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    
+@router.put("/tournaments/{id}/registrants/{player_id}", response_model=RegistrantSchema)
+async def update_registrant(id: int, player_id: int, new_player_id: int, tournament_service: TournamentService = Depends(get_tournament_service)):
+    try:
+        return await tournament_service.update_registrant(id, player_id, new_player_id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
