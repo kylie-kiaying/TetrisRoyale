@@ -76,6 +76,19 @@ services:
     networks:
       - microservices-network
 
+  analytics-service:
+    build:
+      context: ./analytics-service
+    ports:
+      - "8007:8000"
+    env_file:
+      - ./analytics-service/.env
+    depends_on:
+      - matchmaking-service
+      - tournament-service
+    networks:
+      - microservices-network
+
   # ranking-service:
   #   build:
   #     context: ./ranking-service

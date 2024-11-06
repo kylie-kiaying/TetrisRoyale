@@ -19,3 +19,8 @@ class Player(Base):
     match_history = Column(JSON, default=list)
     date_created = Column(DateTime(timezone=True), default=utcnow)
     last_updated = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+    speed = Column(Integer, default=1)
+    defense = Column(Integer, default=1)
+    strategy = Column(Integer, default=1)
+    aggression = Column(Integer, default=1)
+    efficiency = Column(Integer, default=1)
