@@ -34,7 +34,6 @@ async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends
             player1_score=-1,                     # Set initial scores for future match
             player2_score=-1,                     # Set initial scores for future match
         )
-        print(new_match)
         
         db.add(new_match)
         await db.commit()
@@ -45,38 +44,48 @@ async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends
     return {"message": "Tournament match created successfully", "match_id": new_match.id}
 
 @router.put("/matches/{match_id}/", response_model=dict)
-async def update_match_scores(match_id: int, scores: MatchUpdate, db: AsyncSession = Depends(get_db)):
+async def update_match_scores(match_id: int, update: MatchUpdate, db: AsyncSession = Depends(get_db)):
     # Fetch the match
     match = await db.get(Match, match_id)
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
 
+    if update.player1_id:
+        match.player1_id = update.player1_id
+
+    if update.player2_id:
+        match.player2_id = update.player2_id
+
+    if update.status:
+        match.status = update.status
+    
+    if update.scheduled_at:
+        match.scheduled_at = datetime.fromisoformat(update.scheduled_at)
+    
+    if update.tournament_id:
+        match.tournament_id = update.tournament_id
+
     # Update the scores for the match
-    match.player1_score = scores.player1_score
-    match.player2_score = scores.player2_score
+    if update.player1_score:
+        match.player1_score = update.player1_score
 
-    # Check if the match has ended and determine winner if scores are valid
-    if match.player1_score != -1 and match.player2_score != -1:
-        match.status = "completed"
-
-    await db.commit()
-
-    # Fetch all players and matches for WHR calculation
-    players = (await db.execute(select(Player))).scalars().all()
-    matches = (await db.execute(select(Match))).scalars().all()
-
-    updated_ratings = calculate_whr(players, matches)
-
-    # Update player ratings in the local database
-    for player_id, new_rating in updated_ratings.items():
-        print(player_id)
-        print(new_rating)
-        if new_rating:
-            player = await db.get(Player, int(player_id))
-            player.rating = new_rating[len(new_rating) - 1][1]
+    if update.player2_score:
+        match.player2_score = update.player2_score
 
     await db.commit()
-    return {"message": "Match scores updated and ratings recalculated"}
+    if update.status == "completed":
+        await calculate_ratings(db)
+
+    return {"message": "Match updated and ratings recalculated"}
+
+@router.delete("/matches/{match_id}", response_model=dict)
+async def delete_match(match_id:int, db:AsyncSession = Depends(get_db)):
+    match = await db.get(Match, match_id)
+    await db.delete(match)
+    await db.commit()
+    await calculate_ratings(db)
+
+    return{"message": "Match deleted and ratings recalculated"}
 
 @router.post("/ratings/{player_id}", response_model=dict)
 async def add_player(player_id: int, username: str, db: AsyncSession = Depends(get_db)):
@@ -170,6 +179,11 @@ async def store_daily_ratings(db: AsyncSession = Depends(get_db)):
         print("Ratings for today already stored.")
         return
 
+    await calculate_ratings(db)
+
+    print("Stored daily ratings for all players.")
+
+async def calculate_ratings(db: AsyncSession = Depends(get_db)):
     # Fetch all players and matches for WHR calculation
     players = (await db.execute(select(Player))).scalars().all()
     matches = (await db.execute(select(Match))).scalars().all()
@@ -191,4 +205,3 @@ async def store_daily_ratings(db: AsyncSession = Depends(get_db)):
             db.add(rating_history_entry)
 
     await db.commit()
-    print("Stored daily ratings for all players.")
