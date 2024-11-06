@@ -47,3 +47,7 @@ async def reset_password(token: str, data: ResetPassword, db: AsyncSession = Dep
 @router.put("/users/{user_id}")
 async def update_user(user_id: int, request:UpdateRequest, db:AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
     return await auth_service.update_user(user_id, request, db)
+
+@router.delete("/users/{user_id}")
+async def delete_user(user_id: int, db:AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
+    return await auth_service.delete_user(user_id, db)

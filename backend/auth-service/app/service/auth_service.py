@@ -174,3 +174,12 @@ class AuthService:
             return {"message": "Update Sucessful"}
         else:
             return {"error": "No user found with this id."}
+        
+    async def delete_user(self, user_id: int, db:AsyncSession):
+        user_repository = UserRepository()
+        user = await user_repository.get_user_by_id(user_id, db)
+        if user:
+            await user_repository.delete_user(user, db)
+            return {"message": "Delete Sucessful"}
+        else:
+            return {"error": "No user found with this id."}
