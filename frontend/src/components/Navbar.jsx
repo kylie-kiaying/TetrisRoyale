@@ -50,6 +50,27 @@ export default function Navbar() {
     setHasMounted(true);
   }, []);
 
+  const handleSignOut = async () => {
+    try {
+      const response = await fetch('http://localhost:8001/logout/', {
+        method: 'POST',
+        credentials: 'include', // Ensure cookies are sent
+      });
+
+      if (response.ok) {
+        successToast('You have been logged out successfully.');
+        clearUser();
+        Cookies.remove('session_token'); // Remove the token cookie from the client
+        router.push('/');
+      } else {
+        errorToast('Failed to log out. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+      errorToast('An error occurred during logout. Please try again.');
+    }
+  };
+
   // Redirect to home if user is not authenticated after mounting
   useEffect(() => {
     if (hasMounted && !isAuthenticated) {
@@ -111,7 +132,7 @@ export default function Navbar() {
             <Link key={href} href={href}>
               <TooltipProvider>
                 <Tooltip delayDuration={100}>
-                  <TooltipTrigger>
+                  <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
                       className={`text-primary-foreground ${isActive(href) ? 'bg-accent text-accent-foreground' : ''}`}
@@ -183,6 +204,7 @@ export default function Navbar() {
                     variant="destructive"
                     onClick={() => {
                       clearUser();
+                      handleSignOut();
                       window.location.href = '/';
                     }}
                   >
@@ -224,6 +246,7 @@ export default function Navbar() {
           variant="destructive"
           onClick={() => {
             clearUser();
+            handleSignOut();
             window.location.href = '/';
           }}
         >

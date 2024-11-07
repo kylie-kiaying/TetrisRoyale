@@ -1,60 +1,92 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 
-export const useAuthStore = create((set) => ({
-  user: {
-    token: null,
-    username: null,
-    userType: null,
-    rating: null,
-  },
+export const useAuthStore = create(
+  persist(
+    (set) => ({
+      user: {
+        token: null,
+        username: null,
+        userType: null,
+        rating: null,
+      },
 
-  setUser: async (token) => {
-    try {
-      // Verify token format and decode
-      if (token && token.split('.').length === 3) {
-        const decoded = jwtDecode(token);
+      // Updated setUser to remove async/await and streamline setting user data
+      setUser: (token) => {
+        try {
+          if (token && token.split('.').length === 3) {
+            const decoded = jwtDecode(token);
 
-        // Fetch user rating using decoded ID
-        const ratingResponse = await axios.get(
-          `http://localhost:8005/ratings/${decoded.id}`
-        );
-        const rating =
-          ratingResponse.status === 200 ? ratingResponse.data.rating : null;
+            // Fetch user rating using decoded ID
+            axios
+              .get(`http://localhost:8005/ratings/${decoded.id}`)
+              .then((ratingResponse) => {
+                const rating =
+                  ratingResponse.status === 200
+                    ? ratingResponse.data.rating
+                    : null;
 
-        // Set user in Zustand store with token, username, userType, and rating
+                // Set user data in Zustand store
+                set({
+                  user: {
+                    token,
+                    username: decoded.username,
+                    userType: decoded.role,
+                    rating,
+                  },
+                });
+              })
+              .catch((error) => {
+                console.error('Error fetching rating:', error);
+                set({
+                  user: {
+                    token,
+                    username: decoded.username,
+                    userType: decoded.role,
+                    rating: null,
+                  },
+                });
+              });
+          } else {
+            console.error('Invalid token format:', token);
+          }
+        } catch (error) {
+          console.error('Error decoding token:', error);
+        }
+      },
+
+      clearUser: () =>
         set({
-          user: {
-            token,
-            username: decoded.username,
-            userType: decoded.role, // Assuming 'role' in token is 'userType'
-            rating,
-          },
-        });
-      } else {
-        console.error('Invalid token format:', token);
-      }
-    } catch (error) {
-      console.error('Error decoding token or fetching rating:', error);
-    }
-  },
+          user: { token: null, username: null, userType: null, rating: null },
+        }),
 
-  clearUser: () =>
-    set({
-      user: { token: null, username: null, userType: null, rating: null },
+      isAuthenticated: () => !!useAuthStore.getState().user.token,
+
+      initialiseUser: () => {
+        const token = Cookies.get('session_token');
+        if (token) {
+          useAuthStore.getState().setUser(token); // Initialize user if token exists
+        }
+      },
     }),
-
-  isAuthenticated: () => !!useAuthStore.getState().user.token,
-}));
+    {
+      name: 'auth-store',
+      partialize: (state) => ({
+        user: state.user,
+      }),
+    }
+  )
+);
 
 // Initialize user function to load from cookies on app load
 export function initialiseUser() {
   const token = Cookies.get('session_token');
-  console.log('Token from Cookie on Init:', token); // Debugging line
+  console.log('Token from Cookie on Init:', token);
 
   if (token) {
-    useAuthStore.getState().setUser(token); // Set user with token from cookie
+    useAuthStore.getState().setUser(token);
   }
 }
