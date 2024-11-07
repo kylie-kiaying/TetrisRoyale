@@ -18,6 +18,7 @@ def create_access_token(username: str, role: str, id: int):
     }
 
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    # print("Generated Token:", token)  # Log the token for debugging
     return token
 
 def create_recovery_token(email: str):

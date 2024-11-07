@@ -32,6 +32,7 @@ class AuthService:
 
             if verify_password(auth_data.password, stored_password_hash):
                 token = create_access_token(auth_data.username, role, id)
+                # print("Generated Token:", token)  # Log the token value
                 response = {"message": "Login successful"}
                 
                 from fastapi.responses import JSONResponse
@@ -39,8 +40,8 @@ class AuthService:
                 response.set_cookie(
                     key="session_token",
                     value=token,
-                    httponly=True,
-                    secure=True,    # Use HTTPS in production
+                    httponly=False,
+                    secure=False,    # Use HTTPS in production
                     samesite="lax"
                 )
 
