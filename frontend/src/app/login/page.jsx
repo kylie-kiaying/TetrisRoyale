@@ -156,7 +156,7 @@ export default function LoginPage() {
               <p className="text-sm text-gray-400">
                 Forgot your password?{' '}
                 <Link
-                  href="/forgot-password"
+                  href="/login/forget-password"
                   className="text-white underline hover:text-gray-300"
                 >
                   Reset it here
