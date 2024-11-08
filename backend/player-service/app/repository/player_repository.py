@@ -4,6 +4,8 @@ from sqlalchemy.orm.exc import NoResultFound
 from app.model.player_model import Player
 from app.schema.player_schema import PlayerCreate, PlayerUpdate
 from datetime import datetime, timezone
+from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
 
 class PlayerRepository:
     def __init__(self, db_session: AsyncSession):
@@ -35,15 +37,23 @@ class PlayerRepository:
         await self.db_session.refresh(new_player)
         return new_player
 
-    async def update_player(self, player_id: int, player_data: PlayerUpdate):
-        player = await self.get_player_by_id(player_id)
-        if player:
-            for key, value in player_data.dict(exclude_unset=True).items():
-                setattr(player, key, value)
-            await self.db_session.commit()
-            await self.db_session.refresh(player)
-            return player
-        return None
+    async def update_player(self, player_id: int, player_data: dict):
+        try:
+            query = select(Player).where(Player.user_id == player_id)
+            result = await self.db_session.execute(query)
+            player = result.scalar_one_or_none()
+            
+            if player:
+                for key, value in player_data.items():
+                    setattr(player, key, value)
+                player.last_updated = datetime.now(timezone.utc)
+                await self.db_session.commit()
+                await self.db_session.refresh(player)
+                return player
+            return None
+        except Exception as e:
+            await self.db_session.rollback()
+            raise e
 
     async def update_availability(self, player_id: int, availability_status: str):
         player = await self.get_player_by_id(player_id)
