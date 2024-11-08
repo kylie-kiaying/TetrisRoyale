@@ -1,5 +1,5 @@
-from fastapi import HTTPException, Response
-from fastapi.responses import JSONResponse
+from fastapi import HTTPException, Response, status
+from fastapi.responses import JSONResponse, RedirectResponse
 from app.repository.user_repository import UserRepository
 from app.utils.password_utils import verify_password, hash_password
 from app.utils.email_utils import send_verification_email, send_recovery_email
@@ -125,7 +125,8 @@ class AuthService:
 
         if user:
             await user_repository.mark_email_verified(user, db)
-            return {"message": "Email verified successfully"}
+            return RedirectResponse(url="http://localhost:3000/verify-email-success", status_code=status.HTTP_303_SEE_OTHER)
+            # return {"message": "Email verified successfully"}
 
         raise HTTPException(status_code=400, detail="Invalid or expired verification token")
     
