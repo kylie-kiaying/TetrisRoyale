@@ -15,10 +15,7 @@ jobs:
           'auth-service',
           'player-service', 
           'tournament-service',
-          'matchmaking-service',
-          'admin-service',
-          'analytics-service',
-          'rating-service'
+          'matchmaking-service'
         ]
 
     steps:
