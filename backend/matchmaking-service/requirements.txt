@@ -4,8 +4,10 @@ starlette==0.38.5
 uvicorn==0.30.6
 python-jose
 sqlalchemy
-psycopg2-binary
 asyncpg
 pytest==8.3.3
 pytest-asyncio==0.24.0
-whr==1.0.1
+aiosqlite
+httpx
+python-dotenv
+anyio>=3.0.0
