@@ -37,6 +37,7 @@ jobs:
       env:
         PLAYER_SERVICE_URL: http://localhost:8002
         RATING_SERVICE_URL: http://localhost:8005
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
         from_email: ${{ secrets.FROM_EMAIL }}
         from_password: ${{ secrets.FROM_PASSWORD }}
       run: |
