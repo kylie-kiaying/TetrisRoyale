@@ -63,3 +63,8 @@ class UserRepository:
         if request.email:
             user.email = request.email
         await db.commit()
+    
+    async def delete_user(self, user:User, db:AsyncSession):
+        await db.delete(user)
+        await db.flush()
+        await db.commit()

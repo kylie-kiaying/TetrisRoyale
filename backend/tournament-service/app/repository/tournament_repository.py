@@ -45,3 +45,21 @@ class TournamentRepository:
         if tournament:
             return tournament.registrants
         return None
+    
+    async def get_registrant_by_tournament_and_player(self, tournament_id: int, player_id: int):
+        result = await self.db_session.execute(
+            select(Registrant).where(
+                Registrant.tournament_id == tournament_id,
+                Registrant.player_id == player_id
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def delete_registrant(self, registrant: Registrant):
+        await self.db_session.delete(registrant)
+        await self.db_session.commit()
+
+    async def update_registrant(self, registrant: Registrant):
+        await self.db_session.commit()
+        await self.db_session.refresh(registrant)
+        return registrant

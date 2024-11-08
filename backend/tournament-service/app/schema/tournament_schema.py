@@ -21,6 +21,7 @@ class TournamentBase(BaseModel):
     status: Optional[str] = "upcoming"
     remarks: Optional[str]
     recommended_rating: Optional[int]
+    organiser: str
 
 class TournamentCreate(TournamentBase):
     pass
@@ -32,6 +33,7 @@ class TournamentUpdate(BaseModel):
     status: Optional[str]
     remarks: Optional[str]
     recommended_elo: Optional[int]
+    organiser: Optional[str]
 
 
 class TournamentResponse(TournamentBase):

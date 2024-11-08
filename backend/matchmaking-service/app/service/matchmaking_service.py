@@ -3,7 +3,7 @@ from app.repository.matchmaking_repository import MatchmakingRepository
 from app.repository.tournament_repository import TournamentRepository
 from sqlalchemy.exc import NoResultFound
 from app.model.matchmaking_model import Match
-from app.schema.matchmaking_schema import MatchCreate, MatchResponse
+from app.schema.matchmaking_schema import MatchCreate, MatchResponse, MatchUpdate
 import httpx
 from fastapi import HTTPException
 from datetime import datetime
@@ -52,6 +52,11 @@ class MatchmakingService:
             
             match = await self.matchmaking_repository.get_match_by_id(match_id)
             match_update = {
+                "tournament_id": None,
+                "player1_id": None,
+                "player2_id": None,
+                "scheduled_at": None,
+                "status": "completed",
                 "player1_score": 1 if match["player1_id"] == winner_id else 0,
                 "player2_score": 1 if match["player2_id"] == winner_id else 0 
             }
@@ -104,3 +109,71 @@ class MatchmakingService:
         response = await self.matchmaking_repository.create_match(match)
 
         return response
+
+# Method to update an existing match
+    async def update_match(self, match_id: int, match_update: MatchUpdate):
+        try:
+            # Fetch the existing match to ensure it exists
+            existing_match = await self.matchmaking_repository.get_match_by_id(match_id)
+            if not existing_match:
+                raise HTTPException(status_code=404, detail="Match not found")
+            
+            # Create a dictionary with the updated values, keeping existing values as defaults
+            updated_data = {
+                "tournament_id": match_update.tournament_id or existing_match["tournament_id"],
+                "player1_id": match_update.player1_id or existing_match["player1_id"],
+                "player2_id": match_update.player2_id or existing_match["player2_id"],
+                "scheduled_at": match_update.scheduled_at or existing_match["scheduled_at"]
+            }
+
+            # Create a new MatchUpdate object with updated values
+            updated_match_data = MatchUpdate(**updated_data)
+
+            # Save the updated match in the database
+            updated_match = await self.matchmaking_repository.update_match(match_id, updated_match_data)
+
+            match_data = {
+                "tournament_id": updated_data["tournament_id"],
+                "player1_id": updated_data["player1_id"],
+                "player2_id": updated_data["player2_id"],
+                "scheduled_at": updated_data["scheduled_at"].isoformat() if updated_data["scheduled_at"] else None,
+                "status": None,
+                "player1_score": None,
+                "player2_score": None 
+            }
+            
+            async with httpx.AsyncClient() as client:
+                response = await client.put(
+                    f"http://rating-service:8000/matches/{match_id}/",
+                    json=match_data
+                )
+                response.raise_for_status()
+
+            return updated_match
+        except httpx.HTTPStatusError as exc:
+            # Handle errors from external service calls
+            raise HTTPException(status_code=exc.response.status_code, detail=exc.response.text)
+        except Exception as e:
+            # Handle generic exceptions
+            raise HTTPException(status_code=500, detail=str(e))
+
+    # Method to delete an existing match
+    async def delete_match(self, match_id: int):
+        try:
+            match = await self.matchmaking_repository.get_match_by_id(match_id)
+            if not match:
+                raise HTTPException(status_code=404, detail="Match not found")
+            
+            await self.matchmaking_repository.delete_match(match_id)
+
+            async with httpx.AsyncClient() as client:
+                await client.delete(
+                    f"http://rating-service:8000/matches/{match_id}"
+                )
+
+            return {"detail": "Match deleted successfully"}
+        except httpx.HTTPStatusError as exc:
+            # Handle errors from the ratings service
+            raise HTTPException(status_code=exc.response.status_code, detail=exc.response.text)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))

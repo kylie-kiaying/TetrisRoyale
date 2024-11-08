@@ -37,3 +37,20 @@ class TournamentService:
 
     async def get_tournament_matches(self, tournament_id: int):
         return await self.tournament_repository.get_tournament_matches(tournament_id)
+    
+    async def delete_registrant(self, tournament_id: int, player_id: int):
+        registrant = await self.tournament_repository.get_registrant_by_tournament_and_player(tournament_id, player_id)
+        if not registrant:
+            raise ValueError("Registrant not found")
+        
+        await self.tournament_repository.delete_registrant(registrant)
+        return {"detail": "Registrant deleted successfully"}
+    
+    async def update_registrant(self, tournament_id: int, player_id: int, new_player_id: int):
+        registrant = await self.tournament_repository.get_registrant_by_tournament_and_player(tournament_id, player_id)
+        if not registrant:
+            raise ValueError("Registrant not found")
+        
+        registrant.player_id = new_player_id
+        updated_registrant = await self.tournament_repository.update_registrant(registrant)
+        return updated_registrant
