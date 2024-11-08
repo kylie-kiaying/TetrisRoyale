@@ -180,7 +180,7 @@ export default function Navbar() {
                 <div className="text-primary-foreground">
                   <h4 className="font-medium">{username}</h4>
                   <p className="text-xs text-muted-foreground">
-                    ELO: {playerRating || 'N/A'}
+                    WHR: {playerRating || 'N/A'}
                   </p>
                 </div>
               </div>
@@ -196,7 +196,7 @@ export default function Navbar() {
                   </Avatar>
                   <div className="space-y-1">
                     <h4 className="text-sm font-semibold">{username}</h4>
-                    <p className="text-sm">ELO: {playerRating || 'N/A'}</p>
+                    <p className="text-sm">WHR: {playerRating || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="mt-4 flex justify-center">

@@ -83,7 +83,7 @@ export default function PlayerProfile() {
             <h1 className="text-3xl font-semibold md:text-4xl">{username}</h1>
             <div className="flex w-full flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0 md:px-6">
               <p className="text-xl text-gray-400 md:text-2xl">
-                ELO: {playerRating}
+                WHR: {playerRating}
               </p>
               <div className="flex flex-col items-center space-y-2 md:items-start">
                 <p className="text-base text-gray-400 md:text-lg">
