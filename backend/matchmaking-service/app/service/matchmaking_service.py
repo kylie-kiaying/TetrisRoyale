@@ -24,9 +24,9 @@ class MatchmakingService:
         async with httpx.AsyncClient() as client:
             for i in range(0, len(registered_player_ids)):
                 response = await client.get(f"http://rating-service:8000/ratings/{registered_player_ids[i]}")
-                response.raise_for_status()
-                player_rating = response.json()
-                players.append({"id":registered_player_ids[i], "rating":player_rating["rating"]})
+                await response.raise_for_status()
+                player_rating = await response.json()
+                players.append({"id": registered_player_ids[i], "rating": player_rating["rating"]})
 
         players = sorted(players, key=lambda x: x["rating"])
 
