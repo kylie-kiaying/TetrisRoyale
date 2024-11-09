@@ -10,7 +10,7 @@ const tiers = [
     range: '2200+',
     color: 'text-yellow-500',
     description:
-      'The pinnacle of Tetris mastery, Champions display flawless skill, unmatched speed, and superior strategic depth."',
+      'The pinnacle of Tetris mastery, Champions display flawless skill, unmatched speed, and superior strategic depth.',
   },
   {
     name: 'Master',
