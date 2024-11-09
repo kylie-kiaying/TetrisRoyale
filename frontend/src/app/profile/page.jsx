@@ -6,9 +6,6 @@ import { DataTable } from '@/components/ui/data-table';
 import { useAuthStore } from '@/store/authStore';
 import PlayerStatistics from '@/components/PlayerStatistics';
 import ToggleButtons from '@/components/ui/toggle';
-import { getPlayerTier } from '@/utils/getPlayerTier'; // Import the getPlayerTier function
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 
 const matchHistory = [
   {
@@ -44,7 +41,6 @@ const matchHistory = [
 export default function PlayerProfile() {
   const username = useAuthStore((state) => state.user.username); // Get username from the auth store
   const playerRating = useAuthStore((state) => state.user.rating); // Get player rating from the auth store
-  const { tier, color } = getPlayerTier(playerRating); // Get the tier and color based on the rating
   const [visiblePlot, setVisiblePlot] = useState('playstyle'); // State to track the visible plot
 
   const togglePlot = (plot) => {
@@ -89,12 +85,6 @@ export default function PlayerProfile() {
               <p className="text-xl text-gray-400 md:text-2xl">
                 WHR: {playerRating}
               </p>
-              {/* Display Tier Badge */}
-              <Link href="/tierInfo" passHref>
-                <Badge className={`text-xl ${color} hover:glow-${color}`}>
-                  {tier}
-                </Badge>
-              </Link>
               <div className="flex flex-col items-center space-y-2 md:items-start">
                 <p className="text-base text-gray-400 md:text-lg">
                   Matches won: 1
