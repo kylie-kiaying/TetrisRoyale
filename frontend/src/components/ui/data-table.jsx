@@ -80,7 +80,7 @@ export function DataTable({ type, data }) {
                                             <div className="grid grid-cols-2 gap-4">
                                                 {/* Row 1 */}
                                                 <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
+                                                    <p className="text-sm font-semibold text-orange-400">
                                                         Pieces Placed
                                                     </p>
                                                     <p className="text-lg">
@@ -91,7 +91,7 @@ export function DataTable({ type, data }) {
                                                     </p>
                                                 </div>
                                                 <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
+                                                    <p className="text-sm font-semibold text-blue-400">
                                                         PPS (Pieces Per Second)
                                                     </p>
                                                     <p className="text-lg">
@@ -101,7 +101,7 @@ export function DataTable({ type, data }) {
 
                                                 {/* Row 2 */}
                                                 <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
+                                                    <p className="text-sm font-semibold text-purple-400">
                                                         APM (Attacks Per Minute)
                                                     </p>
                                                     <p className="text-lg">
@@ -109,7 +109,7 @@ export function DataTable({ type, data }) {
                                                     </p>
                                                 </div>
                                                 <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
+                                                    <p className="text-sm font-semibold text-pink-400">
                                                         KPP (Keys Per Piece)
                                                     </p>
                                                     <p className="text-lg">
@@ -119,7 +119,7 @@ export function DataTable({ type, data }) {
 
                                                 {/* Row 3 */}
                                                 <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
+                                                    <p className="text-sm font-semibold text-yellow-400">
                                                         Finesse %
                                                     </p>
                                                     <p className="text-lg">
@@ -130,7 +130,7 @@ export function DataTable({ type, data }) {
                                                     </p>
                                                 </div>
                                                 <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
+                                                    <p className="text-sm font-semibold text-green-300">
                                                         Lines Cleared
                                                     </p>
                                                     <p className="text-lg">

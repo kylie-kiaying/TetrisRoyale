@@ -183,7 +183,7 @@ export default function Navbar() {
                   <h4 className="font-medium">{username}</h4>
                   {userType === 'player' ? (
                     <p className="text-xs text-muted-foreground">
-                      WHR: {playerRating || 'N/A'}
+                      WHR: {playerRating.toFixed(2) || 'N/A'}
                     </p>
                   ) : (
                     <p className="text-xs text-muted-foreground">Admin</p>
@@ -205,7 +205,7 @@ export default function Navbar() {
                     {userType === 'player' ? (
                       <>
                         <p className="text-xs text-muted-foreground">
-                          WHR: {playerRating || 'N/A'}
+                          WHR: {playerRating.toFixed(2) || 'N/A'}
                         </p>
                         <Link href="/tierInfo">
                           <Badge className="bg-gray-800 text-xs">

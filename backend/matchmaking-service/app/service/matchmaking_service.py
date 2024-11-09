@@ -1,3 +1,4 @@
+import os
 import random
 from app.repository.matchmaking_repository import MatchmakingRepository
 from app.repository.tournament_repository import TournamentRepository
@@ -7,6 +8,34 @@ from app.schema.matchmaking_schema import MatchCreate, MatchResponse, MatchUpdat
 import httpx
 from fastapi import HTTPException
 from datetime import datetime
+
+
+def generate_random_player_statistics():
+    # Pieces placed between 50 to 150 (a core statistic)
+    pieces_placed = random.randint(50, 150)
+    
+    # Pieces per second (PPS): assume game time of around 60-200 seconds based on pieces placed
+    game_time_seconds = random.uniform(60, 200)
+    pps = round(pieces_placed / game_time_seconds, 2)  # Calculate PPS as pieces per second
+
+    # Key presses per piece (KPP): finesse affects this, lower KPP if finesse is high
+    finesse_percentage = random.randint(50, 100)  # Finesse as a percentage
+    kpp = round(random.uniform(1.5, 3.0) - (finesse_percentage - 50) / 100, 2)
+    kpp = max(0.5, min(3.0, kpp))  # Ensure KPP is between reasonable bounds
+
+    # Attacks per minute (APM): relates to lines cleared
+    lines_cleared = random.randint(50, 500)
+    apm = int((lines_cleared / game_time_seconds) * 60 * random.uniform(0.5, 1.5))
+    apm = min(apm, 300)  # Cap APM at 300
+
+    return {
+        "pieces_placed": pieces_placed,
+        "pps": pps,
+        "kpp": kpp,
+        "apm": apm,
+        "finesse_percentage": f"{finesse_percentage}%",
+        "lines_cleared": lines_cleared
+    }
 
 
 class MatchmakingService:
@@ -46,6 +75,12 @@ class MatchmakingService:
 
     async def submit_match_result(self, match_id: int, winner_id: int):
         try:
+            analytics_service_url = os.getenv("ANALYTICS_SERVICE_URL")
+            if not analytics_service_url:
+                raise RuntimeError("ANALYTICS_SERVICE_URL is not set")
+            
+            player1_statistics = generate_random_player_statistics()
+            player2_statistics = generate_random_player_statistics()
             updated_match = await self.matchmaking_repository.update_match_result(match_id, winner_id)
             if not updated_match:
                 raise ValueError(f"Match with id {match_id} not found")
@@ -58,7 +93,7 @@ class MatchmakingService:
                 "scheduled_at": None,
                 "status": "completed",
                 "player1_score": 1 if match["player1_id"] == winner_id else 0,
-                "player2_score": 1 if match["player2_id"] == winner_id else 0 
+                "player2_score": 1 if match["player2_id"] == winner_id else 0,
             }
 
             async with httpx.AsyncClient() as client:
@@ -66,6 +101,39 @@ class MatchmakingService:
                     f"http://rating-service:8000/matches/{match_id}/",  
                     json=match_update
                 )
+                # response = await client.post(
+                #     # TODO: CHANGE THIS URL
+                #     f"http://localhost:8007/analytics/statistics",
+                #     json={
+                #         "player_id": match["player1_id"],
+                #         "match_id": match_id,
+                #         "tournament_id": match["tournament_id"],
+                #         "pieces_placed": player1_statistics["pieces_placed"],
+                #         "pps": player1_statistics["pps"],
+                #         "kpp": player1_statistics["kpp"],
+                #         "apm": player1_statistics["apm"],
+                #         "finesse_percentage": player1_statistics["finesse_percentage"],
+                #         "lines_cleared": player1_statistics["lines_cleared"]
+                #     }
+                # )
+                # response.raise_for_status()
+                
+                # response = await client.post(
+                #     # TODO: CHANGE THIS URL
+                #     f"http://localhost:8007/analytics/statistics",
+                #     json={
+                #         "player_id": match["player2_id"],
+                #         "match_id": match_id,
+                #         "tournament_id": match["tournament_id"],
+                #         "pieces_placed": player2_statistics["pieces_placed"],
+                #         "pps": player2_statistics["pps"],
+                #         "kpp": player2_statistics["kpp"],
+                #         "apm": player2_statistics["apm"],
+                #         "finesse_percentage": player2_statistics["finesse_percentage"],
+                #         "lines_cleared": player2_statistics["lines_cleared"]
+                #     }
+                # )
+                # response.raise_for_status()
     
             return updated_match
         except Exception as e:
