@@ -20,9 +20,8 @@ import { formatDate } from '@/utils/dateUtils';
 import { successToast, errorToast } from '@/utils/toastUtils';
 
 export default function AdminPage() {
-  const [openDelete, setOpenDelete] = useState(undefined);
-  const [create, setCreate] = useState(false);
-  const [openEdit, setOpenEdit] = useState(undefined);
+  const [openDelete, setOpenDelete] = useState(null); // For delete confirmation
+  const [openCreate, setOpenCreate] = useState(false); // For create dialog
   const [tournaments, setTournaments] = useState([]);
   const username = useAuthStore((state) => state.user.username);
   const [formData, setFormData] = useState({
@@ -68,7 +67,7 @@ export default function AdminPage() {
 
       if (response.ok) {
         successToast('Tournament created successfully!');
-        setCreate(false); // Close the dialog on success
+        setOpenCreate(false); // Close the dialog on success
         setFormData({
           tournament_name: '',
           tournament_start: '',
@@ -93,6 +92,29 @@ export default function AdminPage() {
     setTournaments(fetchedTournaments);
   };
 
+  const handleDeleteTournament = async (tournamentId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8003/tournaments/${tournamentId}`,
+        {
+          method: 'DELETE',
+        }
+      );
+
+      if (response.ok) {
+        successToast('Tournament deleted successfully!');
+        setOpenDelete(null); // Close the delete confirmation dialog
+        loadTournaments(); // Refresh tournaments list
+      } else {
+        console.error('Failed to delete tournament');
+        errorToast('Failed to delete tournament');
+      }
+    } catch (error) {
+      console.error('Error during deletion:', error);
+      errorToast('An error occurred. Please try again.');
+    }
+  };
+
   useEffect(() => {
     loadTournaments();
   }, []);
@@ -115,13 +137,13 @@ export default function AdminPage() {
             <Button
               variant="outline"
               className="border-none bg-purple-700 text-white transition-all duration-200 hover:bg-purple-600"
-              onClick={() => setCreate(true)}
+              onClick={() => setOpenCreate(true)}
             >
               Create
             </Button>
             <Dialog
-              open={create}
-              onClose={() => setCreate(false)}
+              open={openCreate}
+              onClose={() => setOpenCreate(false)}
               className="relative z-10 rounded-lg"
             >
               <DialogBackdrop className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
@@ -216,7 +238,7 @@ export default function AdminPage() {
                               type="button"
                               variant="outline"
                               className="border border-gray-500 text-gray-500 hover:bg-gray-300/70"
-                              onClick={() => setCreate(false)}
+                              onClick={() => setOpenCreate(false)}
                             >
                               Cancel
                             </Button>
@@ -260,12 +282,12 @@ export default function AdminPage() {
                     </span>
                     <div className="mt-2 text-xs">
                       Status:{' '}
-                      {tournament.status === 'ongoing' ? (
+                      {tournament.status === 'Ongoing' ? (
                         <span className="text-yellow-200"> Ongoing</span>
-                      ) : tournament.status === 'upcoming' ? (
+                      ) : tournament.status === 'Upcoming' ? (
                         <span className="text-green-200"> Upcoming</span>
                       ) : (
-                        <span className="text-red-200"> Completed</span>
+                        <span className="text-red-200"> Finished</span>
                       )}
                     </div>
                   </div>
@@ -285,7 +307,61 @@ export default function AdminPage() {
                     >
                       Delete
                     </Button>
-                    {/* Delete Dialog Code (remaining code unchanged) */}
+
+                    {/* Confirm Delete Dialog */}
+                    <Dialog
+                      open={openDelete === tournament.tournament_id}
+                      onClose={() => setOpenDelete(null)}
+                      className="relative z-10 rounded-lg"
+                    >
+                      <DialogBackdrop className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
+                      <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                          <DialogPanel className="relative transform overflow-hidden rounded-lg bg-[#1c1132] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                            <div className="bg-[#1c1132] px-4 pb-4 pt-5 text-white sm:p-6 sm:pb-4">
+                              <div className="flex items-center">
+                                <ExclamationTriangleIcon className="h-6 w-6 text-red-600" />
+                                <DialogTitle
+                                  as="h3"
+                                  className="ml-3 text-lg font-medium"
+                                >
+                                  Confirm Deletion
+                                </DialogTitle>
+                              </div>
+                              <div className="mt-4">
+                                <p>
+                                  Are you sure you want to delete the
+                                  tournament:{' '}
+                                  <strong>{tournament.tournament_name}</strong>?
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                  This action cannot be undone.
+                                </p>
+                              </div>
+                            </div>
+                            <div className="bg-black/25 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                              <Button
+                                onClick={() =>
+                                  handleDeleteTournament(
+                                    tournament.tournament_id
+                                  )
+                                }
+                                className="w-full bg-red-600 text-white hover:bg-red-500 sm:ml-3 sm:w-auto"
+                              >
+                                Delete
+                              </Button>
+                              <Button
+                                onClick={() => setOpenDelete(null)}
+                                variant="outline"
+                                className="mt-3 w-full border border-purple-500 text-purple-500 hover:bg-gray-300/70 sm:mt-0 sm:w-auto"
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </DialogPanel>
+                        </div>
+                      </div>
+                    </Dialog>
                   </div>
                 </CardContent>
               </Card>
