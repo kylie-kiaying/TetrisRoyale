@@ -22,7 +22,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { formatDate } from '@/utils/dateUtils';
+import { formatDateMedium } from '@/utils/dateUtils';
 import { successToast } from '@/utils/toastUtils';
 
 export default function TournamentDetails() {
@@ -205,12 +205,12 @@ export default function TournamentDetails() {
             <DetailItem
               icon={<FaCalendarAlt />}
               label="Start Date"
-              content={formatDate(tournament.tournament_start)}
+              content={formatDateMedium(tournament.tournament_start)}
             />
             <DetailItem
               icon={<FaCalendarAlt />}
               label="End Date"
-              content={formatDate(tournament.tournament_end)}
+              content={formatDateMedium(tournament.tournament_end)}
             />
             <DetailItem
               icon={<FaStar />}
