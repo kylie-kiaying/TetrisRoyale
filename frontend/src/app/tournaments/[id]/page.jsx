@@ -22,15 +22,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-
-// Function to display dateStrings in a more readable format
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleString('en-US', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  });
-}
+import { formatDate } from '@/utils/dateUtils';
 
 export default function TournamentDetails() {
   const router = useRouter();
