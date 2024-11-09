@@ -8,6 +8,7 @@ import PlayerStatistics from '@/components/PlayerStatistics';
 import ToggleButtons from '@/components/ui/toggle';
 import { getPlayerTier } from '@/utils/getPlayerTier'; // Import the getPlayerTier function
 import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
 const matchHistory = [
   {
@@ -89,9 +90,11 @@ export default function PlayerProfile() {
                 WHR: {playerRating}
               </p>
               {/* Display Tier Badge */}
-              <Badge className={`text-xl ${color} hover:glow-${color}`}>
-                {tier}
-              </Badge>
+              <Link href="/tierInfo" passHref>
+                <Badge className={`text-xl ${color} hover:glow-${color}`}>
+                  {tier}
+                </Badge>
+              </Link>
               <div className="flex flex-col items-center space-y-2 md:items-start">
                 <p className="text-base text-gray-400 md:text-lg">
                   Matches won: 1

@@ -207,9 +207,13 @@ export default function Navbar() {
                         <p className="text-xs text-muted-foreground">
                           WHR: {playerRating || 'N/A'}
                         </p>
-                        <Badge className="bg-gray-800 text-xs">
-                          <span className={`${color}`}>{tier}</span>
-                        </Badge>
+                        <Link href="/tierInfo" passHref>
+                          <Badge
+                            className={`bg-gray-800 text-xs ${color} cursor-pointer hover:shadow-[0_0_10px]`}
+                          >
+                            {tier}
+                          </Badge>
+                        </Link>
                       </>
                     ) : (
                       <p className="text-xs text-muted-foreground">Admin</p>

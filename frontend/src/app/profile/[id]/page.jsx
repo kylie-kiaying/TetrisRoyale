@@ -8,6 +8,7 @@ import ToggleButtons from '@/components/ui/toggle';
 import PlayerStatistics from '@/components/PlayerStatistics';
 import { getPlayerTier } from '@/utils/getPlayerTier';
 import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
 // Sample match history data
 const matchHistory = [
@@ -107,11 +108,13 @@ export default function ViewPlayerProfile() {
           <div className="flex w-full flex-col items-center space-y-4 px-2">
             <h1 className="text-3xl font-semibold md:text-4xl">{username}</h1>
             <p className="text-xl text-gray-400 md:text-2xl">WHR: {rating}</p>
-            <Badge
-              className={`mt-2 rounded-lg px-3 py-1 ${color} hover:shadow-[0_0_10px_${color.replace('text', 'shadow')}]`}
-            >
-              {tier}
-            </Badge>
+            <Link href="/tierInfo" passHref>
+              <Badge
+                className={`mt-2 rounded-lg px-3 py-1 ${color} hover:shadow-[0_0_10px_${color.replace('text', 'shadow')}]`}
+              >
+                {tier}
+              </Badge>
+            </Link>
           </div>
 
           {/* Toggle Buttons for Analytics */}
