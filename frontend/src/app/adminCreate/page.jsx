@@ -30,7 +30,7 @@ export default function CreationPage() {
       <div className="flex w-full flex-grow items-start justify-center pb-10 pt-14">
         <Card className="w-[350px] max-w-md items-center rounded-lg bg-opacity-40 shadow-lg backdrop-blur-md">
           <CardHeader>
-            <CardTitle>Edit Tournament</CardTitle>
+            <CardTitle>Create Tournament</CardTitle>
           </CardHeader>
           <CardContent>
             <form>
@@ -70,7 +70,7 @@ export default function CreationPage() {
                 className="bg-white text-[#1e0b38] hover:bg-gray-300/70"
               >
                 {' '}
-                Edit
+                Create
               </Button>
             </div>
           </CardFooter>

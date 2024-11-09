@@ -1,20 +1,10 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from app.controller.ratings_controller import router as ratings_router
 from app.db.database import engine, get_db
 from app.model.models import Base
 from app.controller.ratings_controller import store_daily_ratings
 
 app = FastAPI()
-
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Include the ratings controller
 app.include_router(ratings_router)

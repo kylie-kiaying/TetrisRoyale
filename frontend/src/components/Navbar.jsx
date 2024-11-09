@@ -1,17 +1,15 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { getPlayerTier } from '@/utils/getPlayerTier';
-import { useState, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import {
   Tooltip,
+  TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  TooltipContent,
 } from '@/components/ui/tooltip';
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation'; // Correct import to get the pathname
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import {
   HoverCard,
   HoverCardTrigger,
@@ -33,63 +31,37 @@ import { errorToast } from '@/utils/toastUtils';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [hasMounted, setHasMounted] = useState(false);
-
-  const pathname = usePathname();
+  const pathname = usePathname(); // Get the current pathname
+  const [playerData, setPlayerData] = useState({
+    username: 'User Name',
+    rating: 1234,
+  }); // State for player details
+  const token = useAuthStore((state) => state.token); // Get the JWT token from the auth store
+  const username = useAuthStore((state) => state.username); // Get username from the auth store
+  const role = useAuthStore((state) => state.userType);
   const router = useRouter();
 
-  const userType = useAuthStore((state) => state.user.userType);
-  const isAuthenticated = useAuthStore((state) => !!state.user.token);
-  const username = useAuthStore((state) => state.user.username);
-  const userId = useAuthStore((state) => state.user.id);
-  const playerRating = useAuthStore((state) => state.user.rating);
-  const { tier, color } = getPlayerTier(playerRating || 0);
-
+  // Toggle function for the menu
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
+  // Check if the current route matches the link path
   const isActive = (path) => pathname === path;
 
-  // Set hasMounted to true on initial render
+  // Redirect to root if username is null (user is not logged in)
   useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  const handleSignOut = async () => {
-    try {
-      const response = await fetch('http://localhost:8001/logout/', {
-        method: 'POST',
-        credentials: 'include', // Ensure cookies are sent
-      });
-
-      if (response.ok) {
-        successToast('You have been logged out successfully.');
-        useAuthStore.getState().clearUser(); // Clear user data from the store
-        Cookies.remove('session_token'); // Remove the token cookie from the client
-        router.push('/');
-      } else {
-        errorToast('Failed to log out. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error during logout:', error);
-      errorToast('An error occurred during logout. Please try again.');
-    }
-  };
-
-  // Redirect to home if user is not authenticated after mounting
-  useEffect(() => {
-    if (hasMounted && !isAuthenticated) {
+    if (!username) {
       router.push('/');
       errorToast('You have been signed out, please log in again');
     }
-  }, [hasMounted, isAuthenticated, router]);
-
-  if (!hasMounted) return null;
+  }, [username, router]);
 
   return (
     <div className="sticky top-4 z-50 mt-3 w-full">
       <header className="mx-auto flex h-12 max-w-5xl items-center justify-between rounded-full border-muted bg-inherit px-6 py-4 shadow-[inset_0_0_0_3000px_rgba(150,150,150,0.192)] backdrop-blur-md">
+        {/* Left Side - Logo */}
         <div className="flex items-center gap-4">
           <Link
-            href={userType === 'player' ? '/playerHome' : '/adminHome'}
+            href="/playerHome"
             className="group flex items-center gap-0 text-white"
           >
             <img
@@ -105,51 +77,95 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-4 md:flex">
-          {[
-            {
-              href: userType === 'player' ? '/playerHome' : '/adminHome',
-              icon: <IoHome className="h-6 w-6" />,
-              label: 'Home',
-            },
-            {
-              href: '/tournaments',
-              icon: <IoTrophy className="h-6 w-6" />,
-              label: 'Tournament browser',
-            },
-            {
-              href: '/rankings',
-              icon: <PiRankingBold className="h-6 w-6" />,
-              label: 'Rankings',
-            },
-            {
-              href: '/search',
-              icon: <IoSearch className="h-6 w-6" />,
-              label: 'Search',
-            },
-            {
-              href: '/profile',
-              icon: <IoPerson className="h-6 w-6" />,
-              label: 'Profile',
-            },
-          ].map(({ href, icon, label }) => (
-            <Link key={href} href={href}>
-              <TooltipProvider>
-                <Tooltip delayDuration={100}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className={`text-primary-foreground ${isActive(href) ? 'bg-accent text-accent-foreground' : ''}`}
-                    >
-                      {icon}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{label}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </Link>
-          ))}
+          <Link href="/playerHome">
+            <TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/playerHome') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoHome className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Home</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Link>
+
+          <Link href="/tournaments">
+            <TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoTrophy className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Tournament browser</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Link>
+
+          <Link href="/rankings">
+            <TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <PiRankingBold className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Rankings</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Link>
+
+          <Link href="/search">
+            <TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoSearch className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Search</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Link>
+
+          <Link href="/profile">
+            <TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
+                  >
+                    <IoPerson className="h-6 w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Profile</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Link>
         </nav>
 
         {/* Mobile Menu Icon */}
@@ -163,6 +179,7 @@ export default function Navbar() {
           </button>
         </div>
 
+        {/* Profile Section */}
         <div className="hidden items-center gap-4 md:flex">
           <Button
             variant="ghost"
@@ -170,6 +187,7 @@ export default function Navbar() {
           >
             <IoNotifications className="h-6 w-6" />
           </Button>
+
           <HoverCard>
             <HoverCardTrigger asChild>
               <div className="flex cursor-pointer items-center gap-2">
@@ -181,18 +199,15 @@ export default function Navbar() {
                 </Avatar>
                 <div className="text-primary-foreground">
                   <h4 className="font-medium">{username}</h4>
-                  {userType === 'player' ? (
-                    <p className="text-xs text-muted-foreground">
-                      WHR: {playerRating.toFixed(2) || 'N/A'}
-                    </p>
-                  ) : (
-                    <p className="text-xs text-muted-foreground">Admin</p>
-                  )}
+                  <p className="text-xs text-muted-foreground">
+                    ELO: {playerData.rating}
+                  </p>
                 </div>
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-80 bg-white/80">
               <div className="flex flex-col space-y-4">
+                {/* Avatar and User Information */}
                 <div className="flex items-center justify-between space-x-4">
                   <Avatar>
                     <AvatarImage src="/placeholder-user.jpg" />
@@ -202,28 +217,17 @@ export default function Navbar() {
                   </Avatar>
                   <div className="space-y-1">
                     <h4 className="text-sm font-semibold">{username}</h4>
-                    {userType === 'player' ? (
-                      <>
-                        <p className="text-xs text-muted-foreground">
-                          WHR: {playerRating.toFixed(2) || 'N/A'}
-                        </p>
-                        <Link href="/tierInfo">
-                          <Badge className="bg-gray-800 text-xs">
-                            <span className={`${color}`}>{tier}</span>
-                          </Badge>
-                        </Link>
-                      </>
-                    ) : (
-                      <p className="text-xs text-muted-foreground">Admin</p>
-                    )}
+                    <p className="text-sm">ELO: {playerData.rating}</p>
                   </div>
                 </div>
+
+                {/* Sign out Button */}
                 <div className="mt-4 flex justify-center">
                   <Button
                     variant="destructive"
                     onClick={() => {
-                      useAuthStore.getState().clearUser();
-                      handleSignOut();
+                      useAuthStore.getState().clearToken();
+                      useAuthStore.getState().clearUsername();
                       window.location.href = '/';
                     }}
                   >
@@ -244,31 +248,63 @@ export default function Navbar() {
             : 'pointer-events-none -translate-y-4 opacity-0'
         }`}
       >
-        {[
-          {
-            href: userType === 'player' ? '/playerHome' : '/adminHome',
-            icon: <IoHome className="h-6 w-6" />,
-          },
-          { href: '/tournaments', icon: <IoTrophy className="h-6 w-6" /> },
-          { href: '/rankings', icon: <PiRankingBold className="h-6 w-6" /> },
-          { href: '/search', icon: <IoSearch className="h-6 w-6" /> },
-          { href: '/profile', icon: <IoPerson className="h-6 w-6" /> },
-        ].map(({ href, icon }) => (
-          <Link key={href} href={href}>
-            <Button
-              variant="ghost"
-              className={`text-primary-foreground ${isActive(href) ? 'bg-accent text-accent-foreground' : ''}`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {icon}
-            </Button>
-          </Link>
-        ))}
+        {/* Home button */}
+        <Link href="/playerHome">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/playerHome') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoHome className="h-6 w-6" />
+          </Button>
+        </Link>
+
+        <Link href="/tournaments">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/tournaments') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoTrophy className="h-6 w-6" />
+          </Button>
+        </Link>
+
+        {/* Rankings button */}
+        <Link href="/rankings">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/rankings') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <PiRankingBold className="h-6 w-6" />
+          </Button>
+        </Link>
+
+        <Link href="/search">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/search') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoSearch className="h-6 w-6" />
+          </Button>
+        </Link>
+
+        {/* Profile button */}
+        <Link href="/profile">
+          <Button
+            variant="ghost"
+            className={`text-primary-foreground ${isActive('/profile') ? 'bg-accent text-accent-foreground' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <IoPerson className="h-6 w-6" />
+          </Button>
+        </Link>
+
         <Button
           variant="destructive"
           onClick={() => {
-            useAuthStore.getState().clearUser();
-            handleSignOut();
+            clearStore();
             window.location.href = '/';
           }}
         >
@@ -277,4 +313,10 @@ export default function Navbar() {
       </nav>
     </div>
   );
+
+  function clearStore() {
+    useAuthStore.getState().clearToken();
+    useAuthStore.getState().clearUsername();
+    useAuthStore.getState().clearUsertype();
+  }
 }

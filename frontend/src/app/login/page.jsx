@@ -1,6 +1,5 @@
 'use client';
 
-import { login } from '../../utils/auth.js';
 import { successToast, errorToast } from '@/utils/toastUtils';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,7 +22,8 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/authStore.js';
+import { useAuthStore } from '@/store/authStore';
+// Import Google icon from a library like react-icons
 import { FcGoogle } from 'react-icons/fc';
 
 export default function LoginPage() {
@@ -51,16 +51,38 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { username, password, role } = formData;
+    const payload = {
+      username: formData.username,
+      password: formData.password,
+      role: formData.role,
+    };
 
-    // Call the login function
-    const success = await login(username, password, role, router);
+    try {
+      const response = await fetch('http://localhost:8001/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
 
-    if (success) {
-      console.log('Login successful, redirected');
-      // Additional logic if needed
-    } else {
-      console.log('Login failed');
+      if (response.ok) {
+        const data = await response.json();
+        useAuthStore.getState().setToken(data.access_token);
+        useAuthStore.getState().setUsername(payload.username);
+        useAuthStore.getState().setUsertype(payload.role);
+        successToast('Login successful!');
+        if (payload.role === 'admin') {
+          router.push('/adminHome');
+        } else {
+          router.push('/playerHome');
+        }
+      } else {
+        const errorData = await response.json();
+        errorToast('Login failed:' + (errorData.detail || 'Unknown error'));
+      }
+    } catch (error) {
+      errorToast('An error occurred during login. Please try again.');
     }
   };
 
@@ -156,7 +178,7 @@ export default function LoginPage() {
               <p className="text-sm text-gray-400">
                 Forgot your password?{' '}
                 <Link
-                  href="/login/forget-password"
+                  href="/forgot-password"
                   className="text-white underline hover:text-gray-300"
                 >
                   Reset it here

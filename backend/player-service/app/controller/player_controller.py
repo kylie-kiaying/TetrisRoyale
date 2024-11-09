@@ -1,12 +1,10 @@
-from fastapi import APIRouter, Depends, status, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, status, HTTPException
 from typing import List
 from app.schema.player_schema import PlayerResponse, PlayerCreate, PlayerUpdate, PlayerAvailabilityUpdate, PlayerStatistics
 from app.service.player_service import PlayerService
 from app.utils.dependencies import get_player_service
-from app.utils.s3_utils import S3Handler
 
 router = APIRouter()
-s3_handler = S3Handler()
 
 # Get all players with optional filters
 @router.get("/players", response_model=List[PlayerResponse])
@@ -43,17 +41,3 @@ async def get_player_statistics(id: int, player_service: PlayerService = Depends
 async def delete_player(id: int, player_service: PlayerService = Depends(get_player_service)):
     await player_service.delete_player(id)
     return None
-
-@router.post("/players/{id}/profile-picture", response_model=PlayerResponse)
-async def upload_profile_picture(
-    id: int,
-    file: UploadFile = File(...),
-    player_service: PlayerService = Depends(get_player_service)
-):
-
-    if not file.content_type.startswith('image/'):
-        raise HTTPException(status_code=400, detail="File must be an image")
-    
-    image_url = await s3_handler.upload_profile_picture(file, str(id))
-    
-    return await player_service.update_profile_picture(id, image_url)

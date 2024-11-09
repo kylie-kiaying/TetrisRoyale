@@ -6,8 +6,6 @@ python-jose
 sqlalchemy
 psycopg2-binary
 asyncpg
-python-multipart
-boto3
 pytest==8.3.3
 pytest-asyncio==0.24.0
 whr==1.0.1

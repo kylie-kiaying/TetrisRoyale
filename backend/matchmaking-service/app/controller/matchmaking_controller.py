@@ -30,7 +30,7 @@ async def get_player_matches(player_id: int, matchmaking_service: MatchmakingSer
 async def submit_match_result(match_id: int, result: MatchResultUpdate, matchmaking_service: MatchmakingService = Depends(get_matchmaking_service)):
     try:
         updated_match = await matchmaking_service.submit_match_result(match_id, result.winner_id)
-        return JSONResponse(content=updated_match)  # Return JSON response directly
+        return updated_match  # Return JSON response directly
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     

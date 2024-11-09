@@ -8,6 +8,35 @@ from app.schema.matchmaking_schema import MatchCreate, MatchResponse, MatchUpdat
 import httpx
 from fastapi import HTTPException
 from datetime import datetime
+from math import floor
+
+
+def generate_random_player_statistics():
+    # Pieces placed between 50 to 150 (a core statistic)
+    pieces_placed = random.randint(50, 150)
+    
+    # Pieces per second (PPS): assume game time of around 60-200 seconds based on pieces placed
+    game_time_seconds = random.uniform(60, 200)
+    pps = round(pieces_placed / game_time_seconds, 2)  # Calculate PPS as pieces per second
+
+    # Key presses per piece (KPP): finesse affects this, lower KPP if finesse is high
+    finesse_percentage = random.randint(50, 100)  # Finesse as a percentage
+    kpp = round(random.uniform(1.5, 3.0) - (finesse_percentage - 50) / 100, 2)
+    kpp = max(0.5, min(3.0, kpp))  # Ensure KPP is between reasonable bounds
+
+    # Attacks per minute (APM): relates to lines cleared
+    lines_cleared = random.randint(50, 500)
+    apm = int((lines_cleared / game_time_seconds) * 60 * random.uniform(0.5, 1.5))
+    apm = min(apm, 300)  # Cap APM at 300
+
+    return {
+        "pieces_placed": pieces_placed,
+        "pps": pps,
+        "kpp": kpp,
+        "apm": apm,
+        "finesse_percentage": f"{finesse_percentage}%",
+        "lines_cleared": lines_cleared
+    }
 
 
 def generate_random_player_statistics():
@@ -53,17 +82,21 @@ class MatchmakingService:
         async with httpx.AsyncClient() as client:
             for i in range(0, len(registered_player_ids)):
                 response = await client.get(f"http://rating-service:8000/ratings/{registered_player_ids[i]}")
-                await response.raise_for_status()
-                player_rating = await response.json()
-                players.append({"id": registered_player_ids[i], "rating": player_rating["rating"]})
+                response.raise_for_status()
+                player_rating = response.json()
+                players.append({"id":registered_player_ids[i], "rating":player_rating["rating"]})
 
         players = sorted(players, key=lambda x: x["rating"])
+
+        #decide starting count for stages, which is log2(n) -> 4 players will have starting stage of 2, 8 players will have starting stage of 4: assuming we always have 2^n players
+        starting_stage  = len(players)/2 
 
         matches = []
         for i in range(0, len(players) - 1, 2):
             player1 = players[i]
             player2 = players[i + 1]
-            matches.append([tournament_id, player1['id'], player1['rating'], player2['id'], player2['rating']])
+            matches.append([tournament_id, player1['id'], player1['rating'], player2['id'], player2['rating'], floor(starting_stage), floor(starting_stage/2)])
+            starting_stage += 1
 
         return matches
 
@@ -101,6 +134,7 @@ class MatchmakingService:
                     f"http://rating-service:8000/matches/{match_id}/",  
                     json=match_update
                 )
+
                 # response = await client.post(
                 #     # TODO: CHANGE THIS URL
                 #     f"http://localhost:8007/analytics/statistics",
@@ -134,8 +168,42 @@ class MatchmakingService:
                 #     }
                 # )
                 # response.raise_for_status()
-    
-            return updated_match
+
+            #create new match
+            # print(match)
+            next_match = await self.matchmaking_repository.get_match_by_stage_and_tournament(match["next_stage"], match["tournament_id"])
+            if next_match:
+                updated_data = {
+                    "tournament_id": None,
+                    "player1_id": None,
+                    "player2_id": winner_id,
+                    "scheduled_at": None,
+                    "playable": True
+                }
+
+                # Create a new MatchUpdate object with updated values
+                updated_match_data = MatchUpdate(**updated_data)
+                return await self.matchmaking_repository.update_match(next_match["id"], updated_match_data)
+
+            else:
+                # print('here')
+                match=Match(
+                    id=await self.matchmaking_repository.get_next_id(),
+                    tournament_id=match["tournament_id"],
+                    player1_id=winner_id,
+                    player2_id=0,
+                    scheduled_at=datetime.utcnow(),  # Use current time if not provided,
+                    stage= match["next_stage"],
+                    next_stage= floor(match["next_stage"]/2),
+                    playable= False
+
+                )
+                # Create a new MatchUpdate object with updated values
+                response = await self.matchmaking_repository.create_match(match)
+
+                return response 
+
+
         except Exception as e:
             # Log the error here if you have a logging system
             raise ValueError(f"Error updating match result: {str(e)}")
@@ -147,7 +215,10 @@ class MatchmakingService:
             tournament_id=new_match.tournament_id,
             player1_id=new_match.player1_id,
             player2_id=new_match.player2_id,
-            scheduled_at=new_match.scheduled_at or datetime.utcnow()  # Use current time if not provided
+            scheduled_at=new_match.scheduled_at or datetime.utcnow(),  # Use current time if not provided,
+            stage= new_match.stage,
+            next_stage= new_match.next_stage,
+            playable= True if (new_match.player1_id != 0 and new_match.player2_id != 0) else False
         )
         
         # Add to the database session
@@ -191,7 +262,8 @@ class MatchmakingService:
                 "tournament_id": match_update.tournament_id or existing_match["tournament_id"],
                 "player1_id": match_update.player1_id or existing_match["player1_id"],
                 "player2_id": match_update.player2_id or existing_match["player2_id"],
-                "scheduled_at": match_update.scheduled_at or existing_match["scheduled_at"]
+                "scheduled_at": match_update.scheduled_at or existing_match["scheduled_at"],
+                "playable": match_update.playable or existing_match["playable"]
             }
 
             # Create a new MatchUpdate object with updated values

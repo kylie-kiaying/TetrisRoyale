@@ -89,44 +89,25 @@ services:
     networks:
       - microservices-network
 
-  telegram-postgres:
-    image: postgres:16
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: telegram_bot
-    volumes:
-      - telegram_postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - microservices-network
-
-  telegram-bot:
-    build: ./telegram-bot-service
-    env_file:
-      - ./telegram-bot-service/.env
-    depends_on:
-      telegram-postgres:
-        condition: service_healthy
-      tournament-service:
-        condition: service_started
-      player-service:
-        condition: service_started
-    environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@telegram-postgres:5432/telegram_bot
-    networks:
-      - microservices-network
-
+  # ranking-service:
+  #   build:
+  #     context: ./ranking-service
+  #   ports:
+  #     - "8006:8000"
+  #   env_file:
+  #     - ./ranking-service/.env
+  #   depends_on:
+  #     - auth-service
+  #     - player-service
+  #     - tournament-service
+  #     - matchmaking-service
+  #     - rating-service
+  #   networks:
+  #     - microservices-network
+    
 networks:
   microservices-network:
     driver: bridge
-
-volumes:
-  telegram_postgres_data:
 
   
   
