@@ -24,8 +24,6 @@ import Link from 'next/link';
 
 export default function RegisterPage() {
   const router = useRouter();
-
-  // State to store form data
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -34,7 +32,6 @@ export default function RegisterPage() {
     role: '',
   });
 
-  // Handle input change
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     setFormData((prevData) => ({
@@ -43,7 +40,6 @@ export default function RegisterPage() {
     }));
   };
 
-  // Handle role selection
   const handleRoleChange = (role) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -51,12 +47,10 @@ export default function RegisterPage() {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      // alert("Passwords do not match");
       errorToast('Passwords do not match');
       return;
     }
@@ -78,76 +72,78 @@ export default function RegisterPage() {
       });
 
       if (response.ok) {
-        // alert("Registration successful!");
         successToast('Registration successful!');
-        // Save email in local storage before redirecting
         localStorage.setItem('verificationEmail', payload.email);
-        // Redirect to the verify email page
         router.push('/verifyEmail');
       } else {
         const errorData = await response.json();
-        console.error('Registration failed:', errorData);
-        // alert("Registration failed");
         errorToast('Registration failed, email or username taken');
       }
     } catch (error) {
-      console.error('Error during registration:', error);
-      // alert("An error occurred. Please try again.");
       errorToast('An error occurred. Please try again.');
     }
   };
 
   return (
     <div
-      className="flex min-h-screen flex-col items-center justify-center bg-cover bg-fixed bg-center bg-no-repeat px-4"
+      className="flex min-h-screen flex-col items-center justify-center bg-cover bg-fixed bg-center bg-no-repeat px-6 py-12"
       style={{
         backgroundImage:
           "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')",
       }}
     >
-      <Card className="w-[350px] max-w-md items-center rounded-lg bg-opacity-40 shadow-lg backdrop-blur-md">
+      <Card className="w-full max-w-md rounded-2xl border-none bg-opacity-50 p-6 shadow-lg backdrop-blur-lg">
         <CardHeader>
-          <CardTitle>Register new account</CardTitle>
+          <CardTitle className="text-2xl font-bold text-white">
+            Register new account
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
+            <div className="grid w-full gap-6">
+              <div>
                 <Select onValueChange={handleRoleChange}>
-                  <SelectTrigger id="userType">
+                  <SelectTrigger className="bg-white text-gray-700">
                     <SelectValue placeholder="I am a..." />
                   </SelectTrigger>
-                  <SelectContent position="popper">
+                  <SelectContent>
                     <SelectItem value="admin">Tournament Organizer</SelectItem>
                     <SelectItem value="player">Competitive Player</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">Email</Label>
+              <div>
+                <Label htmlFor="email" className="text-sm text-gray-300">
+                  Email
+                </Label>
                 <Input
                   id="email"
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="Your personal email"
                   required
-                  auto
+                  className="bg-white text-gray-700"
                   autoComplete="off"
                 />
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="username">User ID</Label>
+              <div>
+                <Label htmlFor="username" className="text-sm text-gray-300">
+                  User ID
+                </Label>
                 <Input
                   id="username"
                   value={formData.username}
                   onChange={handleInputChange}
                   placeholder="Your unique username"
                   required
+                  className="bg-white text-gray-700"
                   autoComplete="off"
                 />
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="password">Password</Label>
+              <div>
+                <Label htmlFor="password" className="text-sm text-gray-300">
+                  Password
+                </Label>
                 <Input
                   id="password"
                   type="password"
@@ -155,11 +151,17 @@ export default function RegisterPage() {
                   onChange={handleInputChange}
                   placeholder="8-16 Alphanumeric Characters"
                   required
+                  className="bg-white text-gray-700"
                   autoComplete="off"
                 />
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <div>
+                <Label
+                  htmlFor="confirmPassword"
+                  className="text-sm text-gray-300"
+                >
+                  Confirm Password
+                </Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -167,29 +169,27 @@ export default function RegisterPage() {
                   onChange={handleInputChange}
                   placeholder="Enter your password again"
                   required
+                  className="bg-white text-gray-700"
                   autoComplete="off"
                 />
               </div>
             </div>
-            <CardFooter className="mt-10 flex flex-col items-start space-y-2">
-              <div className="flex w-full items-center justify-center space-x-2">
-                <Link href="/">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="bg-[#1e0b38] text-white hover:bg-gray-300/70"
-                  >
-                    Cancel
-                  </Button>
-                </Link>
+            <CardFooter className="mt-8 flex flex-col items-center space-y-4">
+              <Button
+                type="submit"
+                className="w-full rounded-lg bg-[#4e4e70] px-4 py-2 text-white transition duration-300 hover:bg-[#5c5c8d]"
+              >
+                Register
+              </Button>
+              <Link href="/">
                 <Button
-                  type="submit"
+                  type="button"
                   variant="outline"
-                  className="bg-white text-[#1e0b38] hover:bg-gray-300/70"
+                  className="w-full rounded-lg border border-gray-500 bg-transparent px-4 py-2 text-gray-300 transition duration-300 hover:bg-gray-500/40"
                 >
-                  Register
+                  Cancel
                 </Button>
-              </div>
+              </Link>
             </CardFooter>
           </form>
         </CardContent>

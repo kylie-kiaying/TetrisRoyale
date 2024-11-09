@@ -1,7 +1,4 @@
-import { useAuthStore } from '@/store/authStore';
-
 export async function fetchAdminTournaments(organiserName) {
-  const username = useAuthStore((state) => state.user.username);
   try {
     // Fetch all tournaments from the specified endpoint
     const response = await fetch('http://localhost:8003/tournaments');
@@ -13,7 +10,7 @@ export async function fetchAdminTournaments(organiserName) {
 
     // Filter tournaments where the user is in the registrants list
     const adminTournaments = tournaments.filter(
-      (tournament) => tournament.organiser === username
+      (tournament) => tournament.organiser === organiserName
     );
 
     return adminTournaments;
