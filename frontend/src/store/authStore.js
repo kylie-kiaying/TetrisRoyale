@@ -61,7 +61,8 @@ export const useAuthStore = create(
         }
       },
 
-      clearUser: () =>
+      clearUser: () => {
+        Cookies.remove('session_token'); // Remove token from cookies
         set({
           user: {
             token: null,
@@ -70,7 +71,8 @@ export const useAuthStore = create(
             userType: null,
             rating: null,
           },
-        }),
+        });
+      },
 
       isAuthenticated: () => !!useAuthStore.getState().user.token,
 

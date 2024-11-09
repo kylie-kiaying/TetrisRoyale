@@ -1,5 +1,7 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+import { getPlayerTier } from '@/utils/getPlayerTier';
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -36,12 +38,12 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const role = useAuthStore((state) => state.user.role);
+  const userType = useAuthStore((state) => state.user.userType);
   const isAuthenticated = useAuthStore((state) => !!state.user.token);
   const username = useAuthStore((state) => state.user.username);
   const userId = useAuthStore((state) => state.user.id);
-  const clearUser = useAuthStore((state) => state.clearUser);
   const playerRating = useAuthStore((state) => state.user.rating);
+  const { tier, color } = getPlayerTier(playerRating || 0);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const isActive = (path) => pathname === path;
@@ -60,7 +62,7 @@ export default function Navbar() {
 
       if (response.ok) {
         successToast('You have been logged out successfully.');
-        clearUser();
+        useAuthStore.getState().clearUser(); // Clear user data from the store
         Cookies.remove('session_token'); // Remove the token cookie from the client
         router.push('/');
       } else {
@@ -87,7 +89,7 @@ export default function Navbar() {
       <header className="mx-auto flex h-12 max-w-5xl items-center justify-between rounded-full border-muted bg-inherit px-6 py-4 shadow-[inset_0_0_0_3000px_rgba(150,150,150,0.192)] backdrop-blur-md">
         <div className="flex items-center gap-4">
           <Link
-            href={role === 'player' ? '/playerHome' : '/adminHome'}
+            href={userType === 'player' ? '/playerHome' : '/adminHome'}
             className="group flex items-center gap-0 text-white"
           >
             <img
@@ -105,7 +107,7 @@ export default function Navbar() {
         <nav className="hidden items-center gap-4 md:flex">
           {[
             {
-              href: role === 'player' ? '/playerHome' : '/adminHome',
+              href: userType === 'player' ? '/playerHome' : '/adminHome',
               icon: <IoHome className="h-6 w-6" />,
               label: 'Home',
             },
@@ -168,7 +170,6 @@ export default function Navbar() {
           >
             <IoNotifications className="h-6 w-6" />
           </Button>
-
           <HoverCard>
             <HoverCardTrigger asChild>
               <div className="flex cursor-pointer items-center gap-2">
@@ -180,7 +181,7 @@ export default function Navbar() {
                 </Avatar>
                 <div className="text-primary-foreground">
                   <h4 className="font-medium">{username}</h4>
-                  {role === 'player' ? (
+                  {userType === 'player' ? (
                     <p className="text-xs text-muted-foreground">
                       WHR: {playerRating || 'N/A'}
                     </p>
@@ -201,10 +202,15 @@ export default function Navbar() {
                   </Avatar>
                   <div className="space-y-1">
                     <h4 className="text-sm font-semibold">{username}</h4>
-                    {role === 'player' ? (
-                      <p className="text-xs text-muted-foreground">
-                        WHR: {playerRating || 'N/A'}
-                      </p>
+                    {userType === 'player' ? (
+                      <>
+                        <p className="text-xs text-muted-foreground">
+                          WHR: {playerRating || 'N/A'}
+                        </p>
+                        <Badge className="bg-gray-800 text-xs">
+                          <span className={`${color}`}>{tier}</span>
+                        </Badge>
+                      </>
                     ) : (
                       <p className="text-xs text-muted-foreground">Admin</p>
                     )}
@@ -214,7 +220,7 @@ export default function Navbar() {
                   <Button
                     variant="destructive"
                     onClick={() => {
-                      clearUser();
+                      useAuthStore.getState().clearUser();
                       handleSignOut();
                       window.location.href = '/';
                     }}
@@ -238,7 +244,7 @@ export default function Navbar() {
       >
         {[
           {
-            href: role === 'player' ? '/playerHome' : '/adminHome',
+            href: userType === 'player' ? '/playerHome' : '/adminHome',
             icon: <IoHome className="h-6 w-6" />,
           },
           { href: '/tournaments', icon: <IoTrophy className="h-6 w-6" /> },
@@ -259,7 +265,7 @@ export default function Navbar() {
         <Button
           variant="destructive"
           onClick={() => {
-            clearUser();
+            useAuthStore.getState().clearUser();
             handleSignOut();
             window.location.href = '/';
           }}
