@@ -9,6 +9,7 @@ export const useAuthStore = create(
     (set) => ({
       user: {
         token: null,
+        userId: null,
         username: null,
         userType: null,
         rating: null,
@@ -33,6 +34,7 @@ export const useAuthStore = create(
                 set({
                   user: {
                     token,
+                    userId: decoded.id,
                     username: decoded.username,
                     userType: decoded.role,
                     rating,
@@ -44,6 +46,7 @@ export const useAuthStore = create(
                 set({
                   user: {
                     token,
+                    userId: decoded.id,
                     username: decoded.username,
                     userType: decoded.role,
                     rating: null,
@@ -60,7 +63,13 @@ export const useAuthStore = create(
 
       clearUser: () =>
         set({
-          user: { token: null, username: null, userType: null, rating: null },
+          user: {
+            token: null,
+            userId: null,
+            username: null,
+            userType: null,
+            rating: null,
+          },
         }),
 
       isAuthenticated: () => !!useAuthStore.getState().user.token,
