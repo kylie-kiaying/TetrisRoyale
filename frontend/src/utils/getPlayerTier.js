@@ -8,7 +8,7 @@ export function getPlayerTier(rating) {
   } else if (rating >= 1400) {
     return { tier: 'Platinum', color: 'text-blue-300' }; // Steel Silver
   } else if (rating >= 1200) {
-    return { tier: 'Gold', color: 'text-orange-500' }; // Adjusted to yellow-500 for brighter gold
+    return { tier: 'Gold', color: 'text-yellow-500' }; // Adjusted to yellow-500 for brighter gold
   } else if (rating >= 1000) {
     return { tier: 'Silver', color: 'text-gray-500' }; // Slate Gray
   } else if (rating >= 800) {
