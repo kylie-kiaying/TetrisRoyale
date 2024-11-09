@@ -36,6 +36,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const role = useAuthStore((state) => state.user.role);
   const isAuthenticated = useAuthStore((state) => !!state.user.token);
   const username = useAuthStore((state) => state.user.username);
   const userId = useAuthStore((state) => state.user.id);
@@ -74,8 +75,8 @@ export default function Navbar() {
   // Redirect to home if user is not authenticated after mounting
   useEffect(() => {
     if (hasMounted && !isAuthenticated) {
-      errorToast('You have been signed out, please log in again');
       router.push('/');
+      errorToast('You have been signed out, please log in again');
     }
   }, [hasMounted, isAuthenticated, router]);
 
@@ -86,7 +87,7 @@ export default function Navbar() {
       <header className="mx-auto flex h-12 max-w-5xl items-center justify-between rounded-full border-muted bg-inherit px-6 py-4 shadow-[inset_0_0_0_3000px_rgba(150,150,150,0.192)] backdrop-blur-md">
         <div className="flex items-center gap-4">
           <Link
-            href="/playerHome"
+            href={role === 'player' ? '/playerHome' : '/adminHome'}
             className="group flex items-center gap-0 text-white"
           >
             <img
@@ -104,7 +105,7 @@ export default function Navbar() {
         <nav className="hidden items-center gap-4 md:flex">
           {[
             {
-              href: '/playerHome',
+              href: role === 'player' ? '/playerHome' : '/adminHome',
               icon: <IoHome className="h-6 w-6" />,
               label: 'Home',
             },
@@ -226,7 +227,10 @@ export default function Navbar() {
         }`}
       >
         {[
-          { href: '/playerHome', icon: <IoHome className="h-6 w-6" /> },
+          {
+            href: role === 'player' ? '/playerHome' : '/adminHome',
+            icon: <IoHome className="h-6 w-6" />,
+          },
           { href: '/tournaments', icon: <IoTrophy className="h-6 w-6" /> },
           { href: '/rankings', icon: <PiRankingBold className="h-6 w-6" /> },
           { href: '/search', icon: <IoSearch className="h-6 w-6" /> },
