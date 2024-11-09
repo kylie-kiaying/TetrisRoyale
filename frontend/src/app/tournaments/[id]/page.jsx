@@ -23,6 +23,15 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
+// Function to display dateStrings in a more readable format
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleString('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+}
+
 export default function TournamentDetails() {
   const router = useRouter();
   const { id } = useParams();
@@ -199,12 +208,12 @@ export default function TournamentDetails() {
             <DetailItem
               icon={<FaCalendarAlt />}
               label="Start Date"
-              content={tournament.tournament_start}
+              content={formatDate(tournament.tournament_start)}
             />
             <DetailItem
               icon={<FaCalendarAlt />}
               label="End Date"
-              content={tournament.tournament_end}
+              content={formatDate(tournament.tournament_end)}
             />
             <DetailItem
               icon={<FaStar />}
