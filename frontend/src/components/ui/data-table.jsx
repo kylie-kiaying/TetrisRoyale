@@ -2,20 +2,24 @@
 
 import React from 'react';
 import {
-  useReactTable,
-  getCoreRowModel,
-  getExpandedRowModel,
-  flexRender,
+    useReactTable,
+    getCoreRowModel,
+    getExpandedRowModel,
+    flexRender,
 } from '@tanstack/react-table';
 import { columns } from '@/components/tournament-columns';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from '@/components/ui/table'; // Assuming you're using shadcn/ui Table components
+import { Badge } from '@/components/ui/badge';
+import { useAuthStore } from '@/store/authStore';
+import { FaTrophy } from 'react-icons/fa';
+import { FaGamepad, FaCalendarAlt, FaUser, FaStar } from 'react-icons/fa';
 
 export function DataTable({ type, data }) {
     const tableColumns = columns[type];
@@ -41,9 +45,9 @@ export function DataTable({ type, data }) {
                                     {header.isPlaceholder
                                         ? null
                                         : flexRender(
-                                              header.column.columnDef.header,
-                                              header.getContext()
-                                          )}
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
                                 </TableHead>
                             ))}
                         </TableRow>
@@ -77,70 +81,98 @@ export function DataTable({ type, data }) {
                                             colSpan={tableColumns.length}
                                             className="px-6 py-4 border-b border-gray-600"
                                         >
-                                            <div className="grid grid-cols-2 gap-4">
-                                                {/* Row 1 */}
-                                                <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
-                                                        Pieces Placed
-                                                    </p>
-                                                    <p className="text-lg">
-                                                        {
-                                                            row.original
-                                                                .pieces_placed
-                                                        }
-                                                    </p>
-                                                </div>
-                                                <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
-                                                        PPS (Pieces Per Second)
-                                                    </p>
-                                                    <p className="text-lg">
-                                                        {row.original.pps}
-                                                    </p>
-                                                </div>
+                                            {row.original.pieces_placed && (
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    {/* Row 1 */}
+                                                    <div className="border-b border-gray-700 py-2">
+                                                        <p className="text-sm font-semibold">
+                                                            Pieces Placed
+                                                        </p>
+                                                        <p className="text-lg">
+                                                            {
+                                                                row.original
+                                                                    .pieces_placed
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                    <div className="border-b border-gray-700 py-2">
+                                                        <p className="text-sm font-semibold">
+                                                            PPS (Pieces Per Second)
+                                                        </p>
+                                                        <p className="text-lg">
+                                                            {row.original.pps}
+                                                        </p>
+                                                    </div>
 
-                                                {/* Row 2 */}
-                                                <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
-                                                        APM (Attacks Per Minute)
-                                                    </p>
-                                                    <p className="text-lg">
-                                                        {row.original.apm}
-                                                    </p>
-                                                </div>
-                                                <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
-                                                        KPP (Keys Per Piece)
-                                                    </p>
-                                                    <p className="text-lg">
-                                                        {row.original.kpp}
-                                                    </p>
-                                                </div>
+                                                    {/* Row 2 */}
+                                                    <div className="border-b border-gray-700 py-2">
+                                                        <p className="text-sm font-semibold">
+                                                            APM (Attacks Per Minute)
+                                                        </p>
+                                                        <p className="text-lg">
+                                                            {row.original.apm}
+                                                        </p>
+                                                    </div>
+                                                    <div className="border-b border-gray-700 py-2">
+                                                        <p className="text-sm font-semibold">
+                                                            KPP (Keys Per Piece)
+                                                        </p>
+                                                        <p className="text-lg">
+                                                            {row.original.kpp}
+                                                        </p>
+                                                    </div>
 
-                                                {/* Row 3 */}
-                                                <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
-                                                        Finesse %
-                                                    </p>
-                                                    <p className="text-lg">
-                                                        {
-                                                            row.original
-                                                                .finesse_percentage
-                                                        }
-                                                    </p>
+                                                    {/* Row 3 */}
+                                                    <div className="border-b border-gray-700 py-2">
+                                                        <p className="text-sm font-semibold">
+                                                            Finesse %
+                                                        </p>
+                                                        <p className="text-lg">
+                                                            {
+                                                                row.original
+                                                                    .finesse_percentage
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                    <div className="border-b border-gray-700 py-2">
+                                                        <p className="text-sm font-semibold">
+                                                            Lines Cleared
+                                                        </p>
+                                                        <p className="text-lg">
+                                                            {
+                                                                row.original
+                                                                    .lines_cleared
+                                                            }
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div className="border-b border-gray-700 py-2">
-                                                    <p className="text-sm font-semibold">
-                                                        Lines Cleared
-                                                    </p>
-                                                    <p className="text-lg">
-                                                        {
-                                                            row.original
-                                                                .lines_cleared
-                                                        }
-                                                    </p>
+                                            )}
+
+                                            {row.original.players && (
+                                                <h2 className="text-center text-lg font-bold tracking-wide md:text-2xl">
+                                                    Player List
+                                                </h2>
+                                            )}
+                                            {row.original.players && row.original.players.map((player) => (
+                                                <div className="grid grid-cols-4 gap-4 border-b border-gray-700 py-2">
+                                                    <div className="flex col-start-2 items-center space-x-2 truncate justify-end">
+                                                        <span className="truncate text-sm font-semibold sm:text-xs md:text-sm lg:text-base">
+                                                            {player.username}
+                                                        </span>
+                                                        <Badge
+                                                            className={`rounded-md px-2 py-1 text-xs sm:text-[10px] md:text-xs lg:text-sm ${player.color}`}
+                                                        >
+                                                            {player.tier}
+                                                        </Badge>
+                                                    </div>
+                                                    <div className="flex col-start-3 items-center space-x-2">
+                                                        <FaGamepad className="text-purple-400" size={14} />
+                                                        <span className="text-xs font-semibold text-gray-300 sm:text-[10px] md:text-sm lg:text-base">
+                                                            {player.rating}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            ))}
                                         </TableCell>
                                     </TableRow>
                                 )}

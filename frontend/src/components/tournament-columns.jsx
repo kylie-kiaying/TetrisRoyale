@@ -100,7 +100,7 @@ export const columns = {
           onClick={() => row.toggleExpanded()}
           className="flex items-center"
         >
-          {row.getIsExpanded() ? (
+          {row.getIsExpandedt() ? (
             <IoChevronDown className="h-5 w-5 text-gray-400" />
           ) : (
             <IoChevronForward className="h-5 w-5 text-gray-400" />
@@ -165,7 +165,6 @@ export const columns = {
         return <span style={{ color, fontWeight: 'bold' }}>{label}</span>;
       },
     },
-
     {
       accessorKey: 'recommendedRating',
       header: 'Rating',
@@ -235,7 +234,12 @@ export const columns = {
         header: "Status",
     },
     {
+      accessorKey: 'recommendedRating',
+      header: 'Rating',
+    },
+    {
         id: "expander",
+        accessorKey: "players",
         header: () => null,
         cell: ({ row }) => (
             <button

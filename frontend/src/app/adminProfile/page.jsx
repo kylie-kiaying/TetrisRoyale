@@ -13,7 +13,8 @@ const tournaments = [
       start: 'June 1, 2024',
       end: 'June 10, 2024',
       status: 'Ongoing',
-      organizer: 'World Tetris Federation',
+      recommendedRating: 2000,
+      players: [{username: "p1", tier: "Master", color: 'text-purple-500', rating: 2000}, {username: "p2", tier: "Gold", color: 'text-yellow-500', rating: 1200}, {username: "p3", tier: "Gold", color: 'text-yellow-500', rating: 1200}],
     },
     {
       id: '2',
@@ -21,7 +22,8 @@ const tournaments = [
       start: 'October 5, 2024',
       end: 'October 15, 2024',
       status: 'Upcoming',
-      organizer: 'Tetris Club',
+      recommendedRating: 1200,
+      players: [{username: "p1", tier: "Master", color: 'text-purple-500', rating: 2000}, {username: "p2", tier: "Gold", color: 'text-yellow-500', rating: 1200}, {username: "p3", tier: "Gold", color: 'text-yellow-500', rating: 1200}],
     },
     {
       id: '3',
@@ -29,7 +31,8 @@ const tournaments = [
       start: 'June 1, 2024',
       end: 'June 9, 2024',
       status: 'Ongoing',
-      organizer: 'Tetr.io League',
+      recommendedRating: 1200,
+      players: [{username: "p1", tier: "Master", color: 'text-purple-500', rating: 2000}, {username: "p2", tier: "Gold", color: 'text-yellow-500', rating: 1200}, {username: "p3", tier: "Gold", color: 'text-yellow-500', rating: 1200}],
     }
 ];
 
