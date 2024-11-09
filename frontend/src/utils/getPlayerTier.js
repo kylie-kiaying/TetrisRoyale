@@ -1,6 +1,6 @@
 export function getPlayerTier(rating) {
   if (rating >= 2200) {
-    return { tier: 'Champion', color: 'text-yellow-500' }; // Gold
+    return { tier: 'Champion', color: 'text-amber-300' }; // Amber Yellow
   } else if (rating >= 1900) {
     return { tier: 'Master', color: 'text-purple-500' }; // Royal Purple
   } else if (rating >= 1600) {
@@ -8,7 +8,7 @@ export function getPlayerTier(rating) {
   } else if (rating >= 1400) {
     return { tier: 'Platinum', color: 'text-blue-300' }; // Steel Silver
   } else if (rating >= 1200) {
-    return { tier: 'Gold', color: 'text-yellow-500' }; // Adjusted to yellow-500 for brighter gold
+    return { tier: 'Gold', color: 'text-orange-500' }; // Adjusted to yellow-500 for brighter gold
   } else if (rating >= 1000) {
     return { tier: 'Silver', color: 'text-gray-500' }; // Slate Gray
   } else if (rating >= 800) {
