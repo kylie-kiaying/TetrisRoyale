@@ -16,7 +16,7 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { fetchAdminTournaments } from '@/utils/fetchAdminTournaments';
-import { formatDate } from '@/utils/dateUtils';
+import { formatDateMedium } from '@/utils/dateUtils';
 import { successToast, errorToast } from '@/utils/toastUtils';
 
 export default function AdminPage() {
@@ -277,8 +277,8 @@ export default function AdminPage() {
                 <CardContent className="flex items-center justify-between">
                   <div>
                     <span>
-                      {formatDate(tournament.tournament_start)} -{' '}
-                      {formatDate(tournament.tournament_end)}
+                      {formatDateMedium(tournament.tournament_start)} -{' '}
+                      {formatDateMedium(tournament.tournament_end)}
                     </span>
                     <div className="mt-2 text-xs">
                       Status:{' '}
