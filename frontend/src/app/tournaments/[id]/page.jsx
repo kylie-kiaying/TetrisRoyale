@@ -22,6 +22,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { formatDateMedium } from '@/utils/dateUtils';
+import { successToast } from '@/utils/toastUtils';
 
 export default function TournamentDetails() {
   const router = useRouter();
@@ -89,23 +91,27 @@ export default function TournamentDetails() {
   };
 
   const handleRegisterConfirm = async () => {
+    const playerId = useAuthStore.getState().user.userId; // Get player_id from the Zustand store
+
     try {
       const response = await fetch(
-        `http://localhost:8003/tournaments/${id}/register?player_id=${player_id}`,
+        `http://localhost:8003/tournaments/${id}/register?player_id=${playerId}`,
         {
           method: 'POST',
         }
       );
 
       if (response.ok) {
+        successToast("Registered successfully! Let's get ready to rumble!");
         console.log('User registered successfully');
         setIsDialogOpen(false);
         // You may want to update the UI or trigger a re-fetch of tournament data here
       } else {
-        console.error('Registration failed');
+        errorToast('Registration failed');
+        console.log('Registration failed');
       }
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.log('An error occurred:', error);
     }
   };
 
@@ -199,12 +205,12 @@ export default function TournamentDetails() {
             <DetailItem
               icon={<FaCalendarAlt />}
               label="Start Date"
-              content={tournament.tournament_start}
+              content={formatDateMedium(tournament.tournament_start)}
             />
             <DetailItem
               icon={<FaCalendarAlt />}
               label="End Date"
-              content={tournament.tournament_end}
+              content={formatDateMedium(tournament.tournament_end)}
             />
             <DetailItem
               icon={<FaStar />}

@@ -27,7 +27,7 @@ def send_recovery_email(to_email, token):
     from_password = os.getenv("from_password")
 
     subject = "Password Recovery Request"
-    body = f"Please reset your password by clicking the following link: http://localhost:8001/reset-password/{token}"
+    body = f"Please reset your password by clicking the following link: http://localhost:3000/login/forget-password/{token}"
 
     msg = MIMEMultipart()
     msg['From'] = from_email

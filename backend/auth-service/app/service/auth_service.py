@@ -1,5 +1,5 @@
-from fastapi import HTTPException, Response
-from fastapi.responses import JSONResponse
+from fastapi import HTTPException, Response, status
+from fastapi.responses import JSONResponse, RedirectResponse
 from app.repository.user_repository import UserRepository
 from app.utils.password_utils import verify_password, hash_password
 from app.utils.email_utils import send_verification_email, send_recovery_email
@@ -32,6 +32,7 @@ class AuthService:
 
             if verify_password(auth_data.password, stored_password_hash):
                 token = create_access_token(auth_data.username, role, id)
+                # print("Generated Token:", token)  # Log the token value
                 response = {"message": "Login successful"}
                 
                 from fastapi.responses import JSONResponse
@@ -39,8 +40,8 @@ class AuthService:
                 response.set_cookie(
                     key="session_token",
                     value=token,
-                    httponly=True,
-                    secure=True,    # Use HTTPS in production
+                    httponly=False,
+                    secure=False,    # Use HTTPS in production
                     samesite="lax"
                 )
 
@@ -124,7 +125,8 @@ class AuthService:
 
         if user:
             await user_repository.mark_email_verified(user, db)
-            return {"message": "Email verified successfully"}
+            return RedirectResponse(url="http://localhost:3000/verify-email-success", status_code=status.HTTP_303_SEE_OTHER)
+            # return {"message": "Email verified successfully"}
 
         raise HTTPException(status_code=400, detail="Invalid or expired verification token")
     

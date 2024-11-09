@@ -18,11 +18,11 @@ export const columns = {
       header: 'Name',
     },
     {
-      accessorKey: 'start',
+      accessorKey: 'tournament_start',
       header: 'Start',
     },
     {
-      accessorKey: 'end',
+      accessorKey: 'tournament_end',
       header: 'End',
     },
     {
@@ -32,6 +32,34 @@ export const columns = {
     {
       accessorKey: 'organizer',
       header: 'Organizer',
+    },
+    {
+      accessorKey: 'tournament_id',
+      header: () => null,
+      cell: (info) => (
+        <TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger>
+              <Link href={`/tournaments/${info.getValue()}`}>
+                <div className="flex justify-center">
+                  <IoInformationCircleOutline
+                    size={26}
+                    className="transform cursor-pointer rounded-full bg-purple-700 p-1 text-white transition duration-200 ease-in-out hover:scale-110 hover:bg-purple-600 hover:shadow-lg"
+                  />
+                </div>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent
+              side="top"
+              align="center"
+              className="rounded-md bg-gray-800 px-2 py-1 text-sm text-white shadow"
+            >
+              View Details
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ),
+      className: 'w-12 text-center',
     },
   ],
   completed: [
@@ -40,11 +68,11 @@ export const columns = {
       header: 'Name',
     },
     {
-      accessorKey: 'start',
+      accessorKey: 'tournament_start',
       header: 'Start',
     },
     {
-      accessorKey: 'end',
+      accessorKey: 'tournamnt_end',
       header: 'End',
     },
     {
@@ -54,6 +82,34 @@ export const columns = {
     {
       accessorKey: 'organizer',
       header: 'Organizer',
+    },
+    {
+      accessorKey: 'tournament_id',
+      header: () => null,
+      cell: (info) => (
+        <TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger>
+              <Link href={`/tournaments/${info.getValue()}`}>
+                <div className="flex justify-center">
+                  <IoInformationCircleOutline
+                    size={26}
+                    className="transform cursor-pointer rounded-full bg-purple-700 p-1 text-white transition duration-200 ease-in-out hover:scale-110 hover:bg-purple-600 hover:shadow-lg"
+                  />
+                </div>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent
+              side="top"
+              align="center"
+              className="rounded-md bg-gray-800 px-2 py-1 text-sm text-white shadow"
+            >
+              View Details
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ),
+      className: 'w-12 text-center',
     },
   ],
   match_history: [

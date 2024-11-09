@@ -4,11 +4,13 @@ from app.repository.player_repository import PlayerRepository
 from fastapi import HTTPException
 import httpx
 from sqlalchemy.exc import IntegrityError
+from app.utils.s3_utils import S3Handler
 
 
 class PlayerService:
     def __init__(self, player_repository: PlayerRepository):
         self.player_repository = player_repository
+        self.s3_handler = S3Handler()
 
     async def get_all_players(self, availability_status: Optional[str] = None, min_rating: Optional[int] = None, username: Optional[str] = None) -> List[PlayerResponse]:
         players = await self.player_repository.get_all_players(availability_status, min_rating, username)
@@ -61,4 +63,20 @@ class PlayerService:
             matches_played=matches_played,
             matches_won=matches_won
         )
+
+    async def update_profile_picture(self, player_id: int, image_url: str) -> PlayerResponse:
+        player = await self.player_repository.get_player_by_id(player_id)
+        if not player:
+            raise HTTPException(status_code=404, detail="Player not found")
+        
+        # Delete old profile picture if it exists
+        if player.profile_picture:
+            await self.s3_handler.delete_profile_picture(player.profile_picture)
+        
+        # Update with new profile picture URL
+        player_data = {"profile_picture": image_url}
+        updated_player = await self.player_repository.update_player(player_id, player_data)
+        if not updated_player:
+            raise HTTPException(status_code=404, detail="Player not found")
+        return PlayerResponse.from_orm(updated_player)
 
