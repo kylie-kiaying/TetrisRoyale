@@ -180,9 +180,13 @@ export default function Navbar() {
                 </Avatar>
                 <div className="text-primary-foreground">
                   <h4 className="font-medium">{username}</h4>
-                  <p className="text-xs text-muted-foreground">
-                    WHR: {playerRating || 'N/A'}
-                  </p>
+                  {role === 'player' ? (
+                    <p className="text-xs text-muted-foreground">
+                      WHR: {playerRating || 'N/A'}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">Admin</p>
+                  )}
                 </div>
               </div>
             </HoverCardTrigger>
@@ -197,7 +201,13 @@ export default function Navbar() {
                   </Avatar>
                   <div className="space-y-1">
                     <h4 className="text-sm font-semibold">{username}</h4>
-                    <p className="text-sm">WHR: {playerRating || 'N/A'}</p>
+                    {role === 'player' ? (
+                      <p className="text-xs text-muted-foreground">
+                        WHR: {playerRating || 'N/A'}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">Admin</p>
+                    )}
                   </div>
                 </div>
                 <div className="mt-4 flex justify-center">
