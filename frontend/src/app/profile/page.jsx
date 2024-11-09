@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getPlayerDetails, getPlayerMatchesAndInsertTournamentNameAndStatistics, calculateWinRate } from '@/utils/fetchPlayerDetails';
 import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
 import { useAuthStore } from '@/store/authStore';
@@ -10,42 +11,27 @@ import ToggleButtons from '@/components/ui/toggle';
 import { getPlayerTier } from '@/utils/getPlayerTier'; // Import the getPlayerTier function
 import { Badge } from '@/components/ui/badge';
 
-const matchHistory = [
-  {
-    id: '1',
-    opponent: 'Username2',
-    opponent_img: '/user.png',
-    result: 'Win',
-    tournament: 'Tetris Championship',
-    date: 'October 5, 2024',
-    pieces_placed: 101,
-    pps: 5.97,
-    kpp: 2.85,
-    apm: 50,
-    finesse_percentage: '98.02%',
-    lines_cleared: 40,
-  },
-  {
-    id: '2',
-    opponent: 'Username3',
-    opponent_img: '/user.png',
-    result: 'Lost',
-    tournament: 'Spring Showdown',
-    date: 'June 1, 2024',
-    pieces_placed: 95,
-    pps: 5.5,
-    kpp: 3.01,
-    apm: 45,
-    finesse_percentage: '95.00%',
-    lines_cleared: 38,
-  },
-];
-
 export default function PlayerProfile() {
   const username = useAuthStore((state) => state.user.username); // Get username from the auth store
   const playerRating = useAuthStore((state) => state.user.rating); // Get player rating from the auth store
+  const user_id = useAuthStore((state) => state.user.userId); // Get user id from the auth store
   const { tier, color } = getPlayerTier(playerRating); // Get the tier and color based on the rating
   const [visiblePlot, setVisiblePlot] = useState('playstyle'); // State to track the visible plot
+  const [playerDetails, setPlayerDetails] = useState(null); // State to store player details
+  const [playerMatches, setPlayerMatches] = useState([]); // State to store player matches
+  const [winRate, setWinRate] = useState({ matchesWon: null, matchesLost: null, winRate: 'N/A' }); // State to store winrate
+
+
+  useEffect(() => {
+    if (user_id) {
+      getPlayerDetails(user_id).then((data) => setPlayerDetails(data));
+      getPlayerMatchesAndInsertTournamentNameAndStatistics(user_id).then((data) => {
+        setPlayerMatches(data);
+        const statistics = calculateWinRate(data, user_id);
+        setWinRate(statistics);
+      });
+    }
+  }, [user_id]); 
 
   const togglePlot = (plot) => {
     setVisiblePlot(plot);
@@ -84,10 +70,10 @@ export default function PlayerProfile() {
           </div>
 
           <div className="flex w-full flex-col items-center space-y-4 px-2">
-            <h1 className="text-3xl font-semibold md:text-4xl">{username}</h1>
+            <h1 className="text-3xl font-semibold md:text-4xl">{username} <span className='font-normal text-gray-400 md:text-3xl'>#{user_id}</span></h1>
             <div className="flex w-full flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0 md:px-6">
               <p className="text-xl text-gray-400 md:text-2xl">
-                WHR: {playerRating}
+                WHR: {playerRating ? playerRating.toFixed(2) : "Loading..."}
               </p>
               {/* Display Tier Badge */}
               <Link href="/tierInfo">
@@ -96,14 +82,14 @@ export default function PlayerProfile() {
                 </Badge>
               </Link>
               <div className="flex flex-col items-center space-y-2 md:items-start">
-                <p className="text-base text-gray-400 md:text-lg">
-                  Matches won: 1
+                <p className="text-base text-green-400 md:text-lg">
+                  Matches won: {winRate.matchesWon}
+                </p>
+                <p className="text-base text-red-400 md:text-lg">
+                  Matches lost: {winRate.matchesLost}
                 </p>
                 <p className="text-base text-gray-400 md:text-lg">
-                  Matches lost: 1
-                </p>
-                <p className="text-base text-gray-400 md:text-lg">
-                  Winrate: 50%
+                  Winrate: {winRate.winRate}
                 </p>
               </div>
             </div>
@@ -118,11 +104,21 @@ export default function PlayerProfile() {
 
           {/* ELO Analytics Section */}
           <div className="w-full rounded-lg bg-[#2c1f4c] p-4 md:p-6">
-            {visiblePlot === 'playstyle' && (
-              <PlayerStatistics type="playstyle" />
-            )}
+            {visiblePlot === 'playstyle' && 
+            <PlayerStatistics 
+              type="playstyle" 
+              data={
+                playerDetails ? [
+                  playerDetails.speed,
+                  playerDetails.defense,
+                  playerDetails.strategy,
+                  playerDetails.aggression,
+                  playerDetails.efficiency
+                ] : []
+              } 
+            />}
             {visiblePlot === 'elo' && <PlayerStatistics type="elo" />}
-            {visiblePlot === 'wins' && <PlayerStatistics type="wins" />}
+            {visiblePlot === 'wins' && <PlayerStatistics type="wins" data={playerMatches} />}
           </div>
 
           {/* Match History Section */}
@@ -132,7 +128,7 @@ export default function PlayerProfile() {
             </h2>
             <div className="custom-scrollbar w-full overflow-x-auto">
               <div className="min-w-[600px]">
-                <DataTable type="match_history" data={matchHistory} />
+                <DataTable type="match_history" data={playerMatches} />
               </div>
             </div>
           </div>

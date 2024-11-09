@@ -141,12 +141,24 @@ export const columns = {
       ),
     },
     {
-      accessorKey: 'tournament',
+      accessorKey: 'tournament_name',
       header: 'Tournament',
     },
     {
-      accessorKey: 'date',
+      accessorKey: 'scheduled_at',
       header: 'Date',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        if (!dateValue) return 'N/A';
+        const date = new Date(dateValue);
+        return isNaN(date.getTime())
+          ? 'Invalid Date'
+          : date.toLocaleDateString('en-GB', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+      },
     },
     {
       id: 'expander',
