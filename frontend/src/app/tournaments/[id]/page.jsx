@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { formatDate } from '@/utils/dateUtils';
+import { successToast } from '@/utils/toastUtils';
 
 export default function TournamentDetails() {
   const router = useRouter();
@@ -90,23 +91,27 @@ export default function TournamentDetails() {
   };
 
   const handleRegisterConfirm = async () => {
+    const playerId = useAuthStore.getState().user.userId; // Get player_id from the Zustand store
+
     try {
       const response = await fetch(
-        `http://localhost:8003/tournaments/${id}/register?player_id=${player_id}`,
+        `http://localhost:8003/tournaments/${id}/register?player_id=${playerId}`,
         {
           method: 'POST',
         }
       );
 
       if (response.ok) {
+        successToast("Registered successfully! Let's get ready to rumble!");
         console.log('User registered successfully');
         setIsDialogOpen(false);
         // You may want to update the UI or trigger a re-fetch of tournament data here
       } else {
-        console.error('Registration failed');
+        errorToast('Registration failed');
+        console.log('Registration failed');
       }
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.log('An error occurred:', error);
     }
   };
 
