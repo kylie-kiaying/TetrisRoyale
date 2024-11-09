@@ -54,6 +54,13 @@ const tiers = [
     description:
       'Bronze players are beginning their journey, focusing on developing core skills to climb the ranks and improve their game.',
   },
+  {
+    name: 'Unranked',
+    range: '<800',
+    color: 'text-gray-300',
+    description:
+      'Players who are inactive, or have yet to prove their skills through sufficient victories.',
+  },
 ];
 
 export default function TierInfoPage() {
@@ -64,7 +71,7 @@ export default function TierInfoPage() {
         <h1 className="mb-8 text-3xl font-bold sm:text-4xl">
           Tier Information
         </h1>
-        <div className="grid w-full max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid w-full max-w-5xl grid-cols-1 justify-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {tiers.map((tier) => (
             <div
               key={tier.name}
