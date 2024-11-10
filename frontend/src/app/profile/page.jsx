@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   getPlayerDetails,
   getPlayerMatchesAndInsertTournamentNameAndStatistics,
@@ -16,6 +16,7 @@ import { getPlayerTier } from '@/utils/getPlayerTier'; // Import the getPlayerTi
 import { Badge } from '@/components/ui/badge';
 import { FaEdit } from 'react-icons/fa';
 import BackgroundWrapper from '@/components/BackgroundWrapper';
+import { successToast, errorToast } from '@/utils/toastUtils';
 
 export default function PlayerProfile() {
   const username = useAuthStore((state) => state.user.username); // Get username from the auth store
@@ -30,6 +31,62 @@ export default function PlayerProfile() {
     matchesLost: null,
     winRate: 'N/A',
   }); // State to store winrate
+  const [profileImage, setProfileImage] = useState('/user.png'); // Default image path
+  const [file, setFile] = useState(null);
+
+  // Fetch profile image on mount
+  useEffect(() => {
+    if (user_id) {
+      fetch(`http://localhost:8002/players/${user_id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.profile_picture) {
+            setProfileImage(data.profile_picture);
+          }
+        })
+        .catch(() => errorToast('Failed to load profile picture.'));
+    }
+  }, [user_id]);
+
+  // Handle file change for profile picture upload
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
+
+  // Handle profile picture upload
+  const handleUpload = async () => {
+    if (!file) {
+      errorToast('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8002/players/${user_id}/profile-picture`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setProfileImage(data.profile_picture); // Update profile image with new URL
+        successToast('Profile picture updated successfully.');
+        setFile(null); // Reset file after upload
+      } else {
+        errorToast('Failed to upload profile picture.');
+      }
+    } catch (error) {
+      errorToast('An error occurred while uploading the profile picture.');
+    }
+  };
 
   useEffect(() => {
     if (user_id) {
@@ -63,18 +120,34 @@ export default function PlayerProfile() {
       <div className="mt-8 flex w-full flex-col items-center justify-start space-y-6 py-10">
         {/* Profile Card */}
         <div className="mx-4 flex w-full max-w-4xl flex-col items-center space-y-6 rounded-lg bg-[#1c1132] p-6 shadow-md md:p-8">
-          {/* Profile Picture */}
-          <div className="group relative flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-[#6d28d9] bg-gray-500 md:h-40 md:w-40">
-            <img
-              src="/user.png" // Change this to use the profile picture URL from AWS S3 when available
-              alt="Profile Picture"
-              className="h-full w-full object-cover transition-opacity duration-200 group-hover:opacity-50"
-            />
-
-            {/* Edit Icon on Hover */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-              <FaEdit className="cursor-pointer text-3xl text-black" />
+          <div className="flex flex-col items-center space-y-4">
+            {/* Profile Picture Container */}
+            <div className="group relative h-32 w-32 overflow-hidden rounded-full">
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="h-full w-full object-cover"
+              />
+              <label className="absolute inset-0 flex cursor-pointer items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+                <FaEdit className="text-2xl text-black" />
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </label>
             </div>
+
+            {/* Upload Button */}
+            <button
+              onClick={handleUpload}
+              className={`mt-2 rounded bg-blue-500 px-6 py-2 text-white transition-all ${
+                file ? 'hover:bg-blue-600' : 'cursor-not-allowed bg-gray-400'
+              }`}
+              disabled={!file}
+            >
+              Upload
+            </button>
           </div>
           <div className="flex w-full flex-col items-center space-y-4 px-2">
             <h1 className="text-3xl font-semibold text-white md:text-4xl">
