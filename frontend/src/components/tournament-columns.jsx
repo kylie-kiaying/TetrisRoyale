@@ -104,14 +104,47 @@ export const columns = {
     {
       accessorKey: 'tournament_start',
       header: 'Start',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        return dateValue ? formatDateMedium(dateValue) : 'N/A';
+      },
     },
     {
-      accessorKey: 'tournamnt_end',
+      accessorKey: 'tournament_end',
       header: 'End',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        return dateValue ? formatDateMedium(dateValue) : 'N/A';
+      },
     },
     {
       accessorKey: 'status',
       header: 'Status',
+      cell: (info) => {
+        const status = info.getValue().toLowerCase();
+        const statusCapitalized =
+          status.charAt(0).toUpperCase() + status.slice(1);
+
+        // Set color based on status
+        let color;
+        switch (status) {
+          case 'upcoming':
+            color = 'orange';
+            break;
+          case 'ongoing':
+            color = 'green';
+            break;
+          case 'completed':
+            color = 'gray';
+            break;
+          default:
+            color = 'inherit';
+        }
+
+        return (
+          <span style={{ color, fontWeight: 'bold' }}>{statusCapitalized}</span>
+        );
+      },
     },
     {
       accessorKey: 'organiser',

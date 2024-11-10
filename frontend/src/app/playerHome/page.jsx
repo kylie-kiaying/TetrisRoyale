@@ -68,91 +68,91 @@ import { formatDateMedium } from '@/utils/dateUtils';
 //   },
 // ];
 
-const enrolledTournaments = [
-  {
-    tournament_id: '1',
-    tournament_name: 'Tetris Championship 2024',
-    tournament_start: 'June 1, 2024',
-    tournament_end: 'June 10, 2024',
-    status: 'Ongoing',
-    organizer: 'World Tetris Federation',
-  },
-  {
-    tournament_id: '2',
-    tournament_name: 'Spring Showdown',
-    tournament_start: 'October 5, 2024',
-    tournament_end: 'October 15, 2024',
-    status: 'Upcoming',
-    organizer: 'Tetris Club',
-  },
-  {
-    tournament_id: '3',
-    tournament_name: 'Championship Series 1',
-    tournament_start: 'June 1, 2024',
-    tournament_end: 'June 9, 2024',
-    status: 'Ongoing',
-    organizer: 'Tetr.io League',
-  },
-  {
-    tournament_id: '4',
-    tournament_name: 'World Tetris Tournament',
-    tournament_start: 'June 1, 2024',
-    tournament_end: 'June 5, 2024',
-    status: 'Ongoing',
-    organizer: 'Global Tetris Org',
-  },
-  {
-    tournament_id: '5',
-    tournament_name: 'TetriTracker Champs',
-    tournament_start: 'June 2, 2024',
-    tournament_end: 'June 4, 2024',
-    status: 'Ongoing',
-    organizer: 'TetriTracker',
-  },
-  {
-    tournament_id: '6',
-    tournament_name: 'Tetrix Open',
-    tournament_start: 'July 1, 2024',
-    tournament_end: 'July 10, 2024',
-    status: 'Upcoming',
-    organizer: 'Tetrix.io',
-  },
-];
+// const enrolledTournaments = [
+//   {
+//     tournament_id: '1',
+//     tournament_name: 'Tetris Championship 2024',
+//     tournament_start: 'June 1, 2024',
+//     tournament_end: 'June 10, 2024',
+//     status: 'Ongoing',
+//     organizer: 'World Tetris Federation',
+//   },
+//   {
+//     tournament_id: '2',
+//     tournament_name: 'Spring Showdown',
+//     tournament_start: 'October 5, 2024',
+//     tournament_end: 'October 15, 2024',
+//     status: 'Upcoming',
+//     organizer: 'Tetris Club',
+//   },
+//   {
+//     tournament_id: '3',
+//     tournament_name: 'Championship Series 1',
+//     tournament_start: 'June 1, 2024',
+//     tournament_end: 'June 9, 2024',
+//     status: 'Ongoing',
+//     organizer: 'Tetr.io League',
+//   },
+//   {
+//     tournament_id: '4',
+//     tournament_name: 'World Tetris Tournament',
+//     tournament_start: 'June 1, 2024',
+//     tournament_end: 'June 5, 2024',
+//     status: 'Ongoing',
+//     organizer: 'Global Tetris Org',
+//   },
+//   {
+//     tournament_id: '5',
+//     tournament_name: 'TetriTracker Champs',
+//     tournament_start: 'June 2, 2024',
+//     tournament_end: 'June 4, 2024',
+//     status: 'Ongoing',
+//     organizer: 'TetriTracker',
+//   },
+//   {
+//     tournament_id: '6',
+//     tournament_name: 'Tetrix Open',
+//     tournament_start: 'July 1, 2024',
+//     tournament_end: 'July 10, 2024',
+//     status: 'Upcoming',
+//     organizer: 'Tetrix.io',
+//   },
+// ];
 
-const completedTournaments = [
-  {
-    id: '1',
-    tournament_name: 'Winter Blast',
-    tournament_start: 'February 1, 2024',
-    tournament_end: 'February 5, 2024',
-    status: 'Completed',
-    organizer: 'Winter Games Federation',
-  },
-  {
-    id: '2',
-    tournament_name: 'Autumn Arena',
-    tournament_start: 'September 10, 2023',
-    tournament_end: 'September 20, 2023',
-    status: 'Completed',
-    organizer: 'Autumn Tetris League',
-  },
-  {
-    id: '3',
-    tournament_name: 'New Year Knockout',
-    tournament_start: 'January 2, 2024',
-    tournament_end: 'January 12, 2024',
-    status: 'Completed',
-    organizer: 'Tetris Masters',
-  },
-  {
-    id: '4',
-    tournament_name: 'Spring Bash',
-    tournament_start: 'April 15, 2024',
-    tournament_end: 'April 25, 2024',
-    status: 'Completed',
-    organizer: 'Spring Showdown Inc.',
-  },
-];
+// const completedTournaments = [
+//   {
+//     id: '1',
+//     tournament_name: 'Winter Blast',
+//     tournament_start: 'February 1, 2024',
+//     tournament_end: 'February 5, 2024',
+//     status: 'Completed',
+//     organiser: 'Winter Games Federation',
+//   },
+//   {
+//     id: '2',
+//     tournament_name: 'Autumn Arena',
+//     tournament_start: 'September 10, 2023',
+//     tournament_end: 'September 20, 2023',
+//     status: 'Completed',
+//     organiser: 'Autumn Tetris League',
+//   },
+//   {
+//     id: '3',
+//     tournament_name: 'New Year Knockout',
+//     tournament_start: 'January 2, 2024',
+//     tournament_end: 'January 12, 2024',
+//     status: 'Completed',
+//     organiser: 'Tetris Masters',
+//   },
+//   {
+//     id: '4',
+//     tournament_name: 'Spring Bash',
+//     tournament_start: 'April 15, 2024',
+//     tournament_end: 'April 25, 2024',
+//     status: 'Completed',
+//     organiser: 'Spring Showdown Inc.',
+//   },
+// ];
 
 export default function HomePage() {
   const user = useAuthStore((state) => state.user);
@@ -161,6 +161,7 @@ export default function HomePage() {
 
   const [recommendedTournaments, setRecommendedTournaments] = useState([]);
   const [enrolledTournaments, setEnrolledTournaments] = useState([]); // State for enrolled tournaments
+  const [completedTournaments, setCompletedTournaments] = useState([]); // State for completed tournaments
   const [visibleTable, setVisibleTable] = useState('enrolled');
   const [hotPosts, setHotPosts] = useState([]);
 
@@ -191,6 +192,21 @@ export default function HomePage() {
 
     fetchEnrolledTournaments();
   }, [userId]);
+
+  // Fetch completed tournaments
+  useEffect(() => {
+    const fetchCompletedTournaments = async () => {
+      try {
+        const tournaments = await fetchRecentCompletedTournaments();
+        setCompletedTournaments(tournaments);
+        console.log(tournaments);
+      } catch (error) {
+        console.error('Error fetching completed tournaments:', error);
+      }
+    };
+
+    fetchCompletedTournaments();
+  }, []);
 
   // Load hot Reddit posts on component mount
   useEffect(() => {
