@@ -55,7 +55,7 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch('http://localhost:8001/logout/', {
+      const response = await fetch('http://localhost:8001/auth/logout/', {
         method: 'POST',
         credentials: 'include', // Ensure cookies are sent
       });

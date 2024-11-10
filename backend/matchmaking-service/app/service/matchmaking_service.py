@@ -136,7 +136,7 @@ class MatchmakingService:
 
             async with httpx.AsyncClient() as client:
                 await client.put(
-                    f"http://rating-service:8000/matches/{match_id}/",  
+                    f"http://rating-service:8000/ratings/matches/{match_id}/",  
                     json=match_update
                 )
 
@@ -241,7 +241,7 @@ class MatchmakingService:
         try:
             async with httpx.AsyncClient() as client:
                 await client.post(
-                    "http://rating-service:8000/matches/",  
+                    "http://rating-service:8000/ratings/matches/",  
                     json=match_data
                 )
         except httpx.HTTPStatusError as exc:
@@ -290,7 +290,7 @@ class MatchmakingService:
             
             async with httpx.AsyncClient() as client:
                 response = await client.put(
-                    f"http://rating-service:8000/matches/{match_id}/",
+                    f"http://rating-service:8000/ratings/matches/{match_id}/",
                     json=match_data
                 )
                 response.raise_for_status()
@@ -314,7 +314,7 @@ class MatchmakingService:
 
             async with httpx.AsyncClient() as client:
                 await client.delete(
-                    f"http://rating-service:8000/matches/{match_id}"
+                    f"http://rating-service:8000/ratings/matches/{match_id}"
                 )
 
             return {"detail": "Match deleted successfully"}

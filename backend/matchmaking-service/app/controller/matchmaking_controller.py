@@ -8,6 +8,14 @@ from typing import List
 
 router = APIRouter()
 
+@router.get("/")
+async def root():
+    return {"message": "Service is running"}
+
+@router.get("/matchmaking")
+async def root():
+    return {"message": "Matchmaking service is running"}
+
 @router.post("/matchmaking/tournaments/{tournament_id}/pair")
 async def pair_players(tournament_id: int, matchmaking_service: MatchmakingService = Depends(get_matchmaking_service)):
     try:
