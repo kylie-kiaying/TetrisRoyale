@@ -141,12 +141,24 @@ export const columns = {
       ),
     },
     {
-      accessorKey: 'tournament',
+      accessorKey: 'tournament_name',
       header: 'Tournament',
     },
     {
-      accessorKey: 'date',
+      accessorKey: 'scheduled_at',
       header: 'Date',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        if (!dateValue) return 'N/A';
+        const date = new Date(dateValue);
+        return isNaN(date.getTime())
+          ? 'Invalid Date'
+          : date.toLocaleDateString('en-GB', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+      },
     },
     {
       id: 'expander',
@@ -270,6 +282,33 @@ export const columns = {
     {
       id: 'profile_picture',
       header: () => null,
+    },
+    {
+      accessorKey: 'user_id',
+      header: () => null,
+      cell: (info) => (
+        <TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <Link href={`/profile/${info.getValue()}`}>
+                <div className="flex justify-center">
+                  <div className="cursor-pointer rounded-md bg-blue-600 px-3 py-1 text-sm font-semibold text-white transition duration-200 hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    Profile
+                  </div>
+                </div>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent
+              side="top"
+              align="center"
+              className="rounded-md bg-gray-800 px-2 py-1 text-sm text-white shadow"
+            >
+              Visit Profile
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ),
+      className: 'w-12 text-center',
     },
   ],
   created: [

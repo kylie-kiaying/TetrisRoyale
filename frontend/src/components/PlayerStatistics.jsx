@@ -1,14 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Line, PolarArea, Scatter } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from "chart.js"; 
+import { format, parseISO } from 'date-fns';
 import 'chartjs-adapter-date-fns';
 
 ChartJS.register(...registerables);
 
-export default function PlayerStatistics({ type }) {
+const getWinsData = (playerMatches) => {
+  const winsData = { Day: [], Month: [], Year: [] };
+
+  // Filter matches with 'Win' result
+  const winMatches = playerMatches.filter(match => match.result === 'Win');
+
+  // Helper function to count wins grouped by time interval
+  function countWinsByInterval(intervalFormat) {
+    const counts = {};
+
+    winMatches.forEach(match => {
+      const dateKey = format(parseISO(match.scheduled_at), intervalFormat);
+      counts[dateKey] = (counts[dateKey] || 0) + 1;
+    });
+
+    return Object.entries(counts).map(([x, y]) => ({ x, y }));
+  }
+
+  // Count wins for each interval format
+  winsData.Day = countWinsByInterval('yyyy-MM-dd');
+  winsData.Month = countWinsByInterval('yyyy-MM');
+  winsData.Year = countWinsByInterval('yyyy');
+
+  return winsData;
+};
+
+export default function PlayerStatistics({ type, data }) {
   const [timeInterval, setTimeInterval] = useState('Day');
+  const [playstyle, setPlaystyle] = useState([0, 0, 0, 0, 0]);
+  const [wins, setWins] = useState({ Day: [], Month: [], Year: [] });
   // const totalDuration = 10000;
   // const delayBetweenPoints = totalDuration / data.length;
+
+  useEffect(() => {
+    if (type === 'playstyle') {
+      setPlaystyle(data);
+    } else if (type === 'wins') {
+      setWins(getWinsData(data));
+    }
+  }, [data, type]);
+
+
+
   const delayBetweenPoints = 200;
   const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(100) : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
   const animation = {
@@ -47,13 +87,6 @@ export default function PlayerStatistics({ type }) {
     Year: [1000, 1250, 1300, 1400, 1500, 1600, 1700, 1800],
   };
 
-  // Mock data for Wins Over Time
-  const winsData = {
-    Day: [{ x: '2024-01-01', y: 1 }, { x: '2024-01-02', y: 2 }, { x: '2024-01-03', y: 3 }],
-    Month: [{ x: '2024-01', y: 2 }, { x: '2024-02', y: 3 }, { x: '2024-03', y: 5 }],
-    Year: [{ x: '2024', y: 12 }, { x: '2025', y: 15 }, { x: '2026', y: 18 }],
-  };
-
   // Chart data based on selected time interval
   const eloChartData = {
     labels: eloData[timeInterval].map((_, index) => `2024-0${index + 1}-01`), // Mock dates
@@ -72,7 +105,7 @@ export default function PlayerStatistics({ type }) {
     datasets: [
       {
         label: 'Wins Over Time',
-        data: winsData[timeInterval],
+        data: wins[timeInterval],
         backgroundColor: '#f97316', // Orange color for dots
         borderColor: '#f97316', // Orange color for border
         borderWidth: 1,
@@ -160,7 +193,7 @@ export default function PlayerStatistics({ type }) {
               datasets: [
                 {
                   label: 'Playstyle',
-                  data: [3, 4, 2, 5, 4],
+                  data: playstyle,
                   borderWidth: 1,
                 },
               ],
@@ -169,15 +202,23 @@ export default function PlayerStatistics({ type }) {
               responsive: true,
               scales: {
                 r: {
+                  min: 0,       
+                  max: 5, 
                   grid: { color: '#444' },
                   angleLines: { color: '#444' },
                   ticks: {
-                    display: false,
+                    display: true,
+                    stepSize: 1,
+                    color: '#ccc',
+                    font: { size: 14 },
+                    backdropColor: '#333',
                   },
                   pointLabels: {
                     display: true,
+                    centerPointLabels: true,
                     font: { size: 18 },
                     color: '#ccc',
+                    padding: 10, 
                   },
                 },
               },
@@ -228,6 +269,7 @@ export default function PlayerStatistics({ type }) {
                   },
                 },
                 y: {
+                  beginAtZero: true,
                   title: {
                     display: true,
                     text: 'Number of Wins',
@@ -238,6 +280,7 @@ export default function PlayerStatistics({ type }) {
                   },
                   grid: { color: '#444' },
                   ticks: {
+                    stepSize: 1, 
                     font: {
                       size: 14,
                     },

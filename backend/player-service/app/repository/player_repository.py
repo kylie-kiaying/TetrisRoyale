@@ -37,13 +37,14 @@ class PlayerRepository:
         await self.db_session.refresh(new_player)
         return new_player
 
-    async def update_player(self, player_id: int, player_data: dict):
+    async def update_player(self, player_id: int, player_update: PlayerUpdate):
         try:
             query = select(Player).where(Player.user_id == player_id)
             result = await self.db_session.execute(query)
             player = result.scalar_one_or_none()
             
             if player:
+                player_data = player_update.dict(exclude_unset=True)  # Convert to dictionary
                 for key, value in player_data.items():
                     setattr(player, key, value)
                 player.last_updated = datetime.now(timezone.utc)
