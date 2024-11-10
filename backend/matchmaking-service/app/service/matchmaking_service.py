@@ -113,9 +113,9 @@ class MatchmakingService:
 
     async def submit_match_result(self, match_id: int, winner_id: int):
         try:
-            # analytics_service_url = os.getenv("ANALYTICS_SERVICE_URL")
-            # if not analytics_service_url:
-            #     raise RuntimeError("ANALYTICS_SERVICE_URL is not set")
+            analytics_service_url = os.getenv("ANALYTICS_SERVICE_URL")
+            if not analytics_service_url:
+                raise RuntimeError("ANALYTICS_SERVICE_URL is not set")
             
             player1_statistics = generate_random_player_statistics()
             player2_statistics = generate_random_player_statistics()
@@ -140,42 +140,44 @@ class MatchmakingService:
                     json=match_update
                 )
 
-                # response = await client.post(
-                #     # TODO: CHANGE THIS URL
-                #     f"http://localhost:8007/analytics/statistics",
-                #     json={
-                #         "player_id": match["player1_id"],
-                #         "match_id": match_id,
-                #         "tournament_id": match["tournament_id"],
-                #         "pieces_placed": player1_statistics["pieces_placed"],
-                #         "pps": player1_statistics["pps"],
-                #         "kpp": player1_statistics["kpp"],
-                #         "apm": player1_statistics["apm"],
-                #         "finesse_percentage": player1_statistics["finesse_percentage"],
-                #         "lines_cleared": player1_statistics["lines_cleared"]
-                #     }
-                # )
-                # response.raise_for_status()
+                response = await client.post(
+                    # TODO: CHANGE THIS URL
+                    f"{analytics_service_url}/analytics/statistics",
+                    json={
+                        "player_id": match["player1_id"],
+                        "match_id": match_id,
+                        "tournament_id": match["tournament_id"],
+                        "pieces_placed": player1_statistics["pieces_placed"],
+                        "pps": player1_statistics["pps"],
+                        "kpp": player1_statistics["kpp"],
+                        "apm": player1_statistics["apm"],
+                        "finesse_percentage": player1_statistics["finesse_percentage"],
+                        "lines_cleared": player1_statistics["lines_cleared"]
+                    }
+                )
+                response.raise_for_status()
                 
-                # response = await client.post(
-                #     # TODO: CHANGE THIS URL
-                #     f"http://localhost:8007/analytics/statistics",
-                #     json={
-                #         "player_id": match["player2_id"],
-                #         "match_id": match_id,
-                #         "tournament_id": match["tournament_id"],
-                #         "pieces_placed": player2_statistics["pieces_placed"],
-                #         "pps": player2_statistics["pps"],
-                #         "kpp": player2_statistics["kpp"],
-                #         "apm": player2_statistics["apm"],
-                #         "finesse_percentage": player2_statistics["finesse_percentage"],
-                #         "lines_cleared": player2_statistics["lines_cleared"]
-                #     }
-                # )
-                # response.raise_for_status()
+                response = await client.post(
+                    # TODO: CHANGE THIS URL
+                    f"{analytics_service_url}/analytics/statistics",
+                    json={
+                        "player_id": match["player2_id"],
+                        "match_id": match_id,
+                        "tournament_id": match["tournament_id"],
+                        "pieces_placed": player2_statistics["pieces_placed"],
+                        "pps": player2_statistics["pps"],
+                        "kpp": player2_statistics["kpp"],
+                        "apm": player2_statistics["apm"],
+                        "finesse_percentage": player2_statistics["finesse_percentage"],
+                        "lines_cleared": player2_statistics["lines_cleared"]
+                    }
+                )
+                response.raise_for_status()
+
+            if match["stage"] == 1: # final match in tournament
+                return updated_match
 
             #create new match
-            # print(match)
             next_match = await self.matchmaking_repository.get_match_by_stage_and_tournament(match["next_stage"], match["tournament_id"])
             if next_match:
                 updated_data = {
@@ -192,14 +194,14 @@ class MatchmakingService:
 
             else:
                 # print('here')
-                match=Match(
+                match= Match(
                     id=await self.matchmaking_repository.get_next_id(),
                     tournament_id=match["tournament_id"],
                     player1_id=winner_id,
                     player2_id=0,
                     scheduled_at=datetime.utcnow(),  # Use current time if not provided,
                     stage= match["next_stage"],
-                    next_stage= floor(match["next_stage"]/2),
+                    next_stage= max(floor(match["next_stage"]/2), 1),
                     playable= False
 
                 )
@@ -255,7 +257,7 @@ class MatchmakingService:
 
         return response
 
-# Method to update an existing match
+    # Method to update an existing match
     async def update_match(self, match_id: int, match_update: MatchUpdate):
         try:
             # Fetch the existing match to ensure it exists
