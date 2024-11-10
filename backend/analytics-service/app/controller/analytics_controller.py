@@ -6,6 +6,14 @@ from app.utils.dependencies import get_analytics_service
 
 router = APIRouter()
 
+@router.get("/")
+async def root():
+    return {"message": "Service is running"}
+
+@router.get("/analytics")
+async def root():
+    return {"message": "Analytics service is running"}
+
 @router.post("/analytics/statistics", response_model=PlayerStatisticsResponse, status_code=status.HTTP_201_CREATED)
 async def create_statistics(stat_data: PlayerStatisticsCreate, analytics_service: AnalyticsService = Depends(get_analytics_service)):
     return await analytics_service.create_statistics(stat_data)

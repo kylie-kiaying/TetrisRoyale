@@ -13,6 +13,14 @@ from typing import List
 
 router = APIRouter()
 
+@router.get("/")
+async def root():
+    return {"message": "Service is running"}
+
+@router.get("/ratings")
+async def root():
+    return {"message": "Ratings service is running"}
+
 @router.post("/ratings/matches/", response_model=dict)
 async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends(get_db)):
     # Ensure both players exist in the player microservice
