@@ -129,7 +129,7 @@ export default function PlayerProfile() {
                 className="h-full w-full object-cover"
               />
               <label className="absolute inset-0 flex cursor-pointer items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
-                <FaEdit className="text-2xl text-black" />
+                <FaEdit className="text-2xl text-white" />
                 <input
                   type="file"
                   className="hidden"
@@ -138,16 +138,15 @@ export default function PlayerProfile() {
               </label>
             </div>
 
-            {/* Upload Button */}
-            <button
-              onClick={handleUpload}
-              className={`mt-2 rounded bg-blue-500 px-6 py-2 text-white transition-all ${
-                file ? 'hover:bg-blue-600' : 'cursor-not-allowed bg-gray-400'
-              }`}
-              disabled={!file}
-            >
-              Upload
-            </button>
+            {/* Conditionally render upload button only if a file is selected */}
+            {file && (
+              <button
+                onClick={handleUpload}
+                className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+              >
+                Upload
+              </button>
+            )}
           </div>
           <div className="flex w-full flex-col items-center space-y-4 px-2">
             <h1 className="text-3xl font-semibold text-white md:text-4xl">
