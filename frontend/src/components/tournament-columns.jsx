@@ -235,7 +235,7 @@ export const columns = {
           onClick={() => row.toggleExpanded()}
           className="flex items-center"
         >
-          {row.getIsExpandedt() ? (
+          {row.getIsExpanded() ? (
             <IoChevronDown className="h-5 w-5 text-gray-400" />
           ) : (
             <IoChevronForward className="h-5 w-5 text-gray-400" />
@@ -380,65 +380,65 @@ export const columns = {
   ],
   created: [
     {
-        accessorKey: "tournament_name",
-        header: "Name",
+      accessorKey: 'tournament_name',
+      header: 'Name',
     },
     {
-        accessorKey: "tournament_start",
-        header: "Start",
-        cell: (info) => {
-          const dateValue = info.getValue();
-          if (!dateValue) return 'N/A';
-          const date = new Date(dateValue);
-          return isNaN(date.getTime())
-            ? 'Invalid Date'
-            : date.toLocaleDateString('en-GB', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              });
-        },
+      accessorKey: 'tournament_start',
+      header: 'Start',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        if (!dateValue) return 'N/A';
+        const date = new Date(dateValue);
+        return isNaN(date.getTime())
+          ? 'Invalid Date'
+          : date.toLocaleDateString('en-GB', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+      },
     },
     {
-        accessorKey: "tournament_end",
-        header: "End",
-        cell: (info) => {
-          const dateValue = info.getValue();
-          if (!dateValue) return 'N/A';
-          const date = new Date(dateValue);
-          return isNaN(date.getTime())
-            ? 'Invalid Date'
-            : date.toLocaleDateString('en-GB', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              });
-        },
+      accessorKey: 'tournament_end',
+      header: 'End',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        if (!dateValue) return 'N/A';
+        const date = new Date(dateValue);
+        return isNaN(date.getTime())
+          ? 'Invalid Date'
+          : date.toLocaleDateString('en-GB', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+      },
     },
     {
-        accessorKey: "status",
-        header: "Status",
+      accessorKey: 'status',
+      header: 'Status',
     },
     {
       accessorKey: 'recommended_rating',
       header: 'Rating',
     },
     {
-        id: "expander",
-        accessorKey: "players",
-        header: () => null,
-        cell: ({ row }) => (
-            <button
-                onClick={() => row.toggleExpanded()}
-                className="flex items-center"
-            >
-                {row.getIsExpanded() ? (
-                    <IoChevronDown className="text-gray-400 w-5 h-5" />
-                ) : (
-                    <IoChevronForward className="text-gray-400 w-5 h-5" />
-                )}
-            </button>
-        ),
+      id: 'expander',
+      accessorKey: 'players',
+      header: () => null,
+      cell: ({ row }) => (
+        <button
+          onClick={() => row.toggleExpanded()}
+          className="flex items-center"
+        >
+          {row.getIsExpanded() ? (
+            <IoChevronDown className="h-5 w-5 text-gray-400" />
+          ) : (
+            <IoChevronForward className="h-5 w-5 text-gray-400" />
+          )}
+        </button>
+      ),
     },
-],
+  ],
 };
