@@ -78,7 +78,7 @@ export default function RankingsPage() {
                       Player
                     </th>
                     <th className="p-2 text-left font-semibold text-gray-400 sm:p-4">
-                      ELO Rating
+                      WHR Rating
                     </th>
                     <th className="p-2 text-left font-semibold text-gray-400 sm:p-4">
                       Tier
