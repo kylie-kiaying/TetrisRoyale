@@ -129,5 +129,5 @@ jobs:
     - name: Update ECS services
       run: |
         for service in auth-service player-service tournament-service matchmaking-service rating-service admin-service analytics-service; do
-          aws ecs update-service --cluster CS203-Tetritracker --service $service --force-new-deployment
+          aws ecs update-service --cluster CS203-TetriTracker --service $service --force-new-deployment
         done
