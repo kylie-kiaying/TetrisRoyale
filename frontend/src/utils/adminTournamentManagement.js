@@ -97,7 +97,7 @@ export const startTournament = async (tournament) => {
         // create matches for every pair, pairPlayersResponse.data contains the pairs in the form [tournament_id, player1['id'], player1['rating'], player2['id'], player2['rating'], floor(starting_stage), floor(starting_stage/2)]
         for (const pair of pairPlayersResponse.data) {
           const matchResponse = await axios.post(
-            `http://localhost:8004/matchmaking`,
+            `http://localhost:8004/matchmaking/`,
             {
               tournament_id: pair[0],
               player1_id: pair[1],
@@ -194,3 +194,23 @@ export const spawnTournyAndParticipants = async (username) => {
     errorToast('Failed to spawn tournament and participants');
   }
 };
+
+export const endTournament = async (tournament) => {
+  const response = await axios.put(
+    `http://localhost:8003/tournaments/${tournament.tournament_id}`,
+    {
+      tournament_name: tournament.tournament_name,
+      status: 'completed',
+      organiser: tournament.organiser,
+      tournament_start: tournament.tournament_start,
+      tournament_end: tournament.tournament_end,
+      remarks: tournament.remarks,
+      recommended_rating: tournament.recommended_rating,
+    }
+  );
+  if (response.status != 200) {
+    console.error('Failed to start tournament:', response.statusText);
+  } else {
+    successToast('Tournament ended successfully');
+  }
+}

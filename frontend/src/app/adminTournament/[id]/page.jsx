@@ -24,9 +24,11 @@ import {
   fetchPlayersFromRegistrants,
   getTournamentData,
   startTournament,
+  endTournament
 } from '@/utils/adminTournamentManagement';
 import { useEffect, useState } from 'react';
 import BackgroundWrapper from '@/components/BackgroundWrapper';
+import { set } from 'date-fns';
 
 const isPowerOfTwo = (num) => {
   if (num < 1) return false;
@@ -49,17 +51,22 @@ export default function TournamentDetails() {
   const [tournamentData, setTournamentData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tournamentPlayable, setTournamentPlayable] = useState(false);
+  const [tournamentEnded, setTournamentEnded] = useState(false);
+  const [winner, setWinner] = useState(null);
   const [canBeStarted, setCanBeStarted] = useState(false);
   const [registrants, setRegistrants] = useState([]);
   const [matches, setMatches] = useState([]);
   const [players, setPlayers] = useState([]);
   const [matchesLoading, setMatchesLoading] = useState(true);
+  const [refreshMatches, setRefreshMatches] = useState(false);
+  const [canEndTournament, setCanEndTournament] = useState(false);
 
   useEffect(() => {
     getTournamentData(id).then((data) => {
       if (data) {
         setTournamentData(data);
         setTournamentPlayable(data.status === 'ongoing');
+        setTournamentEnded(data.status === 'completed');
         setRegistrants(data.registrants);
 
         if (
@@ -72,10 +79,10 @@ export default function TournamentDetails() {
       }
       setLoading(false);
     });
-  }, [id]);
+  }, [id, refreshMatches]);
 
   useEffect(() => {
-    if (tournamentPlayable) {
+    if (tournamentPlayable || tournamentEnded) {
       Promise.all([
         fetchAdminTournamentPlayableMatches(id),
         fetchPlayersFromRegistrants(registrants),
@@ -84,12 +91,36 @@ export default function TournamentDetails() {
           setMatches(fetchedMatches);
           setPlayers(fetchedPlayers);
           setMatchesLoading(false);
+          if (tournamentPlayable) {
+            let allCompleted = true;
+            for (const match of fetchedMatches) {
+              if (match.status != 'completed') {
+                allCompleted = false;
+                break;
+              }
+            }
+            setCanEndTournament(allCompleted);
+          } else {
+            let winnerId = null;
+            for (const match of fetchedMatches) {
+              if (match.stage === 1) {
+                winnerId = match.winner_id;
+                break;
+              }
+            }
+            if (winnerId) {
+              const winner = fetchedPlayers.find(
+                (player) => player.user_id === winnerId
+              );
+              setWinner(winner);
+            }
+          }
         })
         .catch(() => {
           setMatchesLoading(false);
         });
     }
-  }, [id, tournamentPlayable, registrants]);
+  }, [id, tournamentPlayable, registrants, refreshMatches]);
 
   if (loading) {
     return (
@@ -108,9 +139,35 @@ export default function TournamentDetails() {
       <div className="flex w-full flex-grow flex-col items-center space-y-8 pb-10 pt-14">
         {/* Tournament Info Card */}
         <div className="w-full max-w-[800px] rounded-xl bg-gradient-to-br from-[#45234d] to-[#23132c] p-8 shadow-2xl">
-          <h1 className="mb-6 text-center text-3xl font-bold text-pink-200">
-            {tournamentData?.tournament_name || 'Tournament Title'}
-          </h1>
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="mb-6 text-center text-3xl font-bold">
+              <span className="text-pink-200">{tournamentData?.tournament_name || 'Tournament Title'}</span> <span className="text-gray-300">#{tournamentData?.tournament_id}</span>
+            </h1>
+            {canBeStarted && <Button
+              variant="outline"
+              className="rounded-lg border-none bg-green-700 px-4 py-2 font-semibold text-white transition-all duration-200 hover:bg-purple-600"
+              onClick={async () => {
+                  await startTournament(tournamentData);
+                  setRefreshMatches((refreshMatches) => !refreshMatches);
+                  setCanBeStarted(false);
+                }
+              }
+            >
+              Start Tournament
+            </Button>}
+            {canEndTournament && 
+            <Button
+              variant="outline"
+              className="rounded-lg border-none bg-yellow-700 px-4 py-2 font-semibold text-white transition-all duration-200 hover:bg-purple-600"
+              onClick={async () => {
+                  await endTournament(tournamentData);
+                  setRefreshMatches((refreshMatches) => !refreshMatches);
+                }
+              }
+            >
+              End Tournament
+            </Button>}
+          </div>
           <div className="space-y-4 text-gray-300">
             <DetailItem
               icon={<FaUser />}
@@ -165,37 +222,51 @@ export default function TournamentDetails() {
                     </CardDescription>
                   </div>
                 ) : (
-                  <ManageMatches matches={matches} players={players} />
+                  <ManageMatches
+                    matches={matches}
+                    players={players}
+                    onMatchUpdated={() => setRefreshMatches((prev) => !prev)} // Toggling to trigger re-fetch
+                  />
                 )
               ) : canBeStarted ? (
                 <div className="space-y-2 text-center">
-                  <CardDescription className="font-medium text-green-400">
+                  <CardDescription className="text-lg text-green-400">
                     Tournament is ready to start.
                   </CardDescription>
-                  <CardDescription className="text-sm text-gray-400">
+                  <CardDescription className="text-lg text-gray-400">
                     Number of registrants: {registrants.length}
                   </CardDescription>
                 </div>
               ) : (
-                <div className="space-y-2 text-center">
-                  <CardDescription className="font-medium text-yellow-500">
-                    Tournament cannot be started with the current number of
-                    players or the current date.
-                  </CardDescription>
-                  <CardDescription className="text-sm text-gray-400">
-                    Number of registrants: {registrants.length}
-                  </CardDescription>
-                  <CardDescription className="text-sm text-gray-400">
-                    Supposed Start Date:{' '}
-                    {formatDateMedium(tournamentData?.tournament_start) ||
-                      'N/A'}
-                  </CardDescription>
-                  <CardDescription className="text-sm text-gray-400">
-                    Current Date:{' '}
-                    {formatDateMedium(new Date().toLocaleDateString())}
-                  </CardDescription>
-                </div>
-              )}
+                tournamentEnded ? (
+                  <div className="space-y-2 text-center">
+                    <CardDescription className="text-lg text-green-400">
+                      Tournament has ended!
+                    </CardDescription>
+                    <CardDescription className="text-lg text-white-400">
+                      Winner: {winner? <div>{winner.username} 🎉</div>  : 'N/A'}
+                    </CardDescription>
+                  </div>
+                ) : (
+                  <div className="space-y-2 text-center">
+                    <CardDescription className="text-lg text-yellow-500">
+                      Tournament cannot be started with the current number of
+                      players or the current date.
+                    </CardDescription>
+                    <CardDescription className="text-lg text-gray-400">
+                      Number of registrants: {registrants.length}
+                    </CardDescription>
+                    <CardDescription className="text-lg text-gray-400">
+                      Supposed Start Date:{' '}
+                      {formatDateMedium(tournamentData?.tournament_start) ||
+                        'N/A'}
+                    </CardDescription>
+                    <CardDescription className="text-lg text-gray-400">
+                      Current Date:{' '}
+                      {formatDateMedium(new Date().toLocaleDateString())}
+                    </CardDescription>
+                  </div>
+              ))}
             </CardContent>
           </Card>
         </div>

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { setPlayerAsWinner } from '@/utils/adminTournamentManagement';
 import { FaTrophy } from 'react-icons/fa';
 
-export default function MatchDialog({ match, players, onClose }) {
+export default function MatchDialog({ match, players, onClose, onResultSubmitted }) {
   const player1 = players.find((player) => player.user_id === match.player1_id);
   const player2 = players.find((player) => player.user_id === match.player2_id);
 
@@ -22,6 +22,12 @@ export default function MatchDialog({ match, players, onClose }) {
   const toggleWinner = (winnerId) => {
     setPlayer1Status(winnerId === player1.user_id ? 'Win' : 'Lose');
     setPlayer2Status(winnerId === player2.user_id ? 'Win' : 'Lose');
+  };
+
+  const handleSubmitResult = async () => {
+    await setPlayerAsWinner(match.id, player1Status === 'Win' ? player1.user_id : player2.user_id);
+    onResultSubmitted(); // Call the callback to refresh matches
+    onClose(); // Close the dialog
   };
 
   return (
@@ -77,13 +83,7 @@ export default function MatchDialog({ match, players, onClose }) {
         <Button
           variant="outline"
           className="rounded-lg border-none bg-purple-700 px-4 py-2 font-semibold text-white transition-all duration-200 hover:bg-purple-600"
-          onClick={() => {
-            setPlayerAsWinner(
-              match.id,
-              player1Status === 'Win' ? player1.user_id : player2.user_id
-            );
-            onClose();
-          }}
+          onClick={handleSubmitResult}
         >
           {match.status === 'completed' ? 'Edit Result' : 'Submit Result'}
         </Button>

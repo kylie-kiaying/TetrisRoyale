@@ -34,7 +34,7 @@ const createPlaceholderMatch = (id) => {
   };
 };
 
-export default function ManageMatches({ matches, players }) {
+export default function ManageMatches({ matches, players, onMatchUpdated }) {
   const [openMatch, setOpenMatch] = useState(null); // Stores the match to open in the dialog
   const [rootGame, setRootGame] = useState(null);
 
@@ -45,6 +45,7 @@ export default function ManageMatches({ matches, players }) {
   });
 
   const openDialog = (match) => {
+    if (match.player1_id === 0 || match.player2_id === 0) return;
     setOpenMatch(match);
   };
 
@@ -265,9 +266,10 @@ export default function ManageMatches({ matches, players }) {
                   <span className="material-icons">close</span>
                 </div>
                 <MatchDialog
-                  match={openMatch}
-                  players={players}
-                  onClose={closeDialog}
+                    match={openMatch}
+                    players={players}
+                    onClose={closeDialog}
+                    onResultSubmitted={onMatchUpdated} // Trigger refresh on result submission
                 />
               </DialogPanel>
             </div>
