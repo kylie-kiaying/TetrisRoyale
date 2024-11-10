@@ -5,7 +5,7 @@ import { DataTable } from '@/components/ui/data-table';
 import { useAuthStore } from '@/store/authStore';
 import { useEffect, useState } from 'react';
 import { fetchAdminTournaments } from '@/utils/fetchAdminTournaments';
-import ToggleButtons from '@/components/ui/toggle';
+import { getPlayerTier } from '@/utils/getPlayerTier';
 
 
 
@@ -16,6 +16,29 @@ export default function AdminProfile() {
 
   const loadTournaments = async () => {
     const fetchedTournaments = await fetchAdminTournaments(username);
+    fetchedTournaments.forEach(async tournament => {
+      try {
+        const response = await fetch(
+          `http://localhost:8003/tournaments/${tournament.tournament_id}`
+        );
+        const data = await response.json();
+        tournament.players = [];
+        
+
+        data.registrants.map(async (registrant) => {
+          const playerResponse = await fetch(
+            `http://localhost:8002/players/${registrant.player_id}`
+          );
+          const playerData = await playerResponse.json();
+          const { tier, color } = getPlayerTier(playerData.rating);
+          const player = {username: playerData.username, tier: tier, color: color, rating: playerData.rating}
+          tournament.players.push(player);
+        })
+      } catch(error) {
+        console.error('Error fetching tournament details:', error);
+      };
+    });
+    
     setTournaments(fetchedTournaments);
   };
   

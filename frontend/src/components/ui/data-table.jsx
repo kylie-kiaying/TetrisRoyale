@@ -148,11 +148,13 @@ export function DataTable({ type, data }) {
                                                 </div>
                                             )}
 
+                                            {row.original.players && (
                                             <h2 className="text-center text-lg font-bold tracking-wide md:text-2xl">
                                                 Player List
                                             </h2>
+                                            )}
                                             {row.original.players && row.original.players.map((player) => (
-                                                <div className="grid grid-cols-4 gap-4 border-b border-gray-700 py-2">
+                                                <div className="grid grid-cols-4 gap-4 border-b border-gray-700 py-2" key={player}>
                                                     <div className="flex col-start-2 items-center space-x-2 truncate justify-end">
                                                         <span className="truncate text-sm font-semibold sm:text-xs md:text-sm lg:text-base">
                                                             {player.username}
