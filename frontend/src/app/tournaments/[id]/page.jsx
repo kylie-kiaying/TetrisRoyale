@@ -5,11 +5,16 @@ import Navbar from '@/components/Navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { FaGamepad, FaCalendarAlt, FaUser, FaStar } from 'react-icons/fa';
+import {
+  FaGamepad,
+  FaCalendarAlt,
+  FaUser,
+  FaStar,
+  FaTrophy,
+} from 'react-icons/fa';
 import { getPlayerTier } from '@/utils/getPlayerTier';
 import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/store/authStore';
-import { FaTrophy } from 'react-icons/fa';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import {
