@@ -92,7 +92,7 @@ jobs:
   #       pytest tests/ -v
 
   deploy:
-    needs: test
+    # needs: test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
