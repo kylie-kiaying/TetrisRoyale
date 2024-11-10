@@ -21,38 +21,50 @@ export const useAuthStore = create(
           if (token && token.split('.').length === 3) {
             const decoded = jwtDecode(token);
 
-            // Fetch user rating using decoded ID
-            axios
-              .get(`http://localhost:8005/ratings/${decoded.id}`)
-              .then((ratingResponse) => {
-                const rating =
-                  ratingResponse.status === 200
-                    ? ratingResponse.data.rating
-                    : null;
+            if (decoded.role === 'player') {
+              // Fetch user rating using decoded ID
+              axios
+                .get(`http://localhost:8005/ratings/${decoded.id}`)
+                .then((ratingResponse) => {
+                  const rating =
+                    ratingResponse.status === 200
+                      ? ratingResponse.data.rating
+                      : null;
 
-                // Set user data in Zustand store
-                set({
-                  user: {
-                    token,
-                    userId: decoded.id,
-                    username: decoded.username,
-                    userType: decoded.role,
-                    rating,
-                  },
+                  // Set user data in Zustand store
+                  set({
+                    user: {
+                      token,
+                      userId: decoded.id,
+                      username: decoded.username,
+                      userType: decoded.role,
+                      rating,
+                    },
+                  });
+                })
+                .catch((error) => {
+                  console.error('Error fetching rating:', error);
+                  set({
+                    user: {
+                      token,
+                      userId: decoded.id,
+                      username: decoded.username,
+                      userType: decoded.role,
+                      rating: null,
+                    },
+                  });
                 });
-              })
-              .catch((error) => {
-                console.error('Error fetching rating:', error);
-                set({
-                  user: {
-                    token,
-                    userId: decoded.id,
-                    username: decoded.username,
-                    userType: decoded.role,
-                    rating: null,
-                  },
-                });
+            } else {
+              set({
+                user: {
+                  token,
+                  userId: decoded.id,
+                  username: decoded.username,
+                  userType: decoded.role,
+                  rating: null,
+                },
               });
+            }
           } else {
             console.error('Invalid token format:', token);
           }
