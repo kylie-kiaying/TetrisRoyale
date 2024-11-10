@@ -143,7 +143,7 @@ export default function TournamentDetails() {
           </CardHeader>
           <CardContent className="max-h-[400px] space-y-2 overflow-y-auto">
             <ul className="space-y-1">
-              {sortedMatches.map((match, index) => {
+              {filteredMatches.map((match, index) => {
                 const isCompleted = match.status === 'completed';
                 return (
                   <li
@@ -206,7 +206,7 @@ export default function TournamentDetails() {
             <DetailItem
               icon={<FaUser />}
               label="Organizer"
-              content={tournament.organizer}
+              content={tournament.organiser}
             />
             <DetailItem
               icon={<FaCalendarAlt />}
@@ -221,7 +221,7 @@ export default function TournamentDetails() {
             <DetailItem
               icon={<FaStar />}
               label="Recommended Rating"
-              content={tournament.recommendedRating || 'None'}
+              content={tournament.recommended_rating || 'None'}
             />
             <DetailItem
               icon={<FaGamepad />}

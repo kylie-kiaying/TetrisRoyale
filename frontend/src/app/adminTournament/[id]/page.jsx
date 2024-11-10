@@ -134,7 +134,7 @@ export default function TournamentDetails() {
             <DetailItem
               icon={<FaStar />}
               label="Recommended Rating"
-              content={tournamentData?.recommendedRating || 'None'}
+              content={tournamentData?.recommended_rating || 'None'}
             />
             <DetailItem
               icon={<FaGamepad />}
@@ -187,10 +187,12 @@ export default function TournamentDetails() {
                   </CardDescription>
                   <CardDescription className="text-sm text-gray-400">
                     Supposed Start Date:{' '}
-                    {tournamentData?.tournament_start || 'N/A'}
+                    {formatDateMedium(tournamentData?.tournament_start) ||
+                      'N/A'}
                   </CardDescription>
                   <CardDescription className="text-sm text-gray-400">
-                    Current Date: {new Date().toLocaleDateString()}
+                    Current Date:{' '}
+                    {formatDateMedium(new Date().toLocaleDateString())}
                   </CardDescription>
                 </div>
               )}
