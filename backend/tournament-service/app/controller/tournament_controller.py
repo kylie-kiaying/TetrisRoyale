@@ -6,6 +6,10 @@ from typing import List
 
 router = APIRouter()
 
+@router.get("/")
+async def root():
+    return {"message": "Service is running"}
+
 @router.get("/tournaments", response_model=List[TournamentResponse])
 async def list_tournaments(tournament_service: TournamentService = Depends(get_tournament_service)):
     return await tournament_service.list_tournaments()

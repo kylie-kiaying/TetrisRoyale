@@ -58,6 +58,7 @@ export default function ViewPlayerProfile() {
       setProfileData({
         username: playerData.username,
         rating: ratingData.rating,
+        profile_picture: playerData.profile_picture,
       });
     } catch (error) {
       console.error('Error fetching player data:', error);
@@ -74,7 +75,7 @@ export default function ViewPlayerProfile() {
     return <div>Loading...</div>;
   }
 
-  const { username, rating } = profileData;
+  const { username, rating, profile_picture } = profileData;
   const { tier, color } = getPlayerTier(rating);
 
   const plotOptions = [
@@ -99,7 +100,7 @@ export default function ViewPlayerProfile() {
         <div className="mx-4 flex w-full max-w-4xl flex-col items-center space-y-6 rounded-lg bg-[#1c1132] p-6 shadow-md md:p-8">
           <div className="group relative flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-[#6d28d9] bg-gray-500 md:h-40 md:w-40">
             <img
-              src="/user.png"
+              src={profile_picture || '/user.png'} // Use profile_picture if available, otherwise default to /user.png
               alt="Profile Picture"
               className="h-full w-full object-cover transition-opacity duration-200 group-hover:opacity-50"
             />
@@ -107,7 +108,9 @@ export default function ViewPlayerProfile() {
 
           <div className="flex w-full flex-col items-center space-y-4 px-2">
             <h1 className="text-3xl font-semibold md:text-4xl">{username}</h1>
-            <p className="text-xl text-gray-400 md:text-2xl">WHR: {rating}</p>
+            <p className="text-xl text-gray-400 md:text-2xl">
+              WHR: {rating.toFixed(2)}
+            </p>
             <Link href="/tierInfo">
               <Badge
                 className={`mt-2 rounded-lg px-3 py-1 ${color} hover:shadow-[0_0_10px_var(--tw-shadow-color)]`}

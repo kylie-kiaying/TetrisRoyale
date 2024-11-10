@@ -8,6 +8,35 @@ from app.schema.matchmaking_schema import MatchCreate, MatchResponse, MatchUpdat
 import httpx
 from fastapi import HTTPException
 from datetime import datetime
+from math import floor
+
+
+def generate_random_player_statistics():
+    # Pieces placed between 50 to 150 (a core statistic)
+    pieces_placed = random.randint(50, 150)
+    
+    # Pieces per second (PPS): assume game time of around 60-200 seconds based on pieces placed
+    game_time_seconds = random.uniform(60, 200)
+    pps = round(pieces_placed / game_time_seconds, 2)  # Calculate PPS as pieces per second
+
+    # Key presses per piece (KPP): finesse affects this, lower KPP if finesse is high
+    finesse_percentage = random.randint(50, 100)  # Finesse as a percentage
+    kpp = round(random.uniform(1.5, 3.0) - (finesse_percentage - 50) / 100, 2)
+    kpp = max(0.5, min(3.0, kpp))  # Ensure KPP is between reasonable bounds
+
+    # Attacks per minute (APM): relates to lines cleared
+    lines_cleared = random.randint(50, 500)
+    apm = int((lines_cleared / game_time_seconds) * 60 * random.uniform(0.5, 1.5))
+    apm = min(apm, 300)  # Cap APM at 300
+
+    return {
+        "pieces_placed": pieces_placed,
+        "pps": pps,
+        "kpp": kpp,
+        "apm": apm,
+        "finesse_percentage": f"{finesse_percentage}%",
+        "lines_cleared": lines_cleared
+    }
 
 
 def generate_random_player_statistics():
@@ -46,24 +75,33 @@ class MatchmakingService:
     async def pair_players(self, tournament_id: int):
         registered_player_ids = await self.tournament_repository.get_tournament_registrants(tournament_id)
 
-        if len(registered_player_ids) < 2:
+        num_players = len(registered_player_ids)
+        if num_players < 2:
             raise ValueError("Not enough players registered for pairing")
+
+        # check if number of players is a power of 2
+        if num_players & (num_players - 1) != 0:
+            raise ValueError("Number of registered players is not a power of 2")
 
         players = []
         async with httpx.AsyncClient() as client:
             for i in range(0, len(registered_player_ids)):
                 response = await client.get(f"http://rating-service:8000/ratings/{registered_player_ids[i]}")
-                await response.raise_for_status()
-                player_rating = await response.json()
-                players.append({"id": registered_player_ids[i], "rating": player_rating["rating"]})
+                response.raise_for_status()
+                player_rating = response.json()
+                players.append({"id":registered_player_ids[i], "rating":player_rating["rating"]})
 
         players = sorted(players, key=lambda x: x["rating"])
+
+        #decide starting count for stages, which is log2(n) -> 4 players will have starting stage of 2, 8 players will have starting stage of 4: assuming we always have 2^n players
+        starting_stage  = len(players)/2 
 
         matches = []
         for i in range(0, len(players) - 1, 2):
             player1 = players[i]
             player2 = players[i + 1]
-            matches.append([tournament_id, player1['id'], player1['rating'], player2['id'], player2['rating']])
+            matches.append([tournament_id, player1['id'], player1['rating'], player2['id'], player2['rating'], floor(starting_stage), floor(starting_stage/2)])
+            starting_stage += 1
 
         return matches
 
@@ -98,56 +136,97 @@ class MatchmakingService:
 
             async with httpx.AsyncClient() as client:
                 await client.put(
-                    f"http://rating-service:8000/matches/{match_id}/",  
+                    f"http://rating-service:8000/ratings/matches/{match_id}/",  
                     json=match_update
                 )
-                # response = await client.post(
-                #     # TODO: CHANGE THIS URL
-                #     f"http://localhost:8007/analytics/statistics",
-                #     json={
-                #         "player_id": match["player1_id"],
-                #         "match_id": match_id,
-                #         "tournament_id": match["tournament_id"],
-                #         "pieces_placed": player1_statistics["pieces_placed"],
-                #         "pps": player1_statistics["pps"],
-                #         "kpp": player1_statistics["kpp"],
-                #         "apm": player1_statistics["apm"],
-                #         "finesse_percentage": player1_statistics["finesse_percentage"],
-                #         "lines_cleared": player1_statistics["lines_cleared"]
-                #     }
-                # )
-                # response.raise_for_status()
+
+                response = await client.post(
+                    # TODO: CHANGE THIS URL
+                    f"{analytics_service_url}/analytics/statistics",
+                    json={
+                        "player_id": match["player1_id"],
+                        "match_id": match_id,
+                        "tournament_id": match["tournament_id"],
+                        "pieces_placed": player1_statistics["pieces_placed"],
+                        "pps": player1_statistics["pps"],
+                        "kpp": player1_statistics["kpp"],
+                        "apm": player1_statistics["apm"],
+                        "finesse_percentage": player1_statistics["finesse_percentage"],
+                        "lines_cleared": player1_statistics["lines_cleared"]
+                    }
+                )
+                response.raise_for_status()
                 
-                # response = await client.post(
-                #     # TODO: CHANGE THIS URL
-                #     f"http://localhost:8007/analytics/statistics",
-                #     json={
-                #         "player_id": match["player2_id"],
-                #         "match_id": match_id,
-                #         "tournament_id": match["tournament_id"],
-                #         "pieces_placed": player2_statistics["pieces_placed"],
-                #         "pps": player2_statistics["pps"],
-                #         "kpp": player2_statistics["kpp"],
-                #         "apm": player2_statistics["apm"],
-                #         "finesse_percentage": player2_statistics["finesse_percentage"],
-                #         "lines_cleared": player2_statistics["lines_cleared"]
-                #     }
-                # )
-                # response.raise_for_status()
-    
-            return updated_match
+                response = await client.post(
+                    # TODO: CHANGE THIS URL
+                    f"{analytics_service_url}/analytics/statistics",
+                    json={
+                        "player_id": match["player2_id"],
+                        "match_id": match_id,
+                        "tournament_id": match["tournament_id"],
+                        "pieces_placed": player2_statistics["pieces_placed"],
+                        "pps": player2_statistics["pps"],
+                        "kpp": player2_statistics["kpp"],
+                        "apm": player2_statistics["apm"],
+                        "finesse_percentage": player2_statistics["finesse_percentage"],
+                        "lines_cleared": player2_statistics["lines_cleared"]
+                    }
+                )
+                response.raise_for_status()
+
+            if match["stage"] == 1: # final match in tournament
+                return updated_match
+
+            #create new match
+            next_match = await self.matchmaking_repository.get_match_by_stage_and_tournament(match["next_stage"], match["tournament_id"])
+            if next_match:
+                updated_data = {
+                    "tournament_id": None,
+                    "player1_id": None,
+                    "player2_id": winner_id,
+                    "scheduled_at": None,
+                    "playable": True
+                }
+
+                # Create a new MatchUpdate object with updated values
+                updated_match_data = MatchUpdate(**updated_data)
+                return await self.matchmaking_repository.update_match(next_match["id"], updated_match_data)
+
+            else:
+                # print('here')
+                match= Match(
+                    id=await self.matchmaking_repository.get_next_id(),
+                    tournament_id=match["tournament_id"],
+                    player1_id=winner_id,
+                    player2_id=0,
+                    scheduled_at=datetime.utcnow(),  # Use current time if not provided,
+                    stage= match["next_stage"],
+                    next_stage= max(floor(match["next_stage"]/2), 1),
+                    playable= False
+
+                )
+                # Create a new MatchUpdate object with updated values
+                response = await self.matchmaking_repository.create_match(match)
+
+                return response 
+
+
         except Exception as e:
             # Log the error here if you have a logging system
             raise ValueError(f"Error updating match result: {str(e)}")
 
-    async def create_match(self, match_id: int, new_match: MatchCreate):
+    async def create_match(self, new_match: MatchCreate):
         # Create a new Match instance based on new_match data
+        match_id = await self.matchmaking_repository.get_next_id()
         match = Match(
             id=match_id,
             tournament_id=new_match.tournament_id,
             player1_id=new_match.player1_id,
             player2_id=new_match.player2_id,
-            scheduled_at=new_match.scheduled_at or datetime.utcnow()  # Use current time if not provided
+            scheduled_at=new_match.scheduled_at or datetime.utcnow(),  # Use current time if not provided,
+            stage= new_match.stage,
+            next_stage= new_match.next_stage,
+            playable= True if (new_match.player1_id != 0 and new_match.player2_id != 0) else False
         )
         
         # Add to the database session
@@ -164,7 +243,7 @@ class MatchmakingService:
         try:
             async with httpx.AsyncClient() as client:
                 await client.post(
-                    "http://rating-service:8000/matches/",  
+                    "http://rating-service:8000/ratings/matches/",  
                     json=match_data
                 )
         except httpx.HTTPStatusError as exc:
@@ -178,7 +257,7 @@ class MatchmakingService:
 
         return response
 
-# Method to update an existing match
+    # Method to update an existing match
     async def update_match(self, match_id: int, match_update: MatchUpdate):
         try:
             # Fetch the existing match to ensure it exists
@@ -191,7 +270,8 @@ class MatchmakingService:
                 "tournament_id": match_update.tournament_id or existing_match["tournament_id"],
                 "player1_id": match_update.player1_id or existing_match["player1_id"],
                 "player2_id": match_update.player2_id or existing_match["player2_id"],
-                "scheduled_at": match_update.scheduled_at or existing_match["scheduled_at"]
+                "scheduled_at": match_update.scheduled_at or existing_match["scheduled_at"],
+                "playable": match_update.playable or existing_match["playable"]
             }
 
             # Create a new MatchUpdate object with updated values
@@ -212,7 +292,7 @@ class MatchmakingService:
             
             async with httpx.AsyncClient() as client:
                 response = await client.put(
-                    f"http://rating-service:8000/matches/{match_id}/",
+                    f"http://rating-service:8000/ratings/matches/{match_id}/",
                     json=match_data
                 )
                 response.raise_for_status()
@@ -236,7 +316,7 @@ class MatchmakingService:
 
             async with httpx.AsyncClient() as client:
                 await client.delete(
-                    f"http://rating-service:8000/matches/{match_id}"
+                    f"http://rating-service:8000/ratings/matches/{match_id}"
                 )
 
             return {"detail": "Match deleted successfully"}

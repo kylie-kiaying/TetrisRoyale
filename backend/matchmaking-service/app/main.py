@@ -23,4 +23,4 @@ app.include_router(matchmaking_controller.router)
 
 @app.get("/")
 async def root():
-    return {"message": "Player Service is running!"}
+    return {"message": "Matchmaking Service is running!"}

@@ -59,6 +59,8 @@ class AuthService:
 
             player_service_url = os.getenv("PLAYER_SERVICE_URL")
             rating_service_url = os.getenv("RATING_SERVICE_URL")
+            admin_service_url = os.getenv("ADMIN_SERVICE_URL")
+
 
             if not player_service_url:
                 raise RuntimeError("PLAYER_SERVICE_URL is not set")
@@ -103,6 +105,21 @@ class AuthService:
                     )
                     response.raise_for_status()
 
+                    
+            elif auth_data.role == 'admin':
+                async with httpx.AsyncClient() as client:
+                    player_data = {
+                        "user_id": user.id,
+                        "username": auth_data.username,
+                        "email": auth_data.email,
+                        "display_name": auth_data.username
+                    }
+                    response = await client.post(
+                        f"{admin_service_url}/admins",
+                        json=player_data
+                    )
+                    response.raise_for_status()
+                    
             return {"message": "User registered successfully. Please check your email to verify your account."}
 
         except httpx.RequestError as req_err:
