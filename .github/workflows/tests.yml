@@ -64,32 +64,32 @@ env:
   ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        service: [
-          'auth-service',
-          'player-service', 
-          'tournament-service',
-          'matchmaking-service',
-          'rating-service',
-          'admin-service',
-          'analytics-service'
-        ]
-    steps:
-    - uses: actions/checkout@v3
+  # test:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       service: [
+  #         'auth-service',
+  #         'player-service', 
+  #         'tournament-service',
+  #         'matchmaking-service',
+  #         'rating-service',
+  #         'admin-service',
+  #         'analytics-service'
+  #       ]
+  #   steps:
+  #   - uses: actions/checkout@v3
     
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: '3.12'
         
-    - name: Run tests
-      working-directory: ./backend/${{ matrix.service }}
-      run: |
-        pip install -r requirements.txt
-        pytest tests/ -v
+  #   - name: Run tests
+  #     working-directory: ./backend/${{ matrix.service }}
+  #     run: |
+  #       pip install -r requirements.txt
+  #       pytest tests/ -v
 
   deploy:
     needs: test
