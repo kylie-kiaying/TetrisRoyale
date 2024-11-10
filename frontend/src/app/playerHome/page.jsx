@@ -16,159 +16,63 @@ import {
 } from '@/components/ui/carousel';
 import { Card, CardContent } from '@/components/ui/card';
 import { getRecommendedTournaments } from '@/utils/fetchRecommendedTournaments';
-
-const recommendedTournaments = [
-  {
-    tournament_id: '1',
-    tournament_name: 'Summer Slam',
-    tournament_start: 'August 1, 2024',
-    tournament_end: 'August 10, 2024',
-    status: 'Upcoming',
-    organizer: 'Summer Tetris League',
-    recommended_rating: 1230,
-  },
-  {
-    tournament_id: '2',
-    tournament_name: 'Fall Frenzy',
-    tournament_start: 'September 15, 2024',
-    tournament_end: 'September 25, 2024',
-    status: 'Upcoming',
-    organizer: 'Fall Tetris Association',
-    recommended_rating: 1240,
-  },
-  {
-    tournament_id: '3',
-    tournament_name: 'Halloween Havoc',
-    tournament_start: 'October 31, 2024',
-    tournament_end: 'November 5, 2024',
-    status: 'Upcoming',
-    organizer: 'Spooky Tetris Club',
-    recommended_rating: 1225,
-  },
-  {
-    tournament_id: '4',
-    tournament_name: 'Winter Wonderland',
-    tournament_start: 'December 20, 2024',
-    tournament_end: 'December 30, 2024',
-    status: 'Upcoming',
-    organizer: 'Winter Tetris Federation',
-    recommended_rating: 1235,
-  },
-  {
-    tournament_id: '5',
-    tournament_name: 'New Year Bash',
-    tournament_start: 'January 1, 2025',
-    tournament_end: 'January 10, 2025',
-    status: 'Upcoming',
-    organizer: 'New Year Tetris League',
-    recommended_rating: 1245,
-  },
-];
-
-const enrolledTournaments = [
-  {
-    tournament_id: '1',
-    tournament_name: 'Tetris Championship 2024',
-    tournament_start: 'June 1, 2024',
-    tournament_end: 'June 10, 2024',
-    status: 'Ongoing',
-    organizer: 'World Tetris Federation',
-  },
-  {
-    tournament_id: '2',
-    tournament_name: 'Spring Showdown',
-    tournament_start: 'October 5, 2024',
-    tournament_end: 'October 15, 2024',
-    status: 'Upcoming',
-    organizer: 'Tetris Club',
-  },
-  {
-    tournament_id: '3',
-    tournament_name: 'Championship Series 1',
-    tournament_start: 'June 1, 2024',
-    tournament_end: 'June 9, 2024',
-    status: 'Ongoing',
-    organizer: 'Tetr.io League',
-  },
-  {
-    tournament_id: '4',
-    tournament_name: 'World Tetris Tournament',
-    tournament_start: 'June 1, 2024',
-    tournament_end: 'June 5, 2024',
-    status: 'Ongoing',
-    organizer: 'Global Tetris Org',
-  },
-  {
-    tournament_id: '5',
-    tournament_name: 'TetriTracker Champs',
-    tournament_start: 'June 2, 2024',
-    tournament_end: 'June 4, 2024',
-    status: 'Ongoing',
-    organizer: 'TetriTracker',
-  },
-  {
-    tournament_id: '6',
-    tournament_name: 'Tetrix Open',
-    tournament_start: 'July 1, 2024',
-    tournament_end: 'July 10, 2024',
-    status: 'Upcoming',
-    organizer: 'Tetrix.io',
-  },
-];
-
-const completedTournaments = [
-  {
-    id: '1',
-    tournament_name: 'Winter Blast',
-    tournament_start: 'February 1, 2024',
-    tournament_end: 'February 5, 2024',
-    status: 'Completed',
-    organizer: 'Winter Games Federation',
-  },
-  {
-    id: '2',
-    tournament_name: 'Autumn Arena',
-    tournament_start: 'September 10, 2023',
-    tournament_end: 'September 20, 2023',
-    status: 'Completed',
-    organizer: 'Autumn Tetris League',
-  },
-  {
-    id: '3',
-    tournament_name: 'New Year Knockout',
-    tournament_start: 'January 2, 2024',
-    tournament_end: 'January 12, 2024',
-    status: 'Completed',
-    organizer: 'Tetris Masters',
-  },
-  {
-    id: '4',
-    tournament_name: 'Spring Bash',
-    tournament_start: 'April 15, 2024',
-    tournament_end: 'April 25, 2024',
-    status: 'Completed',
-    organizer: 'Spring Showdown Inc.',
-  },
-];
+import { fetchRecentCompletedTournaments } from '@/utils/fetchRecentlyCompletedTournaments';
+import { fetchUserTournaments } from '@/utils/fetchEnrolledTournaments';
+import { formatDateMedium } from '@/utils/dateUtils';
 
 export default function HomePage() {
-  // const [recommendedTournaments, setRecommendedTournaments] = useState([]);
+  const user = useAuthStore((state) => state.user);
+  const userId = user.userId;
+  const userRating = user.rating;
 
-  // useEffect(() => {
-  //   async function loadRecommendedTournaments() {
-  //     const tournaments = await getRecommendedTournaments(
-  //       user.rating,
-  //       user.username
-  //     );
-  //     setRecommendedTournaments(tournaments);
-  //   }
-  //   loadRecommendedTournaments();
-  // }, [user.rating, user.username]);
-
+  const [recommendedTournaments, setRecommendedTournaments] = useState([]);
+  const [enrolledTournaments, setEnrolledTournaments] = useState([]); // State for enrolled tournaments
+  const [completedTournaments, setCompletedTournaments] = useState([]); // State for completed tournaments
   const [visibleTable, setVisibleTable] = useState('enrolled');
-  const toggleTable = (table) => setVisibleTable(table);
-
   const [hotPosts, setHotPosts] = useState([]);
+
+  // Fetch recommended tournaments
+  useEffect(() => {
+    const fetchRecommendedTournaments = async () => {
+      try {
+        const tournaments = await getRecommendedTournaments(userRating, userId);
+        setRecommendedTournaments(tournaments);
+      } catch (error) {
+        console.error('Error fetching recommended tournaments:', error);
+      }
+    };
+
+    fetchRecommendedTournaments();
+  }, [userRating, userId]);
+
+  // Fetch enrolled tournaments
+  useEffect(() => {
+    const fetchEnrolledTournaments = async () => {
+      try {
+        const tournaments = await fetchUserTournaments(userId);
+        setEnrolledTournaments(tournaments);
+      } catch (error) {
+        console.error('Error fetching enrolled tournaments:', error);
+      }
+    };
+
+    fetchEnrolledTournaments();
+  }, [userId]);
+
+  // Fetch completed tournaments
+  useEffect(() => {
+    const fetchCompletedTournaments = async () => {
+      try {
+        const tournaments = await fetchRecentCompletedTournaments();
+        setCompletedTournaments(tournaments);
+        console.log(tournaments);
+      } catch (error) {
+        console.error('Error fetching completed tournaments:', error);
+      }
+    };
+
+    fetchCompletedTournaments();
+  }, []);
 
   // Load hot Reddit posts on component mount
   useEffect(() => {
@@ -178,6 +82,8 @@ export default function HomePage() {
     }
     loadHotPosts();
   }, []);
+
+  const toggleTable = (table) => setVisibleTable(table);
 
   return (
     <BackgroundWrapper className="w-full overflow-hidden">
@@ -294,13 +200,15 @@ export default function HomePage() {
 
                             {/* Date Range Format */}
                             <p className="text-center text-xs text-[#c2c2c7]">
-                              {tournament.start} &mdash; {tournament.end}
+                              {formatDateMedium(tournament.tournament_start)}{' '}
+                              &mdash;{' '}
+                              {formatDateMedium(tournament.tournament_end)}
                             </p>
 
                             <p className="text-center text-xs font-light text-[#c2c2c7]">
                               Organizer:{' '}
                               <span className="font-semibold text-[#78dcca] transition duration-200 hover:text-[#afffe1]">
-                                {tournament.organizer}
+                                {tournament.organiser}
                               </span>
                             </p>
                             <p className="text-center text-xs font-light text-[#c2c2c7]">

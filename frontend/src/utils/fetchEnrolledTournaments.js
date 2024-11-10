@@ -8,11 +8,14 @@ export async function fetchUserTournaments(userId) {
 
     const tournaments = await response.json();
 
-    // Filter tournaments where the user is in the registrants list
-    const userTournaments = tournaments.filter((tournament) =>
-      tournament.registrants.some(
-        (registrant) => registrant.player_id === userId
-      )
+    // Filter tournaments where the user is in the registrants list and the tournament status is not "completed"
+    const userTournaments = tournaments.filter(
+      (tournament) =>
+        tournament.status !== 'completed' && // Exclude tournaments with status "completed"
+        Array.isArray(tournament.registrants) &&
+        tournament.registrants.some(
+          (registrant) => registrant.player_id === userId
+        )
     );
 
     return userTournaments;
