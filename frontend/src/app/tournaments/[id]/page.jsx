@@ -5,11 +5,16 @@ import Navbar from '@/components/Navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { FaGamepad, FaCalendarAlt, FaUser, FaStar } from 'react-icons/fa';
+import {
+  FaGamepad,
+  FaCalendarAlt,
+  FaUser,
+  FaStar,
+  FaTrophy,
+} from 'react-icons/fa';
 import { getPlayerTier } from '@/utils/getPlayerTier';
 import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/store/authStore';
-import { FaTrophy } from 'react-icons/fa';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -143,9 +148,10 @@ export default function TournamentDetails() {
                 return (
                   <li
                     key={match.id}
-                    className={`flex items-center justify-between rounded-lg px-3 py-2 transition-all duration-200 ${
+                    onClick={() => openDialog(match)}
+                    className={`flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-all duration-200 ${
                       index % 2 === 0 ? 'bg-[#332054]' : 'bg-[#2a1a46]'
-                    } ${isCompleted ? 'border-l-4 border-green-500' : ''} shadow-md hover:scale-105 hover:bg-purple-700`}
+                    } ${isCompleted ? 'border-l-4 border-green-500' : ''} shadow-md hover:bg-purple-700`}
                     style={{ opacity: isCompleted ? 1 : 0.7 }}
                   >
                     <div className="flex w-full items-center overflow-hidden">
@@ -200,7 +206,7 @@ export default function TournamentDetails() {
             <DetailItem
               icon={<FaUser />}
               label="Organizer"
-              content={tournament.organizer}
+              content={tournament.organiser}
             />
             <DetailItem
               icon={<FaCalendarAlt />}
@@ -215,7 +221,7 @@ export default function TournamentDetails() {
             <DetailItem
               icon={<FaStar />}
               label="Recommended Rating"
-              content={tournament.recommendedRating || 'None'}
+              content={tournament.recommended_rating || 'None'}
             />
             <DetailItem
               icon={<FaGamepad />}

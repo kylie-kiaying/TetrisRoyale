@@ -15,6 +15,10 @@ def calculate_whr(players, matches):
 
     for match in matches:
         # Convert the match timestamp to a Unix timestamp (or whatever int format is expected)
+        if match.status != 'completed':
+            continue
+        if match.player1_id == match.player2_id:
+            continue
         match_time = int(match.timestamp.timestamp())  # Example conversion
         whr_model.create_game(
             str(match.player1_id),  # Ensure these are strings

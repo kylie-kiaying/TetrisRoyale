@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
+from sqlalchemy import select, update, and_, func
 from app.model.matchmaking_model import Match
 from app.schema.matchmaking_schema import MatchResponse, MatchUpdate
 from app.utils.checks import check_player_exists, check_tournament_exists
@@ -107,7 +107,10 @@ class MatchmakingRepository:
             "player2_id": match.player2_id,
             "scheduled_at": match.scheduled_at.isoformat(),  # Convert datetime to ISO format string
             "status": match.status,
-            "winner_id": match.winner_id
+            "winner_id": match.winner_id,
+            "stage": match.stage,
+            "next_stage": match.next_stage,
+            "playable": match.playable
         }
 
     async def update_match(self, match_id: int, match_update: MatchUpdate):
@@ -124,6 +127,8 @@ class MatchmakingRepository:
                         match.player2_id = match_update.player2_id
                     if match_update.scheduled_at is not None:
                         match.scheduled_at = match_update.scheduled_at
+                    if match_update.playable is not None:
+                        match.playable = match_update.playable
 
                     # Commit the changes and return the updated match
                     await session.commit()
@@ -140,3 +145,21 @@ class MatchmakingRepository:
                     await session.commit()
                     return {"detail": "Match deleted successfully"}
                 return None  # Return None if match not found
+
+    async def get_match_by_stage_and_tournament(self, stage: int, tournament_id: int):
+        # print(stage)
+        # print(tournament_id)
+        result = await self.db_session.execute(
+            select(Match).where(and_(Match.stage == stage, Match.tournament_id == tournament_id))
+        )
+        
+        match = result.scalar_one_or_none()
+        return self._match_to_dict(match) if match else None
+    
+    async def get_next_id(self):
+        async with self.AsyncSessionLocal() as session:
+            async with session.begin():
+                result = await session.execute(select(func.max(Match.id) + 1))
+                next_id = result.scalar()
+                # print(next_id)
+                return next_id

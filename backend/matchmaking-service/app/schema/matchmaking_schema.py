@@ -16,9 +16,11 @@ class MatchResponse(BaseModel):
 
 class MatchCreate(BaseModel):
     tournament_id: int
-    player1_id: int
-    player2_id: int
+    player1_id: Optional[int]
+    player2_id: Optional[int]
     scheduled_at: Optional[datetime] = None
+    stage: Optional[int]
+    next_stage:Optional[int]
 
 class MatchResultUpdate(BaseModel):
     winner_id: int
@@ -28,3 +30,4 @@ class MatchUpdate(BaseModel):
     player1_id: Optional[int]
     player2_id: Optional[int]
     scheduled_at: Optional[datetime]
+    playable: Optional[bool]

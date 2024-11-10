@@ -15,7 +15,7 @@ import {
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { fetchAdminTournaments } from '@/utils/fetchAdminTournaments';
+import { fetchAdminTournaments, spawnTournyAndParticipants } from '@/utils/adminTournamentManagement';
 import { formatDateMedium } from '@/utils/dateUtils';
 import { successToast, errorToast } from '@/utils/toastUtils';
 
@@ -265,7 +265,7 @@ export default function AdminPage() {
               >
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>{tournament.tournament_name}</CardTitle>
-                  <Link href="/adminTournament">
+                  <Link href={`/adminTournament/${tournament.tournament_id}`}>
                     <Button
                       variant="outline"
                       className="border-none bg-purple-700 text-white transition-all duration-200 hover:bg-purple-600"
@@ -367,6 +367,14 @@ export default function AdminPage() {
               </Card>
             ))}
           </CardContent>
+          {/* <Button
+            onClick={() =>
+              spawnTournyAndParticipants(username)
+            }
+            className="w-full bg-grey-600 text-white hover:bg-black sm:ml-3 sm:w-auto"
+          >
+            Demo
+          </Button> */}
         </Card>
       </div>
     </div>
