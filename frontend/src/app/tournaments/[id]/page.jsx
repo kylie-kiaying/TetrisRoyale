@@ -85,7 +85,7 @@ export default function TournamentDetails() {
   }, [id]);
 
   const isRegistered = tournament?.registrants.some(
-    (registrant) => registrant.username === username
+    (registrant) => registrant.player_id === id
   );
 
   if (!tournament) return <div>Loading...</div>;
