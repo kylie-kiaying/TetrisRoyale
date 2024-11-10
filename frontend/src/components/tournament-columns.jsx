@@ -30,8 +30,8 @@ export const columns = {
       header: 'Status',
     },
     {
-      accessorKey: 'organizer',
-      header: 'Organizer',
+      accessorKey: 'organiser',
+      header: 'Organiser',
     },
     {
       accessorKey: 'tournament_id',
@@ -80,8 +80,8 @@ export const columns = {
       header: 'Status',
     },
     {
-      accessorKey: 'organizer',
-      header: 'Organizer',
+      accessorKey: 'organiser',
+      header: 'Organiser',
     },
     {
       accessorKey: 'tournament_id',
