@@ -6,6 +6,7 @@ from app.schema.player_schema import PlayerCreate, PlayerUpdate
 from datetime import datetime, timezone
 from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
+from fastapi import HTTPException
 
 class PlayerRepository:
     def __init__(self, db_session: AsyncSession):
@@ -37,21 +38,21 @@ class PlayerRepository:
         await self.db_session.refresh(new_player)
         return new_player
 
-    async def update_player(self, player_id: int, player_update: PlayerUpdate):
+    async def update_player(self, player_id: int, player_data: dict):
         try:
-            query = select(Player).where(Player.user_id == player_id)
-            result = await self.db_session.execute(query)
-            player = result.scalar_one_or_none()
+            player = await self.get_player_by_id(player_id)
+            if not player:
+                raise HTTPException(status_code=404, detail="Player not found")
+                
+            for key, value in player_data.items():
+                setattr(player, key, value)
             
-            if player:
-                player_data = player_update.dict(exclude_unset=True)  # Convert to dictionary
-                for key, value in player_data.items():
-                    setattr(player, key, value)
-                player.last_updated = datetime.now(timezone.utc)
-                await self.db_session.commit()
-                await self.db_session.refresh(player)
-                return player
-            return None
+            player.last_updated = datetime.now(timezone.utc)
+            
+            await self.db_session.commit()
+            await self.db_session.refresh(player)
+                
+            return player
         except Exception as e:
             await self.db_session.rollback()
             raise e
