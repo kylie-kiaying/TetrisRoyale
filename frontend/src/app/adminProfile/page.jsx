@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
 import { useAuthStore } from '@/store/authStore';
 import { useEffect, useState } from 'react';
-import { fetchAdminTournaments } from '@/utils/fetchAdminTournaments';
+import { fetchAdminTournaments } from '@/utils/adminTournamentManagement';
 import { getPlayerTier } from '@/utils/getPlayerTier';
 
 
