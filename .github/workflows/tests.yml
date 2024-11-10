@@ -1,4 +1,4 @@
-name: Deploy to Amazon ECS
+name: Build and Push to ECR
 
 on:
   push:
@@ -31,30 +31,20 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
-        for service in auth-service player-service tournament-service matchmaking-service rating-service admin-service analytics-service; do
-          cd backend/$service
+        services=("auth-service" "player-service" "tournament-service" "matchmaking-service" "rating-service" "admin-service" "analytics-service")
+        
+        for service in "${services[@]}"; do
+          echo "Processing $service"
           
-          # Build and tag the image
-          docker build -t $ECR_REGISTRY/$service:$GITHUB_SHA .
-          docker tag $ECR_REGISTRY/$service:$GITHUB_SHA $ECR_REGISTRY/$service:latest
+          cd backend/$service || exit 1
           
-          # Push the image
-          docker push $ECR_REGISTRY/$service:$GITHUB_SHA
-          docker push $ECR_REGISTRY/$service:latest
+          echo "Building image for $service"
+          docker build -t "$ECR_REGISTRY/$service:$GITHUB_SHA" .
+          docker tag "$ECR_REGISTRY/$service:$GITHUB_SHA" "$ECR_REGISTRY/$service:latest"
+          
+          echo "Pushing image for $service"
+          docker push "$ECR_REGISTRY/$service:$GITHUB_SHA"
+          docker push "$ECR_REGISTRY/$service:latest"
           
           cd ../..
-        done
-
-    - name: Create CodeDeploy Deployments
-      run: |
-        for service in auth-service player-service tournament-service matchmaking-service rating-service admin-service analytics-service; do
-          aws deploy create-deployment \
-            --application-name CS203-TetriTracker-$service \
-            --deployment-group-name CS203-TetriTracker-$service-deployment-group \
-            --revision '{
-              "revisionType": "AppSpecContent",
-              "appSpecContent": {
-                "content": "{\"version\":1,\"Resources\":[{\"TargetService\":{\"Type\":\"AWS::ECS::Service\",\"Properties\":{\"TaskDefinition\":\"'$service':$GITHUB_SHA'\",\"LoadBalancerInfo\":{\"ContainerName\":\"'$service'\",\"ContainerPort\":8000}}}}]}"
-              }
-            }'
         done
