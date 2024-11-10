@@ -233,7 +233,7 @@ export default function ManageMatches({ matches, players }) {
                       <span
                         className={`text-xs font-semibold sm:text-sm md:text-base ${isCompleted ? 'text-green-400' : 'text-yellow-400'}`}
                       >
-                        {isCompleted ? 'completed' : 'pending'}
+                        {isCompleted ? 'Completed' : 'Pending'}
                       </span>
                     </div>
                   </li>
