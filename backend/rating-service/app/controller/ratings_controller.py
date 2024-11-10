@@ -21,6 +21,38 @@ async def root():
 async def root():
     return {"message": "Ratings service is running"}
 
+@router.get("/ratings/all", response_model=List[dict])
+async def get_all_player_ratings(db: AsyncSession = Depends(get_db)):
+    """
+    Retrieves the ratings of all players.
+    Args:
+        db (AsyncSession): Database session.
+    Returns:
+        List[dict]: A list of all players' rating information.
+    """
+    # Retrieve all players from the database
+    result = await db.execute(select(Player))
+    players = result.scalars().all()
+    # Check if players exist in the database
+    if not players:
+        raise HTTPException(status_code=404, detail="No players found in the database")
+    
+    # Prepare the list of players' rating information
+    players_ratings = []
+    for player in players:
+        # Adjust rating if necessary
+        player.rating += 1000
+        if player.rating < 0:
+            player.rating = 0
+        # Add player rating info to the list
+        players_ratings.append({
+            "player_id": player.id,
+            "username": player.username,
+            "rating": player.rating
+        })
+    return players_ratings
+
+
 @router.post("/ratings/matches/", response_model=dict)
 async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends(get_db)):
     # Ensure both players exist in the player microservice

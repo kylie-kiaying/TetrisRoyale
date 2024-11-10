@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  images: {
+    domains: ['tetritracker-profile-pictures.s3.amazonaws.com'],
+  },
+};
 
 export default nextConfig;
