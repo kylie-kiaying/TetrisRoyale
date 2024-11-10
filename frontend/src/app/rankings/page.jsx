@@ -11,29 +11,6 @@ import { getPlayerTier } from '@/utils/getPlayerTier';
 import { fetchLeaderboard } from '@/utils/fetchRankings';
 
 export default function RankingsPage() {
-  // Sample data for the top players with real names
-  // const topPlayers = [
-  //   {
-  //     rank: 1,
-  //     username: 'TwitchNightz1x',
-  //     rating: 2800,
-  //     avatar: '/path-to-image',
-  //   },
-  //   { rank: 2, username: 'Penny', rating: 2750, avatar: '/path-to-image' },
-  //   { rank: 3, username: 'NeedMimis', rating: 2700, avatar: '/path-to-image' },
-  //   { rank: 4, username: 'Muted', rating: 2650, avatar: '/path-to-image' },
-  //   { rank: 5, username: 'Snake', rating: 2600, avatar: '/path-to-image' },
-  //   {
-  //     rank: 6,
-  //     username: 'PoppinsGuide',
-  //     rating: 2550,
-  //     avatar: '/path-to-image',
-  //   },
-  //   { rank: 7, username: '100TZander', rating: 2500, avatar: '/path-to-image' },
-  //   { rank: 8, username: 'Paul', rating: 2450, avatar: '/path-to-image' },
-  //   { rank: 9, username: 'Nabil', rating: 2400, avatar: '/path-to-image' },
-  //   { rank: 10, username: 'PopSmoke', rating: 2350, avatar: '/path-to-image' },
-  // ];
   const [topPlayers, setTopPlayers] = useState([]);
 
   useEffect(() => {
