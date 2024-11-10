@@ -8,7 +8,7 @@ export async function login(username, password, role, router) {
   const payload = { username, password, role };
 
   try {
-    const response = await fetch('http://localhost:8001/login/', {
+    const response = await fetch('http://localhost:8001/auth/login/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

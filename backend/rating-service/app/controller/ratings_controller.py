@@ -13,7 +13,7 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/matches/", response_model=dict)
+@router.post("/ratings/matches/", response_model=dict)
 async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends(get_db)):
     # Ensure both players exist in the player microservice
     player1 = await get_player_by_id(match.player1_id, db)
@@ -43,7 +43,7 @@ async def create_tournament_match(match: MatchCreate, db: AsyncSession = Depends
     
     return {"message": "Tournament match created successfully", "match_id": new_match.id}
 
-@router.put("/matches/{match_id}/", response_model=dict)
+@router.put("/ratings/matches/{match_id}/", response_model=dict)
 async def update_match_scores(match_id: int, update: MatchUpdate, db: AsyncSession = Depends(get_db)):
     # Fetch the match
     match = await db.get(Match, match_id)
@@ -78,7 +78,7 @@ async def update_match_scores(match_id: int, update: MatchUpdate, db: AsyncSessi
 
     return {"message": "Match updated and ratings recalculated"}
 
-@router.delete("/matches/{match_id}", response_model=dict)
+@router.delete("/ratings/matches/{match_id}", response_model=dict)
 async def delete_match(match_id:int, db:AsyncSession = Depends(get_db)):
     match = await db.get(Match, match_id)
     await db.delete(match)

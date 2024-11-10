@@ -19,7 +19,7 @@ export default function ForgotPassword() {
     setError(''); // Clear any previous error
 
     try {
-      const response = await fetch('http://localhost:8001/forgot-password', {
+      const response = await fetch('http://localhost:8001/auth/forgot-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
