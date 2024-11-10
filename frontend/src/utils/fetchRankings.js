@@ -23,6 +23,7 @@ export const fetchLeaderboard = async () => {
 
           // Ensure the profile picture is a valid URL or fallback
           return {
+            player_id: player.player_id,
             rank: index + 1,
             username: player.username,
             rating: Math.floor(player.rating * 100) / 100,
@@ -36,6 +37,7 @@ export const fetchLeaderboard = async () => {
             error
           );
           return {
+            player_id: player.player_id,
             rank: index + 1,
             username: player.username,
             rating: Math.floor(player.rating * 100) / 100,
