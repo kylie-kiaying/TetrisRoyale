@@ -231,52 +231,64 @@ export default function TournamentDetails() {
           </div>
 
           {/* Register Button */}
+          {/* Register Button */}
           <div className="mt-6 flex justify-end">
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  className={`rounded-full px-6 py-2 font-semibold transition-all duration-200 ${
-                    isRegistered
-                      ? 'cursor-not-allowed bg-gray-600 text-gray-400'
-                      : 'transform bg-gradient-to-r from-purple-500 to-purple-700 text-white shadow-lg hover:scale-105 hover:from-purple-600 hover:to-purple-800'
-                  }`}
-                  disabled={isRegistered}
-                  onClick={() => !isRegistered && setIsDialogOpen(true)}
-                >
-                  {isRegistered ? 'Registered' : 'Register'}
-                </Button>
-              </DialogTrigger>
+            {tournament.status === 'completed' ? (
+              // Display a non-clickable "Completed" button
+              <Button
+                className="cursor-not-allowed rounded-full bg-gray-600 px-6 py-2 font-semibold text-gray-400 shadow-lg"
+                disabled
+              >
+                Completed
+              </Button>
+            ) : (
+              // Display the Register button and dialog if the tournament is not completed
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    className={`rounded-full px-6 py-2 font-semibold transition-all duration-200 ${
+                      isRegistered
+                        ? 'cursor-not-allowed bg-gray-600 text-gray-400'
+                        : 'transform bg-gradient-to-r from-purple-500 to-purple-700 text-white shadow-lg hover:scale-105 hover:from-purple-600 hover:to-purple-800'
+                    }`}
+                    disabled={isRegistered}
+                    onClick={() => !isRegistered && setIsDialogOpen(true)}
+                  >
+                    {isRegistered ? 'Registered' : 'Register'}
+                  </Button>
+                </DialogTrigger>
 
-              {!isRegistered && (
-                <DialogContent className="rounded-lg border-none bg-gradient-to-br from-[#3b1a56] to-[#1c1132] p-6 text-white shadow-lg">
-                  <DialogHeader className="mb-4 text-center">
-                    <DialogTitle className="text-2xl font-bold text-pink-200">
-                      Confirm Registration
-                    </DialogTitle>
-                    <DialogDescription className="text-gray-300">
-                      Are you sure you want to register for this tournament?
-                    </DialogDescription>
-                  </DialogHeader>
+                {!isRegistered && (
+                  <DialogContent className="rounded-lg border-none bg-gradient-to-br from-[#3b1a56] to-[#1c1132] p-6 text-white shadow-lg">
+                    <DialogHeader className="mb-4 text-center">
+                      <DialogTitle className="text-2xl font-bold text-pink-200">
+                        Confirm Registration
+                      </DialogTitle>
+                      <DialogDescription className="text-gray-300">
+                        Are you sure you want to register for this tournament?
+                      </DialogDescription>
+                    </DialogHeader>
 
-                  <DialogFooter className="flex justify-center space-x-4">
-                    <Button
-                      variant="secondary"
-                      onClick={() => setIsDialogOpen(false)}
-                      className="rounded-full bg-gray-600 text-gray-300 hover:bg-gray-500"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="primary"
-                      onClick={handleRegisterConfirm}
-                      className="rounded-full bg-gradient-to-r from-purple-500 to-purple-700 text-white shadow-md hover:from-purple-600 hover:to-purple-800"
-                    >
-                      Confirm
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              )}
-            </Dialog>
+                    <DialogFooter className="flex justify-center space-x-4">
+                      <Button
+                        variant="secondary"
+                        onClick={() => setIsDialogOpen(false)}
+                        className="rounded-full bg-gray-600 text-gray-300 hover:bg-gray-500"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="primary"
+                        onClick={handleRegisterConfirm}
+                        className="rounded-full bg-gradient-to-r from-purple-500 to-purple-700 text-white shadow-md hover:from-purple-600 hover:to-purple-800"
+                      >
+                        Confirm
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                )}
+              </Dialog>
+            )}
           </div>
         </div>
 
