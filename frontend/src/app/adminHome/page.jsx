@@ -335,7 +335,7 @@ export default function AdminPage() {
                                   <strong>{tournament.tournament_name}</strong>?
                                 </p>
                                 <p className="text-sm text-gray-400">
-                                  This action cannot be undone.
+                                  This will also remove <strong>{tournament.tournament_name}</strong> from your profile. This action cannot be undone.
                                 </p>
                               </div>
                             </div>

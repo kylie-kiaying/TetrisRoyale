@@ -125,7 +125,7 @@ export default function Navbar() {
               label: 'Search',
             },
             {
-              href: '/profile',
+              href: userType === 'player' ? '/profile' : '/adminProfile',
               icon: <IoPerson className="h-6 w-6" />,
               label: 'Profile',
             },
@@ -250,7 +250,7 @@ export default function Navbar() {
           { href: '/tournaments', icon: <IoTrophy className="h-6 w-6" /> },
           { href: '/rankings', icon: <PiRankingBold className="h-6 w-6" /> },
           { href: '/search', icon: <IoSearch className="h-6 w-6" /> },
-          { href: '/profile', icon: <IoPerson className="h-6 w-6" /> },
+          { href: userType === 'player' ? '/profile' : '/adminProfile', icon: <IoPerson className="h-6 w-6" /> },
         ].map(({ href, icon }) => (
           <Link key={href} href={href}>
             <Button
