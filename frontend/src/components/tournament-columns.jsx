@@ -278,19 +278,43 @@ export const columns = {
         header: "Name",
     },
     {
-        accessorKey: "start",
+        accessorKey: "tournament_start",
         header: "Start",
+        cell: (info) => {
+          const dateValue = info.getValue();
+          if (!dateValue) return 'N/A';
+          const date = new Date(dateValue);
+          return isNaN(date.getTime())
+            ? 'Invalid Date'
+            : date.toLocaleDateString('en-GB', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              });
+        },
     },
     {
-        accessorKey: "end",
+        accessorKey: "tournament_end",
         header: "End",
+        cell: (info) => {
+          const dateValue = info.getValue();
+          if (!dateValue) return 'N/A';
+          const date = new Date(dateValue);
+          return isNaN(date.getTime())
+            ? 'Invalid Date'
+            : date.toLocaleDateString('en-GB', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              });
+        },
     },
     {
         accessorKey: "status",
         header: "Status",
     },
     {
-      accessorKey: 'recommendedRating',
+      accessorKey: 'recommended_rating',
       header: 'Rating',
     },
     {

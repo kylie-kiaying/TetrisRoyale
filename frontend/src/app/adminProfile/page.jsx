@@ -1,43 +1,28 @@
 'use client';
 
-import { useState } from 'react';
 import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
 import { useAuthStore } from '@/store/authStore';
+import { useEffect, useState } from 'react';
+import { fetchAdminTournaments } from '@/utils/fetchAdminTournaments';
 import ToggleButtons from '@/components/ui/toggle';
 
-const tournaments = [
-    {
-      id: '1',
-      tournament_name: 'Tetris Championship 2024',
-      start: 'June 1, 2024',
-      end: 'June 10, 2024',
-      status: 'Ongoing',
-      recommendedRating: 2000,
-      players: [{username: "p1", tier: "Master", color: 'text-purple-500', rating: 2000}, {username: "p2", tier: "Gold", color: 'text-yellow-500', rating: 1200}, {username: "p3", tier: "Gold", color: 'text-yellow-500', rating: 1200}],
-    },
-    {
-      id: '2',
-      tournament_name: 'Spring Showdown',
-      start: 'October 5, 2024',
-      end: 'October 15, 2024',
-      status: 'Upcoming',
-      recommendedRating: 1200,
-      players: [{username: "p1", tier: "Master", color: 'text-purple-500', rating: 2000}, {username: "p2", tier: "Gold", color: 'text-yellow-500', rating: 1200}, {username: "p3", tier: "Gold", color: 'text-yellow-500', rating: 1200}],
-    },
-    {
-      id: '3',
-      tournament_name: 'Championship Series 1',
-      start: 'June 1, 2024',
-      end: 'June 9, 2024',
-      status: 'Ongoing',
-      recommendedRating: 1200,
-      players: [{username: "p1", tier: "Master", color: 'text-purple-500', rating: 2000}, {username: "p2", tier: "Gold", color: 'text-yellow-500', rating: 1200}, {username: "p3", tier: "Gold", color: 'text-yellow-500', rating: 1200}],
-    }
-];
+
+
 
 export default function AdminProfile() {
-  const username = useAuthStore((state) => state.username); // Get username from the auth store
+  const [tournaments, setTournaments] = useState([]);
+  const username = useAuthStore((state) => state.user.username);
+
+  const loadTournaments = async () => {
+    const fetchedTournaments = await fetchAdminTournaments(username);
+    setTournaments(fetchedTournaments);
+  };
+  
+  useEffect(() => {
+    loadTournaments();
+  }, []);
+ 
 
   return (
     <div
@@ -68,7 +53,7 @@ export default function AdminProfile() {
           <div className="flex w-full flex-col items-center space-y-4 px-2">
             <h1 className="text-3xl font-semibold md:text-4xl">{username}</h1>
             <div className="flex w-full flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0 md:px-6">
-              <p className="text-xl text-gray-400 md:text-2xl">Tournaments Hosted: 3</p>
+              <p className="text-xl text-gray-400 md:text-2xl">Tournaments Hosted: {tournaments.length}</p>
             </div>
           </div>
 
