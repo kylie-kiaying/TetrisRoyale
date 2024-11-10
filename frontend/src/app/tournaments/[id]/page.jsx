@@ -138,14 +138,15 @@ export default function TournamentDetails() {
           </CardHeader>
           <CardContent className="max-h-[400px] space-y-2 overflow-y-auto">
             <ul className="space-y-1">
-              {filteredMatches.map((match, index) => {
+              {sortedMatches.map((match, index) => {
                 const isCompleted = match.status === 'completed';
                 return (
                   <li
                     key={match.id}
-                    className={`flex items-center justify-between rounded-lg px-3 py-2 transition-all duration-200 ${
+                    onClick={() => openDialog(match)}
+                    className={`flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-all duration-200 ${
                       index % 2 === 0 ? 'bg-[#332054]' : 'bg-[#2a1a46]'
-                    } ${isCompleted ? 'border-l-4 border-green-500' : ''} shadow-md hover:scale-105 hover:bg-purple-700`}
+                    } ${isCompleted ? 'border-l-4 border-green-500' : ''} shadow-md hover:bg-purple-700`}
                     style={{ opacity: isCompleted ? 1 : 0.7 }}
                   >
                     <div className="flex w-full items-center overflow-hidden">

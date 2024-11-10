@@ -113,9 +113,9 @@ class MatchmakingService:
 
     async def submit_match_result(self, match_id: int, winner_id: int):
         try:
-            analytics_service_url = os.getenv("ANALYTICS_SERVICE_URL")
-            if not analytics_service_url:
-                raise RuntimeError("ANALYTICS_SERVICE_URL is not set")
+            # analytics_service_url = os.getenv("ANALYTICS_SERVICE_URL")
+            # if not analytics_service_url:
+            #     raise RuntimeError("ANALYTICS_SERVICE_URL is not set")
             
             player1_statistics = generate_random_player_statistics()
             player2_statistics = generate_random_player_statistics()
