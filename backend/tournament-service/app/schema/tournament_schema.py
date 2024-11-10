@@ -32,7 +32,7 @@ class TournamentUpdate(BaseModel):
     tournament_end: Optional[datetime]
     status: Optional[str]
     remarks: Optional[str]
-    recommended_elo: Optional[int]
+    recommended_rating: Optional[int]
     organiser: Optional[str]
 
 

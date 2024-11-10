@@ -30,18 +30,17 @@ async def get_player_matches(player_id: int, matchmaking_service: MatchmakingSer
 async def submit_match_result(match_id: int, result: MatchResultUpdate, matchmaking_service: MatchmakingService = Depends(get_matchmaking_service)):
     try:
         updated_match = await matchmaking_service.submit_match_result(match_id, result.winner_id)
-        return JSONResponse(content=updated_match)  # Return JSON response directly
+        return updated_match  # Return JSON response directly
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     
-@router.post("/matchmaking/{match_id}", response_model=MatchResponse)
+@router.post("/matchmaking/", response_model=MatchResponse)
 async def create_new_match(
-    match_id: int,
     new_match: MatchCreate,
     matchmaking_service: MatchmakingService = Depends(get_matchmaking_service)
 ):
     try:
-        created_match = await matchmaking_service.create_match(match_id, new_match)
+        created_match = await matchmaking_service.create_match(new_match)
         return created_match
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
