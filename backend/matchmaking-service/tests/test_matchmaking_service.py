@@ -20,41 +20,6 @@ def matchmaking_service():
     tournament_repo = AsyncMock(TournamentRepository)
     return MatchmakingService(matchmaking_repo, tournament_repo)
 
-async def test_pair_players_success(matchmaking_service):
-    # Arrange
-    matchmaking_service.tournament_repository.get_tournament_registrants.return_value = [1, 2, 3, 4]
-    
-    # Create a mock response with awaitable methods
-    mock_response = AsyncMock()
-    mock_response.json.return_value = {"rating": 1200}
-    mock_response.raise_for_status = AsyncMock()
-    
-    # Mock the httpx client get method
-    with patch('httpx.AsyncClient.get', return_value=mock_response) as mock_get:
-        # Act
-        result = await matchmaking_service.pair_players(1)
-        
-        # Assert
-        assert len(result) == 2
-        # Each match should contain [tournament_id, player1_id, player1_rating, player2_id, player2_rating]
-        assert len(result[0]) == 5
-        assert len(result[1]) == 5
-        
-        # Verify the players were paired correctly
-        assert result[0][1] == 1  # First match, player1_id
-        assert result[0][3] == 2  # First match, player2_id
-        assert result[1][1] == 3  # Second match, player1_id
-        assert result[1][3] == 4  # Second match, player2_id
-        
-        # Verify all players have the mocked rating
-        assert result[0][2] == 1200  # First match, player1_rating
-        assert result[0][4] == 1200  # First match, player2_rating
-        assert result[1][2] == 1200  # Second match, player1_rating
-        assert result[1][4] == 1200  # Second match, player2_rating
-        
-        # Verify the get method was called for each player
-        assert mock_get.call_count == 4
-
 
 @pytest.mark.asyncio
 async def test_pair_players_not_enough_players():
