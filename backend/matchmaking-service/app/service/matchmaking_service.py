@@ -139,16 +139,9 @@ class MatchmakingService:
                     f"http://rating-service:8000/ratings/matches/{match_id}/",  
                     json=match_update
                 )
-<<<<<<< HEAD
-
-                response = await client.post(
-                    # TODO: CHANGE THIS URL
-                    f"{analytics_service_url}/analytics/statistics",
-=======
                 response = await client.post(
                     # TODO: CHANGE THIS URL
                     f"http://analytics-service:8000/analytics/statistics",
->>>>>>> testing/unit-tests
                     json={
                         "player_id": match["player1_id"],
                         "match_id": match_id,
@@ -165,11 +158,7 @@ class MatchmakingService:
                 
                 response = await client.post(
                     # TODO: CHANGE THIS URL
-<<<<<<< HEAD
-                    f"{analytics_service_url}/analytics/statistics",
-=======
                     f"http://analytics-service:8000/analytics/statistics",
->>>>>>> testing/unit-tests
                     json={
                         "player_id": match["player2_id"],
                         "match_id": match_id,
@@ -183,49 +172,8 @@ class MatchmakingService:
                     }
                 )
                 response.raise_for_status()
-<<<<<<< HEAD
-
-            if match["stage"] == 1: # final match in tournament
-                return updated_match
-
-            #create new match
-            next_match = await self.matchmaking_repository.get_match_by_stage_and_tournament(match["next_stage"], match["tournament_id"])
-            if next_match:
-                updated_data = {
-                    "tournament_id": None,
-                    "player1_id": None,
-                    "player2_id": winner_id,
-                    "scheduled_at": None,
-                    "playable": True
-                }
-
-                # Create a new MatchUpdate object with updated values
-                updated_match_data = MatchUpdate(**updated_data)
-                return await self.matchmaking_repository.update_match(next_match["id"], updated_match_data)
-
-            else:
-                # print('here')
-                match= Match(
-                    id=await self.matchmaking_repository.get_next_id(),
-                    tournament_id=match["tournament_id"],
-                    player1_id=winner_id,
-                    player2_id=0,
-                    scheduled_at=datetime.utcnow(),  # Use current time if not provided,
-                    stage= match["next_stage"],
-                    next_stage= max(floor(match["next_stage"]/2), 1),
-                    playable= False
-
-                )
-                # Create a new MatchUpdate object with updated values
-                response = await self.matchmaking_repository.create_match(match)
-
-                return response 
-
-
-=======
     
             return updated_match
->>>>>>> testing/unit-tests
         except Exception as e:
             # Log the error here if you have a logging system
             raise ValueError(f"Error updating match result: {str(e)}")

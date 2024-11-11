@@ -2,9 +2,11 @@ name: Build, Test, and Push to ECR
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main  # Matches any branch (the correct way to specify all branches)
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 env:
   AWS_REGION: ap-southeast-1
@@ -30,6 +32,8 @@ jobs:
     - name: Build, test, and push images to ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        DATABASE_URL: postgresql+asyncpg://postgres:postgres@database-cs203.c186q28q8coh.ap-southeast-1.rds.amazonaws.com:5432/database-cs203
+        ANALYTICS_SERVICE_URL: http://analytics-service:8000
       run: |
         services=("auth-service" "player-service" "tournament-service" "matchmaking-service" "rating-service" "admin-service" "analytics-service")
         
@@ -48,11 +52,8 @@ jobs:
           
           echo "Running tests for $service"
           # Check if service has a specific test structure
-          if [ "$service" == "rating-service" ]; then
-            pytest app/controller -v || exit 1  # Run tests on controller component
-          else
-            pytest tests/ -v || exit 1  # Run tests on the general tests directory
-          fi
+          pytest tests/ -v || exit 1  # Run tests on the general tests directory
+          
           
           echo "Building image for $service"
           docker build -t "$ECR_REGISTRY/$service:$GITHUB_SHA" .
