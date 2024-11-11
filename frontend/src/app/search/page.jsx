@@ -10,62 +10,45 @@ import { distance } from "fastest-levenshtein";
 export default function SearchPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedOption, setSelectedOption] = useState("Players");
-
     const [players, setPlayers] = useState([]);
-    const [tournaments, setTournaments] = useState([]);
-    const [organizers, setOrganizers] = useState([]);
-    const [filteredResults, setFilteredResults] = useState([]); // Filtered results displayed to the user
+    const [filteredResults, setFilteredResults] = useState([]);
     const [hasSearched, setHasSearched] = useState(false);
-
     const [hasFetchedPlayers, setHasFetchedPlayers] = useState(false);
-    const [hasFetchedTournaments, setHasFetchedTournaments] = useState(false);
-    const [hasFetchedOrganizers, setHasFetchedOrganizers] = useState(false);
+    const [suggestions, setSuggestions] = useState([]);
 
     useEffect(() => {
         setFilteredResults([]);
         setHasSearched(false);
     }, [selectedOption]);
 
-    // Fetch initial data based on selectedOption
     useEffect(() => {
         fetchData(selectedOption);
     }, [selectedOption]);
 
-    const [suggestions, setSuggestions] = useState([]);
     useEffect(() => {
         if (searchQuery.trim() === "") {
             setSuggestions([]);
             return;
         }
 
-        const dataToSearch =
-            selectedOption === "Players" ? players : tournaments;
-        const key =
-            selectedOption === "Players" ? "username" : "tournament_name";
-
-        const exactMatches = dataToSearch.filter((item) =>
-            item[key].toLowerCase().includes(searchQuery.toLowerCase())
+        const exactMatches = players.filter((item) =>
+            item.username.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
-        const similarMatches = dataToSearch
+        const similarMatches = players
             .filter((item) => !exactMatches.includes(item))
             .map((item) => ({
                 item,
                 similarity: distance(
                     searchQuery.toLowerCase(),
-                    item[key].toLowerCase()
+                    item.username.toLowerCase()
                 ),
             }))
             .sort((a, b) => a.similarity - b.similarity)
             .map((entry) => entry.item);
 
-        const filteredSuggestions = [...exactMatches, ...similarMatches].slice(
-            0,
-            3
-        );
-
-        setSuggestions(filteredSuggestions);
-    }, [searchQuery, selectedOption, players, tournaments]);
+        setSuggestions([...exactMatches, ...similarMatches].slice(0, 3));
+    }, [searchQuery, selectedOption, players]);
 
     const fetchData = async (selectedOption) => {
         if (selectedOption === "Players" && !hasFetchedPlayers) {
@@ -73,64 +56,45 @@ export default function SearchPage() {
             const data = await response.json();
             setPlayers(data);
             setHasFetchedPlayers(true);
-            return data; // Return the data after fetching
-        } else if (selectedOption === "Tournaments" && !hasFetchedTournaments) {
-            const response = await fetch("http://localhost:8003/tournaments");
-            const data = await response.json();
-            setTournaments(data);
-            setHasFetchedTournaments(true);
-            return data;
-        } else if (selectedOption === "TOs" && !hasFetchedOrganizers) {
-            // Fetch organizers and return data
-        } else {
-            // If data has already been fetched, just return the existing dataset
-            return selectedOption === "Players"
-                ? players
-                : selectedOption === "Tournaments"
-                  ? tournaments
-                  : organizers;
         }
+    };
+
+    const fetchRatings = async (playerIds) => {
+        const ratingsPromises = playerIds.map(async (user_id) => {
+            const response = await fetch(`http://localhost:8005/ratings/${user_id}`);
+            const ratingData = await response.json();
+            return { user_id, rating: parseFloat(ratingData.rating).toFixed(2) };
+        });
+        return await Promise.all(ratingsPromises);
     };
 
     const handleSearch = async (e) => {
         e.preventDefault();
-        console.log(`Searching for "${searchQuery}" in ${selectedOption}`);
 
-        // Fetch the relevant data before filtering
-        const data = await fetchData(selectedOption);
-        const query = searchQuery.toLowerCase();
+        const filtered = players.filter((player) =>
+            player.username.toLowerCase().includes(searchQuery.toLowerCase())
+        );
 
-        // Filter based on the selected option and search query
-        const filtered = data.filter((item) => {
-            if (selectedOption === "Players") {
-                return item.username.toLowerCase().includes(query);
-            } else if (selectedOption === "Tournaments") {
-                return (
-                    item.tournament_name.toLowerCase().includes(query) ||
-                    item.remarks.toLowerCase().includes(query) ||
-                    item.status.toLowerCase().includes(query)
-                );
-            }
-            return false;
+        const playerIds = filtered.map((player) => player.user_id);
+
+        const ratings = await fetchRatings(playerIds);
+
+        const resultsWithRatings = filtered.map((player) => {
+            const rating = ratings.find((r) => r.user_id === player.user_id)?.rating || "N/A";
+            return { ...player, rating };
         });
-        setFilteredResults(filtered);
+
+        setFilteredResults(resultsWithRatings);
         setHasSearched(true);
     };
 
     const isResultsValid =
-        filteredResults.length > 0 &&
-        ((selectedOption === "Players" &&
-            filteredResults.every((item) => item.username)) ||
-            (selectedOption === "Tournaments" &&
-                filteredResults.every((item) => item.tournament_name)));
+        filteredResults.length > 0 && filteredResults.every((item) => item.username);
 
-    // Handle click on a suggestion
     const handleSuggestionClick = (suggestion) => {
-        const key =
-            selectedOption === "Players" ? "username" : "tournament_name";
-        setSearchQuery(suggestion[key]); // Update search query with the suggestion
-        setFilteredResults([suggestion]); // Update search results to show the clicked suggestion
-        setSuggestions([]); // Clear suggestions
+        setSearchQuery(suggestion.username);
+        setFilteredResults([suggestion]);
+        setSuggestions([]);
     };
 
     return (
@@ -149,7 +113,6 @@ export default function SearchPage() {
                     />
                 </div>
 
-                {/* Render DataTable */}
                 <div className="mt-8 max-w-4xl mx-auto w-full">
                     {selectedOption === "Players" &&
                         hasSearched &&
@@ -158,18 +121,8 @@ export default function SearchPage() {
                             <DataTable type="players" data={filteredResults} />
                         )}
 
-                    {selectedOption === "Tournaments" &&
-                        hasSearched &&
-                        isResultsValid &&
-                        filteredResults.length > 0 && (
-                            <DataTable type="all" data={filteredResults} />
-                        )}
-
-                    {/* Display a message if no results are found */}
                     {hasSearched && filteredResults.length === 0 && (
-                        <p className="text-center text-gray-400">
-                            No results found.
-                        </p>
+                        <p className="text-center text-gray-400">No results found.</p>
                     )}
                 </div>
             </div>
