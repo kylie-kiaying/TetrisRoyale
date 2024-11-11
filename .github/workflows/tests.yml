@@ -1,12 +1,26 @@
 name: Build, Test, and Push to ECR
 
+
+No, you don’t need to create a new pull request to the main branch every time you want to test your workflows. You can use a separate branch specifically for testing workflow files. Here’s how you can set it up:
+
+1. Modify the Workflow to Run on Any Branch
+To allow your workflow to run on any branch, you can modify the on section in the workflow YAML file to listen for changes on all branches instead of just main. Here’s an example:
+
+yaml
+Copy code
 on:
   push:
-    branches: 
-      - "*"
+    branches:
+      - main
+      - develop
+      - "workflow-testing"  # your testing branch
+      - "*"  # matches any branch
   pull_request:
-    branches: [ main ]
-
+    branches:
+      - main
+      - develop
+      - workflow-testing
+      - "*"
 env:
   AWS_REGION: ap-southeast-1
   ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com
