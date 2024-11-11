@@ -31,7 +31,6 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
 
     - name: Build, test, and push images to ECR
       env:
