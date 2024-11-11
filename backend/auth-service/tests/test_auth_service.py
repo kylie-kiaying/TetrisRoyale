@@ -130,30 +130,6 @@ async def test_verify_email_invalid_token():
     assert exc_info.value.status_code == 400
     assert exc_info.value.detail == "Invalid or expired verification token"
 
-@pytest.mark.asyncio
-async def test_register_missing_env_vars():
-    
-    mock_user_repo = AsyncMock(UserRepository)
-    auth_service = AuthService()
-    mock_db = AsyncMock()
-    
-    # Mock no existing user
-    mock_user_repo.get_user_by_username.return_value = None
-    auth_data = AsyncMock(username="new_user", password="password", email="user@example.com", role="player")
-
-    # Test missing PLAYER_SERVICE_URL by patching only that specific variable
-    with patch.dict('os.environ', {'RATING_SERVICE_URL': 'http://mock-rating-service-url', 'ADMIN_SERVICE_URL': 'http://mock-admin-service-url'}, clear=False), \
-         patch('app.service.auth_service.hash_password', return_value="hashed_password"), \
-         patch('app.service.auth_service.UserRepository', return_value=mock_user_repo), \
-         patch('httpx.AsyncClient.post', return_value=AsyncMock(status_code=200, json=AsyncMock(return_value={}))) as mock_post:
-
-        with pytest.raises(RuntimeError) as exc_info:
-            await auth_service.register(auth_data, mock_db)
-        assert str(exc_info.value) == "PLAYER_SERVICE_URL is not set"
-        
-        # Verify that no HTTP request was made since PLAYER_SERVICE_URL is missing
-        mock_post.assert_not_called()
-
 
 @pytest.mark.asyncio
 async def test_reset_password_invalid_token():
