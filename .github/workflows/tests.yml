@@ -1,52 +1,49 @@
-# name: Microservices Tests
+name: Microservices Tests
 
-# on:
-#   push:
-#     branches: [ main, develop ]
-#   pull_request:
-#     branches: [ main, develop ]
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
 
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         service: [
-#           'auth-service',
-#           'player-service', 
-#           'tournament-service',
-#           'matchmaking-service'
-#         ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [
+          'admin-service'
+        ]
 
-#     steps:
-#     - uses: actions/checkout@v3
+    steps:
+    - uses: actions/checkout@v3
 
-#     - name: Set up Python 3.12
-#       uses: actions/setup-python@v4
-#       with:
-#         python-version: '3.12'
-        
-#     - name: Install dependencies for ${{ matrix.service }}
-#       working-directory: ./backend/${{ matrix.service }}
-#       run: |
-#         python -m pip install --upgrade pip
-#         pip install -r requirements.txt
-#         pip install aiosqlite
-        
-#     - name: Run tests for ${{ matrix.service }}
-#       working-directory: ./backend/${{ matrix.service }}
-#       env:
-#         TESTING: "true"
-#         PLAYER_SERVICE_URL: http://localhost:8002
-#         RATING_SERVICE_URL: http://localhost:8005
-#         from_email: ${{ secrets.FROM_EMAIL }}
-#         from_password: ${{ secrets.FROM_PASSWORD }}
-#       run: |
-#         pytest tests/ -v
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
 
-#     - name: Upload test results
-#       if: always()
-#       uses: actions/upload-artifact@v3
-#       with:
-#         name: test-results-${{ matrix.service }}
-#         path: ./backend/${{ matrix.service }}/test-results
+    - name: Install dependencies for ${{ matrix.service }}
+      working-directory: ./backend/${{ matrix.service }}
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install aiosqlite
+
+    - name: Run tests for ${{ matrix.service }}
+      working-directory: ./backend/${{ matrix.service }}
+      env:
+        TESTING: "true"
+        PLAYER_SERVICE_URL: http://localhost:8002
+        RATING_SERVICE_URL: http://localhost:8005
+        from_email: ${{ secrets.FROM_EMAIL }}
+        from_password: ${{ secrets.FROM_PASSWORD }}
+      run: |
+        pytest -v --junitxml=test-results.xml
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-${{ matrix.service }}
+        path: ./backend/${{ matrix.service }}/test-results.xml
