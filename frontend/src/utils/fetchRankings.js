@@ -20,12 +20,13 @@ export const fetchLeaderboard = async () => {
           // Use the profile picture URL if available, otherwise use the fallback
           const profilePicture =
             profileResponse.data?.profile_picture || '/user.png';
+          const playerUsername = profileResponse.data?.username || player.username;
 
           // Ensure the profile picture is a valid URL or fallback
           return {
             player_id: player.player_id,
             rank: index + 1,
-            username: player.username,
+            username: playerUsername,
             rating: Math.floor(player.rating * 100) / 100,
             avatar: profilePicture.startsWith('http')
               ? profilePicture
