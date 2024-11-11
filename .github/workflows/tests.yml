@@ -33,6 +33,7 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         DATABASE_URL: postgresql+asyncpg://postgres:postgres@database-cs203.c186q28q8coh.ap-southeast-1.rds.amazonaws.com:5432/database-cs203
+        ANALYTICS_SERVICE_URL: http://analytics-service:8000
       run: |
         services=("auth-service" "player-service" "tournament-service" "matchmaking-service" "rating-service" "admin-service" "analytics-service")
         
