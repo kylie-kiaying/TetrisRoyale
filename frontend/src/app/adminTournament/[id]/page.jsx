@@ -263,7 +263,7 @@ export default function TournamentDetails() {
                     </CardDescription>
                     <CardDescription className="text-lg text-gray-400">
                       Current Date:{' '}
-                      {formatDateMedium(new Date().toLocaleDateString())}
+                      {formatDateMedium(new Date().toLocaleString())}
                     </CardDescription>
                   </div>
               ))}
