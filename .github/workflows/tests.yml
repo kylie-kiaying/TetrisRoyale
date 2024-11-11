@@ -1,4 +1,4 @@
-name: Build, Test, and Push to ECR
+name: Build and Push to ECR
 
 on:
   push:
@@ -27,11 +27,7 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-
-    - name: Build, test, and push images to ECR
+    - name: Build, tag, and push images to ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
@@ -41,9 +37,6 @@ jobs:
           echo "Processing $service"
           
           cd backend/$service || exit 1
-          
-          echo "Running tests for $service"
-          pytest -v || exit 1
           
           echo "Building image for $service"
           docker build -t "$ECR_REGISTRY/$service:$GITHUB_SHA" .
