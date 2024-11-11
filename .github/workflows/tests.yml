@@ -2,7 +2,7 @@ name: Build, Test, and Push to ECR
 
 on:
   push:
-    branches: [ main, testing/*]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -43,7 +43,7 @@ jobs:
           cd backend/$service || exit 1
           
           echo "Running tests for $service"
-          pytest tests/ -v || exit 1
+          pytest -v || exit 1
           
           echo "Building image for $service"
           docker build -t "$ECR_REGISTRY/$service:$GITHUB_SHA" .
