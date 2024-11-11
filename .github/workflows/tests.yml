@@ -53,7 +53,7 @@ jobs:
           echo "Running tests for $service"
           # Check if service has a specific test structure
           pytest tests/ -v || exit 1  # Run tests on the general tests directory
-          fi
+          
           
           echo "Building image for $service"
           docker build -t "$ECR_REGISTRY/$service:$GITHUB_SHA" .
