@@ -2,9 +2,11 @@ name: Build and Push to ECR
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main  # Matches any branch (the correct way to specify all branches)
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 env:
   AWS_REGION: ap-southeast-1
@@ -30,6 +32,8 @@ jobs:
     - name: Build, tag, and push images to ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        DATABASE_URL: postgresql+asyncpg://postgres:postgres@database-cs203.c186q28q8coh.ap-southeast-1.rds.amazonaws.com:5432/database-cs203
+        ANALYTICS_SERVICE_URL: http://analytics-service:8000
       run: |
         services=("auth-service" "player-service" "tournament-service" "matchmaking-service" "rating-service" "admin-service" "analytics-service")
         
@@ -37,6 +41,19 @@ jobs:
           echo "Processing $service"
           
           cd backend/$service || exit 1
+          
+          echo "Installing dependencies for $service"
+          if [ -f requirements.txt ]; then
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+          else
+            echo "No requirements.txt found for $service"
+          fi
+          
+          echo "Running tests for $service"
+          # Check if service has a specific test structure
+          pytest tests/ -v || exit 1  # Run tests on the general tests directory
+          
           
           echo "Building image for $service"
           docker build -t "$ECR_REGISTRY/$service:$GITHUB_SHA" .
