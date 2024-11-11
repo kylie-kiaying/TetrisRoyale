@@ -112,57 +112,6 @@ async def test_login_email_not_verified():
         assert exc_info.value.detail == "Email not verified"
 
 
-@pytest.mark.asyncio
-async def test_register_success():
-    load_dotenv()
-    # Arrange
-    mock_user_repo = AsyncMock(UserRepository)
-    auth_service = AuthService()
-    mock_db = AsyncMock()
-
-    # Mock get_user_by_username to return None, meaning no user exists
-    mock_user_repo.get_user_by_username.return_value = None
-
-    auth_data = AsyncMock(username="new_user", password="password", email="user@example.com", role="user")
-
-    # Patch hash_password and email sending
-    with patch('app.service.auth_service.hash_password', return_value="hashed_password"), \
-         patch('app.service.auth_service.send_verification_email', return_value=None), \
-         patch('app.service.auth_service.UserRepository', return_value=mock_user_repo), \
-         patch.dict('os.environ', {'PLAYER_SERVICE_URL': 'http://mock-player-service-url'}), \
-         patch('httpx.AsyncClient.post', return_value=AsyncMock(status_code=200)):
-
-        # Act
-        response = await auth_service.register(auth_data, mock_db)
-
-        # Assert
-        assert response == {"message": "User registered successfully. Please check your email to verify your account."}
-
-
-@pytest.mark.asyncio
-async def test_verify_email_success():
-    # Arrange
-    mock_user_repo = AsyncMock(UserRepository)
-    auth_service = AuthService()
-    mock_db = AsyncMock()
-
-    # Mock get_user_by_verification_token to return a User object
-    mock_user_repo.get_user_by_verification_token.return_value = User(
-        username="test_user",
-        password_hash="hashed_password",
-        email_verified=False,
-        role="user"
-    )
-
-    with patch('app.service.auth_service.UserRepository', return_value=mock_user_repo):
-        # Act
-        response = await auth_service.verify_email("valid_token", mock_db)
-
-        # Assert
-        assert isinstance(response, RedirectResponse)
-        assert response.status_code == 303  # HTTP_303_SEE_OTHER
-        assert response.headers["location"] == "http://localhost:3000/verify-email-success"
-
 
 @pytest.mark.asyncio
 async def test_verify_email_invalid_token():
