@@ -101,39 +101,39 @@ class MatchmakingService:
                     f"http://rating-service:8000/matches/{match_id}/",  
                     json=match_update
                 )
-                # response = await client.post(
-                #     # TODO: CHANGE THIS URL
-                #     f"http://localhost:8007/analytics/statistics",
-                #     json={
-                #         "player_id": match["player1_id"],
-                #         "match_id": match_id,
-                #         "tournament_id": match["tournament_id"],
-                #         "pieces_placed": player1_statistics["pieces_placed"],
-                #         "pps": player1_statistics["pps"],
-                #         "kpp": player1_statistics["kpp"],
-                #         "apm": player1_statistics["apm"],
-                #         "finesse_percentage": player1_statistics["finesse_percentage"],
-                #         "lines_cleared": player1_statistics["lines_cleared"]
-                #     }
-                # )
-                # response.raise_for_status()
+                response = await client.post(
+                    # TODO: CHANGE THIS URL
+                    f"http://analytics-service:8000/analytics/statistics",
+                    json={
+                        "player_id": match["player1_id"],
+                        "match_id": match_id,
+                        "tournament_id": match["tournament_id"],
+                        "pieces_placed": player1_statistics["pieces_placed"],
+                        "pps": player1_statistics["pps"],
+                        "kpp": player1_statistics["kpp"],
+                        "apm": player1_statistics["apm"],
+                        "finesse_percentage": player1_statistics["finesse_percentage"],
+                        "lines_cleared": player1_statistics["lines_cleared"]
+                    }
+                )
+                response.raise_for_status()
                 
-                # response = await client.post(
-                #     # TODO: CHANGE THIS URL
-                #     f"http://localhost:8007/analytics/statistics",
-                #     json={
-                #         "player_id": match["player2_id"],
-                #         "match_id": match_id,
-                #         "tournament_id": match["tournament_id"],
-                #         "pieces_placed": player2_statistics["pieces_placed"],
-                #         "pps": player2_statistics["pps"],
-                #         "kpp": player2_statistics["kpp"],
-                #         "apm": player2_statistics["apm"],
-                #         "finesse_percentage": player2_statistics["finesse_percentage"],
-                #         "lines_cleared": player2_statistics["lines_cleared"]
-                #     }
-                # )
-                # response.raise_for_status()
+                response = await client.post(
+                    # TODO: CHANGE THIS URL
+                    f"http://analytics-service:8000/analytics/statistics",
+                    json={
+                        "player_id": match["player2_id"],
+                        "match_id": match_id,
+                        "tournament_id": match["tournament_id"],
+                        "pieces_placed": player2_statistics["pieces_placed"],
+                        "pps": player2_statistics["pps"],
+                        "kpp": player2_statistics["kpp"],
+                        "apm": player2_statistics["apm"],
+                        "finesse_percentage": player2_statistics["finesse_percentage"],
+                        "lines_cleared": player2_statistics["lines_cleared"]
+                    }
+                )
+                response.raise_for_status()
     
             return updated_match
         except Exception as e:

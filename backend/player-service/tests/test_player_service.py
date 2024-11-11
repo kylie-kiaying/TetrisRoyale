@@ -6,6 +6,8 @@ from app.service.player_service import PlayerService
 from app.repository.player_repository import PlayerRepository
 from app.schema.player_schema import PlayerCreate, PlayerUpdate, PlayerResponse, PlayerAvailabilityUpdate, PlayerStatistics
 
+#pytest --asyncio-mode=auto --html=report.html --cov=app.service.admin_service --cov-branch --cov-report=html:coverage_html
+
 @pytest.mark.asyncio
 async def test_get_all_players():
     # Arrange

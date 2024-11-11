@@ -68,6 +68,9 @@ class AuthService:
             if not rating_service_url:
                 raise RuntimeError("RATING_SERVICE_URL is not set")
             
+            if not admin_service_url:
+                raise RuntimeError("ADMIN_SERVICE_URL is not set")
+            
             # Check if username or email already exists
             existing_user = await user_repository.get_user_by_username(auth_data.username, db)
             if existing_user:
