@@ -292,7 +292,7 @@ export default function AdminPage() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Link href="/adminEdit">
+                    <Link href={`/editTournament/${tournament.tournament_id}`}>
                       <Button
                         variant="outline"
                         className="border-purple-500 text-purple-500 transition-all duration-200 hover:bg-gray-300/70"
