@@ -2,7 +2,7 @@ name: Build, Test, and Push to ECR
 
 on:
   push:
-    branches: [ main ]
+    branches: [ * ]
   pull_request:
     branches: [ main ]
 
