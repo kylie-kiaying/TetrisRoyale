@@ -27,10 +27,6 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-
     - name: Build, test, and push images to ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
