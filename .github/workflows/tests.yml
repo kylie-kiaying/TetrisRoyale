@@ -52,10 +52,7 @@ jobs:
           
           echo "Running tests for $service"
           # Check if service has a specific test structure
-          if [ "$service" == "rating-service" ]; then
-            pytest app/controller -v || exit 1  # Run tests on controller component
-          else
-            pytest tests/ -v || exit 1  # Run tests on the general tests directory
+          pytest tests/ -v || exit 1  # Run tests on the general tests directory
           fi
           
           echo "Building image for $service"
