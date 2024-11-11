@@ -139,10 +139,16 @@ class MatchmakingService:
                     f"http://rating-service:8000/ratings/matches/{match_id}/",  
                     json=match_update
                 )
+<<<<<<< HEAD
 
                 response = await client.post(
                     # TODO: CHANGE THIS URL
                     f"{analytics_service_url}/analytics/statistics",
+=======
+                response = await client.post(
+                    # TODO: CHANGE THIS URL
+                    f"http://analytics-service:8000/analytics/statistics",
+>>>>>>> testing/unit-tests
                     json={
                         "player_id": match["player1_id"],
                         "match_id": match_id,
@@ -159,7 +165,11 @@ class MatchmakingService:
                 
                 response = await client.post(
                     # TODO: CHANGE THIS URL
+<<<<<<< HEAD
                     f"{analytics_service_url}/analytics/statistics",
+=======
+                    f"http://analytics-service:8000/analytics/statistics",
+>>>>>>> testing/unit-tests
                     json={
                         "player_id": match["player2_id"],
                         "match_id": match_id,
@@ -173,6 +183,7 @@ class MatchmakingService:
                     }
                 )
                 response.raise_for_status()
+<<<<<<< HEAD
 
             if match["stage"] == 1: # final match in tournament
                 return updated_match
@@ -211,6 +222,10 @@ class MatchmakingService:
                 return response 
 
 
+=======
+    
+            return updated_match
+>>>>>>> testing/unit-tests
         except Exception as e:
             # Log the error here if you have a logging system
             raise ValueError(f"Error updating match result: {str(e)}")
