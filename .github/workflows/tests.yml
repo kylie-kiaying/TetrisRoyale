@@ -1,51 +1,57 @@
-name: Microservices Tests
+name: Build, Test, and Push to ECR
 
 on:
   push:
-    branches: [main, develop]
+    branches: [ main, testing/*]
   pull_request:
-    branches: [main, develop]
+    branches: [ main ]
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        service: [
-          'admin-service'
-        ]
-
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v4
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        python-version: '3.12'
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
 
-    - name: Install dependencies for ${{ matrix.service }}
-      working-directory: ./backend/${{ matrix.service }}
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install aiosqlite
 
-    - name: Run tests for ${{ matrix.service }}
-      working-directory: ./backend/${{ matrix.service }}
+    - name: Build, test, and push images to ECR
       env:
-        TESTING: "true"
-        PLAYER_SERVICE_URL: http://localhost:8002
-        RATING_SERVICE_URL: http://localhost:8005
-        from_email: ${{ secrets.FROM_EMAIL }}
-        from_password: ${{ secrets.FROM_PASSWORD }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
-        pytest -v --junitxml=test-results.xml
-
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results-${{ matrix.service }}
-        path: ./backend/${{ matrix.service }}/test-results.xml
-
-#testing
+        services=("auth-service" "player-service" "tournament-service" "matchmaking-service" "rating-service" "admin-service" "analytics-service")
+        
+        for service in "${services[@]}"; do
+          echo "Processing $service"
+          
+          cd backend/$service || exit 1
+          
+          echo "Running tests for $service"
+          pytest tests/ -v || exit 1
+          
+          echo "Building image for $service"
+          docker build -t "$ECR_REGISTRY/$service:$GITHUB_SHA" .
+          docker tag "$ECR_REGISTRY/$service:$GITHUB_SHA" "$ECR_REGISTRY/$service:latest"
+          
+          echo "Pushing image for $service"
+          docker push "$ECR_REGISTRY/$service:$GITHUB_SHA"
+          docker push "$ECR_REGISTRY/$service:latest"
+          
+          cd ../..
+        done
