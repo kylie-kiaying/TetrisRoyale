@@ -4,8 +4,6 @@ import httpx
 from app.service.matchmaking_service import MatchmakingService
 from app.repository.matchmaking_repository import MatchmakingRepository
 from app.repository.tournament_repository import TournamentRepository
-import os
-from dotenv import load_dotenv
 
 pytestmark = pytest.mark.asyncio
 
