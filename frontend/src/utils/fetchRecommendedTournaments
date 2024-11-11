@@ -13,26 +13,35 @@ export const fetchTournaments = async () => {
 export const filterByRating = (tournaments, userRating, ratingRange = 100) => {
   return tournaments.filter(
     (tournament) =>
-      Math.abs(tournament.recommendedRating - userRating) <= ratingRange
+      Math.abs(tournament.recommended_rating - userRating) <= ratingRange
   );
 };
 
-export const filterEnrolledTournaments = (tournaments, username) => {
+export const filterEnrolledTournaments = (tournaments, playerId) => {
   return tournaments.filter(
-    (tournament) => !tournament.registrants.includes(username)
+    (tournament) =>
+      !tournament.registrants.some((player) => player.player_id === playerId)
   );
+};
+
+// New filter for upcoming tournaments
+export const filterUpcomingTournaments = (tournaments) => {
+  return tournaments.filter((tournament) => tournament.status === 'upcoming');
 };
 
 export const getRecommendedTournaments = async (
   userRating,
-  username,
-  ratingRange = 100
+  userId,
+  ratingRange = 1000
 ) => {
   const allTournaments = await fetchTournaments();
+
+  const filteredByStatus = filterUpcomingTournaments(allTournaments);
   const filteredByRating = filterByRating(
-    allTournaments,
+    filteredByStatus,
     userRating,
     ratingRange
   );
-  return filterEnrolledTournaments(filteredByRating, username);
+
+  return filterEnrolledTournaments(filteredByRating, userId).slice(0, 5);
 };

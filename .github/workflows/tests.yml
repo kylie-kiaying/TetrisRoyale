@@ -1,12 +1,12 @@
-name: Build, Test, and Push to ECR
+name: Build and Push to ECR
 
 on:
   push:
     branches:
-      - "**"  # Matches any branch (the correct way to specify all branches)
+      - main  # Matches any branch (the correct way to specify all branches)
   pull_request:
     branches:
-      - "**" 
+      - main
 
 env:
   AWS_REGION: ap-southeast-1
@@ -30,6 +30,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
 
     - name: Build, test, and push images to ECR
+
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         DATABASE_URL: postgresql+asyncpg://postgres:postgres@database-cs203.c186q28q8coh.ap-southeast-1.rds.amazonaws.com:5432/database-cs203
@@ -54,8 +55,7 @@ jobs:
           # Check if service has a specific test structure
           pytest tests/ -v || exit 1  # Run tests on the general tests directory
           
-          
-          
+
           echo "Building image for $service"
           docker build -t "$ECR_REGISTRY/$service:$GITHUB_SHA" .
           docker tag "$ECR_REGISTRY/$service:$GITHUB_SHA" "$ECR_REGISTRY/$service:latest"

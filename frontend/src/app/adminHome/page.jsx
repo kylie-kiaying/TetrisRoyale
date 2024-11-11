@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar.jsx';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import BackgroundWrapper from '@/components/BackgroundWrapper';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
@@ -15,7 +16,7 @@ import {
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { fetchAdminTournaments } from '@/utils/fetchAdminTournaments';
+import { fetchAdminTournaments, spawnTournyAndParticipants } from '@/utils/adminTournamentManagement';
 import { formatDateMedium } from '@/utils/dateUtils';
 import { successToast, errorToast } from '@/utils/toastUtils';
 
@@ -89,7 +90,14 @@ export default function AdminPage() {
 
   const loadTournaments = async () => {
     const fetchedTournaments = await fetchAdminTournaments(username);
-    setTournaments(fetchedTournaments);
+
+    // Sort tournaments based on status
+    const sortedTournaments = fetchedTournaments.sort((a, b) => {
+      const statusOrder = { ongoing: 0, upcoming: 1, completed: 2 };
+      return statusOrder[a.status] - statusOrder[b.status];
+    });
+  
+    setTournaments(sortedTournaments);
   };
 
   const handleDeleteTournament = async (tournamentId) => {
@@ -120,16 +128,8 @@ export default function AdminPage() {
   }, []);
 
   return (
-    <div
-      className="flex min-h-screen flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat px-4"
-      style={{
-        backgroundImage:
-          "linear-gradient(to bottom, rgba(11, 5, 29, 0.95), rgba(28, 17, 50, 0.95)), url('/bgpic.png')",
-      }}
-    >
-      <div className="w-full">
-        <Navbar />
-      </div>
+    <BackgroundWrapper>
+      <Navbar />
       <div className="flex w-full flex-grow items-start justify-center pb-10 pt-14">
         <Card className="w-full max-w-4xl rounded-lg border-none bg-[#1c1132] bg-opacity-90 shadow-lg backdrop-blur-md">
           <CardHeader className="flex flex-row items-center justify-between">
@@ -265,7 +265,7 @@ export default function AdminPage() {
               >
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>{tournament.tournament_name}</CardTitle>
-                  <Link href="/adminTournament">
+                  <Link href={`/adminTournament/${tournament.tournament_id}`}>
                     <Button
                       variant="outline"
                       className="border-none bg-purple-700 text-white transition-all duration-200 hover:bg-purple-600"
@@ -282,9 +282,9 @@ export default function AdminPage() {
                     </span>
                     <div className="mt-2 text-xs">
                       Status:{' '}
-                      {tournament.status === 'Ongoing' ? (
+                      {tournament.status === 'ongoing' ? (
                         <span className="text-yellow-200"> Ongoing</span>
-                      ) : tournament.status === 'Upcoming' ? (
+                      ) : tournament.status === 'upcoming' ? (
                         <span className="text-green-200"> Upcoming</span>
                       ) : (
                         <span className="text-red-200"> Finished</span>
@@ -335,7 +335,7 @@ export default function AdminPage() {
                                   <strong>{tournament.tournament_name}</strong>?
                                 </p>
                                 <p className="text-sm text-gray-400">
-                                  This action cannot be undone.
+                                  This will also remove <strong>{tournament.tournament_name}</strong> from your profile. This action cannot be undone.
                                 </p>
                               </div>
                             </div>
@@ -367,8 +367,16 @@ export default function AdminPage() {
               </Card>
             ))}
           </CardContent>
+          {/* <Button
+            onClick={() =>
+              spawnTournyAndParticipants(username)
+            }
+            className="w-full bg-grey-600 text-white hover:bg-black sm:ml-3 sm:w-auto"
+          >
+            Demo
+          </Button> */}
         </Card>
       </div>
-    </div>
+    </BackgroundWrapper>
   );
 }

@@ -29,7 +29,7 @@ import {
 } from 'react-icons/io5';
 import { PiRankingBold } from 'react-icons/pi';
 import { useAuthStore } from '@/store/authStore';
-import { errorToast } from '@/utils/toastUtils';
+import { errorToast, successToast } from '@/utils/toastUtils';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -41,29 +41,28 @@ export default function Navbar() {
   const userType = useAuthStore((state) => state.user.userType);
   const isAuthenticated = useAuthStore((state) => !!state.user.token);
   const username = useAuthStore((state) => state.user.username);
-  const userId = useAuthStore((state) => state.user.id);
+  const userId = useAuthStore((state) => state.user.userId);
   const playerRating = useAuthStore((state) => state.user.rating);
+  const profilePicture = useAuthStore((state) => state.user.profilePicture);
   const { tier, color } = getPlayerTier(playerRating || 0);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const isActive = (path) => pathname === path;
 
-  // Set hasMounted to true on initial render
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch('http://localhost:8001/logout/', {
+      const response = await fetch('http://localhost:8001/auth/logout/', {
         method: 'POST',
-        credentials: 'include', // Ensure cookies are sent
+        credentials: 'include',
       });
 
       if (response.ok) {
         successToast('You have been logged out successfully.');
-        useAuthStore.getState().clearUser(); // Clear user data from the store
-        Cookies.remove('session_token'); // Remove the token cookie from the client
+        useAuthStore.getState().clearUser();
         router.push('/');
       } else {
         errorToast('Failed to log out. Please try again.');
@@ -74,7 +73,6 @@ export default function Navbar() {
     }
   };
 
-  // Redirect to home if user is not authenticated after mounting
   useEffect(() => {
     if (hasMounted && !isAuthenticated) {
       router.push('/');
@@ -127,7 +125,7 @@ export default function Navbar() {
               label: 'Search',
             },
             {
-              href: '/profile',
+              href: userType === 'player' ? '/profile' : '/adminProfile',
               icon: <IoPerson className="h-6 w-6" />,
               label: 'Profile',
             },
@@ -174,7 +172,7 @@ export default function Navbar() {
             <HoverCardTrigger asChild>
               <div className="flex cursor-pointer items-center gap-2">
                 <Avatar>
-                  <AvatarImage src="/user.png" />
+                  <AvatarImage src={profilePicture || '/user.png'} />
                   <AvatarFallback>
                     {username ? username.charAt(0).toUpperCase() : 'U'}
                   </AvatarFallback>
@@ -183,7 +181,7 @@ export default function Navbar() {
                   <h4 className="font-medium">{username}</h4>
                   {userType === 'player' ? (
                     <p className="text-xs text-muted-foreground">
-                      WHR: {playerRating.toFixed(2) || 'N/A'}
+                      WHR: {playerRating?.toFixed(2) || 'N/A'}
                     </p>
                   ) : (
                     <p className="text-xs text-muted-foreground">Admin</p>
@@ -195,7 +193,7 @@ export default function Navbar() {
               <div className="flex flex-col space-y-4">
                 <div className="flex items-center justify-between space-x-4">
                   <Avatar>
-                    <AvatarImage src="/placeholder-user.jpg" />
+                    <AvatarImage src={profilePicture || '/user.png'} />
                     <AvatarFallback>
                       {username ? username.charAt(0).toUpperCase() : 'U'}
                     </AvatarFallback>
@@ -205,7 +203,7 @@ export default function Navbar() {
                     {userType === 'player' ? (
                       <>
                         <p className="text-xs text-muted-foreground">
-                          WHR: {playerRating.toFixed(2) || 'N/A'}
+                          WHR: {playerRating?.toFixed(2) || 'N/A'}
                         </p>
                         <Link href="/tierInfo">
                           <Badge className="bg-gray-800 text-xs">
@@ -252,7 +250,7 @@ export default function Navbar() {
           { href: '/tournaments', icon: <IoTrophy className="h-6 w-6" /> },
           { href: '/rankings', icon: <PiRankingBold className="h-6 w-6" /> },
           { href: '/search', icon: <IoSearch className="h-6 w-6" /> },
-          { href: '/profile', icon: <IoPerson className="h-6 w-6" /> },
+          { href: userType === 'player' ? '/profile' : '/adminProfile', icon: <IoPerson className="h-6 w-6" /> },
         ].map(({ href, icon }) => (
           <Link key={href} href={href}>
             <Button

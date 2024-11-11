@@ -3,14 +3,10 @@ import json
 import http.cookies
 from unittest.mock import AsyncMock, patch
 from fastapi import HTTPException
-from fastapi.responses import RedirectResponse
 from app.service.auth_service import AuthService
 from app.model.user_model import User
 from app.repository.user_repository import UserRepository
-from dotenv import load_dotenv
-from httpx import Response
 
-# 
 
 @pytest.mark.asyncio
 async def test_login_success():
@@ -128,6 +124,7 @@ async def test_verify_email_invalid_token():
          patch('app.service.auth_service.UserRepository', return_value=mock_user_repo):
         await auth_service.verify_email("invalid_token", mock_db)
     assert exc_info.value.status_code == 400
+
     assert exc_info.value.detail == "Invalid or expired verification token"
 
 
@@ -193,3 +190,4 @@ async def test_delete_user_non_existent():
     with patch('app.service.auth_service.UserRepository', return_value=mock_user_repo):
         response = await auth_service.delete_user(999, mock_db)
         assert response == {"error": "No user found with this id."}
+

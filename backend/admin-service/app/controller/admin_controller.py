@@ -6,6 +6,10 @@ from app.utils.dependencies import get_admin_service
 
 router = APIRouter()
 
+@router.get("/")
+async def root():
+    return {"message": "Service is running"}
+
 @router.get("/admins", response_model=List[AdminResponse])
 async def get_all_admins(admin_service: AdminService = Depends(get_admin_service)):
     return await admin_service.get_all_admins()

@@ -8,9 +8,9 @@ export async function fetchRecentCompletedTournaments() {
 
     const tournaments = await response.json();
 
-    // Filter to get only completed tournaments
+    // Filter to get only completed tournaments based on the "status" field
     const completedTournaments = tournaments
-      .filter((tournament) => tournament.completed)
+      .filter((tournament) => tournament.status === 'completed') // Check if status is "completed"
       // Sort by `tournament_end` date in descending order (most recent first)
       .sort((a, b) => new Date(b.tournament_end) - new Date(a.tournament_end))
       // Slice to get the top 10 most recent completed tournaments

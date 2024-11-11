@@ -24,7 +24,7 @@ export default function ResetPasswordPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:8001/reset-password/${id}`,
+        `http://localhost:8001/auth/reset-password/${id}`,
         {
           method: 'POST',
           headers: {

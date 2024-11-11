@@ -8,6 +8,10 @@ from app.utils.s3_utils import S3Handler
 router = APIRouter()
 s3_handler = S3Handler()
 
+@router.get("/")
+async def root():
+    return {"message": "Service is running"}
+
 # Get all players with optional filters
 @router.get("/players", response_model=List[PlayerResponse])
 async def get_all_players(availability_status: str = None, min_rating: int = None, username: str = None, player_service: PlayerService = Depends(get_player_service)):

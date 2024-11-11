@@ -12,21 +12,25 @@ app = FastAPI()
 
 @router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"Service is up and"}
 
-@router.post("/login/", response_model=LoginResponse)
+@router.get("/auth/")
+async def root():
+    return {"Auth Service is up and running"}
+
+@router.post("/auth/login/", response_model=LoginResponse)
 async def verify_user(auth_data: UserLogin, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
     return await auth_service.login(auth_data, db)
 
-@router.post("/register/")
+@router.post("/auth/register/")
 async def register_user(auth_data: UserReg, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
     return await auth_service.register(auth_data, db)
 
-@router.get("/verify/{token}")
+@router.get("/auth/verify/{token}")
 async def verify_email(token: str, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
     return await auth_service.verify_email(token, db)
 
-@router.post("/logout/")
+@router.post("/auth/logout/")
 async def logout_user(request: Request, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()
 ):
     token = request.cookies.get("session_token")
@@ -35,19 +39,19 @@ async def logout_user(request: Request, db: AsyncSession = Depends(get_db), auth
         return JSONResponse(status_code=400, content={"message": "No authentication cookie found."})
     return await auth_service.logout(token, db)
 
-@router.post("/forgot-password")
+@router.post("/auth/forgot-password")
 async def forgot_password(data: ForgotPassword, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
     return await auth_service.forgot_password(data.recovery_email, db)
 
-@router.post("/reset-password/{token}")
+@router.post("/auth/reset-password/{token}")
 async def reset_password(token: str, data: ResetPassword, db: AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
     return await auth_service.reset_password(token, data.new_password, db)
 
 #put endpoint
-@router.put("/users/{user_id}")
+@router.put("/auth/users/{user_id}")
 async def update_user(user_id: int, request:UpdateRequest, db:AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
     return await auth_service.update_user(user_id, request, db)
 
-@router.delete("/users/{user_id}")
+@router.delete("/auth/users/{user_id}")
 async def delete_user(user_id: int, db:AsyncSession = Depends(get_db), auth_service: AuthService = Depends()):
     return await auth_service.delete_user(user_id, db)

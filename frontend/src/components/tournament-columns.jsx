@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { formatDateMedium } from '@/utils/dateUtils';
 
 export const columns = {
   enrolled: [
@@ -20,18 +21,51 @@ export const columns = {
     {
       accessorKey: 'tournament_start',
       header: 'Start',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        return dateValue ? formatDateMedium(dateValue) : 'N/A';
+      },
     },
     {
       accessorKey: 'tournament_end',
       header: 'End',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        return dateValue ? formatDateMedium(dateValue) : 'N/A';
+      },
     },
     {
       accessorKey: 'status',
       header: 'Status',
+      cell: (info) => {
+        const status = info.getValue().toLowerCase();
+        const statusCapitalized =
+          status.charAt(0).toUpperCase() + status.slice(1);
+
+        // Set color based on status
+        let color;
+        switch (status) {
+          case 'upcoming':
+            color = 'orange';
+            break;
+          case 'ongoing':
+            color = 'green';
+            break;
+          case 'completed':
+            color = 'gray';
+            break;
+          default:
+            color = 'inherit';
+        }
+
+        return (
+          <span style={{ color, fontWeight: 'bold' }}>{statusCapitalized}</span>
+        );
+      },
     },
     {
-      accessorKey: 'organizer',
-      header: 'Organizer',
+      accessorKey: 'organiser',
+      header: 'Organiser',
     },
     {
       accessorKey: 'tournament_id',
@@ -70,18 +104,51 @@ export const columns = {
     {
       accessorKey: 'tournament_start',
       header: 'Start',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        return dateValue ? formatDateMedium(dateValue) : 'N/A';
+      },
     },
     {
-      accessorKey: 'tournamnt_end',
+      accessorKey: 'tournament_end',
       header: 'End',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        return dateValue ? formatDateMedium(dateValue) : 'N/A';
+      },
     },
     {
       accessorKey: 'status',
       header: 'Status',
+      cell: (info) => {
+        const status = info.getValue().toLowerCase();
+        const statusCapitalized =
+          status.charAt(0).toUpperCase() + status.slice(1);
+
+        // Set color based on status
+        let color;
+        switch (status) {
+          case 'upcoming':
+            color = 'orange';
+            break;
+          case 'ongoing':
+            color = 'green';
+            break;
+          case 'completed':
+            color = 'gray';
+            break;
+          default:
+            color = 'inherit';
+        }
+
+        return (
+          <span style={{ color, fontWeight: 'bold' }}>{statusCapitalized}</span>
+        );
+      },
     },
     {
-      accessorKey: 'organizer',
-      header: 'Organizer',
+      accessorKey: 'organiser',
+      header: 'Organiser',
     },
     {
       accessorKey: 'tournament_id',
@@ -233,7 +300,6 @@ export const columns = {
         return <span style={{ color, fontWeight: 'bold' }}>{label}</span>;
       },
     },
-
     {
       accessorKey: 'recommendedRating',
       header: 'Rating',
@@ -310,6 +376,69 @@ export const columns = {
         </TooltipProvider>
       ),
       className: 'w-12 text-center',
+    },
+  ],
+  created: [
+    {
+      accessorKey: 'tournament_name',
+      header: 'Name',
+    },
+    {
+      accessorKey: 'tournament_start',
+      header: 'Start',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        if (!dateValue) return 'N/A';
+        const date = new Date(dateValue);
+        return isNaN(date.getTime())
+          ? 'Invalid Date'
+          : date.toLocaleDateString('en-GB', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+      },
+    },
+    {
+      accessorKey: 'tournament_end',
+      header: 'End',
+      cell: (info) => {
+        const dateValue = info.getValue();
+        if (!dateValue) return 'N/A';
+        const date = new Date(dateValue);
+        return isNaN(date.getTime())
+          ? 'Invalid Date'
+          : date.toLocaleDateString('en-GB', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+      },
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+    },
+    {
+      accessorKey: 'recommended_rating',
+      header: 'Rating',
+    },
+    {
+      id: 'expander',
+      accessorKey: 'players',
+      header: () => null,
+      cell: ({ row }) => (
+        <button
+          onClick={() => row.toggleExpanded()}
+          className="flex items-center"
+        >
+          {row.getIsExpanded() ? (
+            <IoChevronDown className="h-5 w-5 text-gray-400" />
+          ) : (
+            <IoChevronForward className="h-5 w-5 text-gray-400" />
+          )}
+        </button>
+      ),
     },
   ],
 };
