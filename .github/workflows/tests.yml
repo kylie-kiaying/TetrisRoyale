@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -25,8 +25,13 @@ jobs:
 
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
+      uses: aws-actions/amazon-ecr-login@v1
 
+    - name: Install pytest and dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+        
     - name: Build, test, and push images to ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -38,21 +43,8 @@ jobs:
           
           cd backend/$service || exit 1
           
-          echo "Installing dependencies for $service"
-          if [ -f requirements.txt ]; then
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-          else
-            echo "No requirements.txt found for $service"
-          fi
-          
           echo "Running tests for $service"
-          # Check if service has a specific test structure
-          if [ "$service" == "rating-service" ]; then
-            pytest app/controller -v || exit 1  # Run tests on controller component
-          else
-            pytest tests/ -v || exit 1  # Run tests on the general tests directory
-          fi
+          pytest -v || exit 1
           
           echo "Building image for $service"
           docker build -t "$ECR_REGISTRY/$service:$GITHUB_SHA" .
