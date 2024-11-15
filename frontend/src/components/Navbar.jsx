@@ -30,6 +30,7 @@ import {
 import { PiRankingBold } from 'react-icons/pi';
 import { useAuthStore } from '@/store/authStore';
 import { errorToast, successToast } from '@/utils/toastUtils';
+import { authService } from '@/services/authService';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -55,21 +56,12 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch('http://localhost:8001/auth/logout/', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (response.ok) {
-        successToast('You have been logged out successfully.');
-        useAuthStore.getState().clearUser();
-        router.push('/');
-      } else {
-        errorToast('Failed to log out. Please try again.');
-      }
+      await authService.logout();
+      successToast('You have been logged out successfully.');
+      useAuthStore.getState().clearUser();
+      router.push('/');
     } catch (error) {
-      console.error('Error during logout:', error);
-      errorToast('An error occurred during logout. Please try again.');
+      errorToast('Failed to log out. Please try again.');
     }
   };
 

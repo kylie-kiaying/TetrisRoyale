@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { successToast, errorToast } from '@/utils/toastUtils';
 import BackgroundWrapper from '@/components/BackgroundWrapper';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { authService } from '@/services/authService';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -23,24 +24,9 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:8001/auth/reset-password/${id}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ new_password: password }),
-        }
-      );
-
-      if (response.ok) {
-        successToast('Your password has been reset successfully.');
-        router.push('/login'); // Redirect to login after success
-      } else {
-        const result = await response.json();
-        errorToast(result.message || 'An error occurred');
-      }
+      await authService.resetPassword(id, password);
+      successToast('Your password has been reset successfully.');
+      router.push('/login'); // Redirect to login after success
     } catch (err) {
       errorToast('Failed to connect to the server. Please try again later.');
     }

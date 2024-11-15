@@ -9,6 +9,8 @@ import PlayerStatistics from '@/components/PlayerStatistics';
 import { getPlayerTier } from '@/utils/getPlayerTier';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { playerService } from '@/services/playerService';
+import { ratingService } from '@/services/ratingService';
 
 // Sample match history data
 const matchHistory = [
@@ -49,11 +51,8 @@ export default function ViewPlayerProfile() {
 
   const fetchProfileData = async () => {
     try {
-      const response = await fetch(`http://localhost:8002/players/${id}`);
-      const playerData = await response.json();
-
-      const ratingResponse = await fetch(`http://localhost:8005/ratings/${id}`);
-      const ratingData = await ratingResponse.json();
+      const playerData = await playerService.getPlayerDetails(id);
+      const ratingData = await ratingService.getUserRating(id);
 
       setProfileData({
         username: playerData.username,

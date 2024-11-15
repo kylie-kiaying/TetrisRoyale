@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import BackgroundWrapper from '@/components/BackgroundWrapper';
 import { successToast, errorToast } from '@/utils/toastUtils';
 import { useRouter } from 'next/navigation';
+import { authService } from '@/services/authService'; // Import authService
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -19,24 +20,11 @@ export default function ForgotPassword() {
     setError(''); // Clear any previous error
 
     try {
-      const response = await fetch('http://localhost:8001/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ recovery_email: email }),
-      });
-
-      if (response.ok) {
-        setIsSubmitted(true);
-        successToast(
-          'If an account with this email exists, you will receive a reset link shortly.'
-        );
-      } else {
-        const result = await response.json();
-        setError(result.message || 'Something went wrong. Please try again.');
-        errorToast('Something went wrong. Please try again.');
-      }
+      await authService.forgotPassword(email);
+      setIsSubmitted(true);
+      successToast(
+        'If an account with this email exists, you will receive a reset link shortly.'
+      );
     } catch (err) {
       setError('Failed to connect to the server. Please try again later.');
       errorToast('Failed to connect to the server. Please try again later.');
