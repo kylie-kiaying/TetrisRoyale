@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import Link from 'next/link';
+import { authService } from '@/services/authService';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -63,22 +64,10 @@ export default function RegisterPage() {
     };
 
     try {
-      const response = await fetch('http://localhost:8001/auth/register/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        successToast('Registration successful!');
-        localStorage.setItem('verificationEmail', payload.email);
-        router.push('/verifyEmail');
-      } else {
-        const errorData = await response.json();
-        errorToast('Registration failed, email or username taken');
-      }
+      await authService.register(payload);
+      successToast('Registration successful!');
+      localStorage.setItem('verificationEmail', payload.email);
+      router.push('/verifyEmail');
     } catch (error) {
       errorToast('An error occurred. Please try again.');
     }
