@@ -16,6 +16,18 @@ npm install
 npm run dev
 ```
 
+Add this to your frontend env file if running backend locally. Else, change to deployed endpoint:  
+
+```
+NEXT_PUBLIC_AUTH_SERVICE_URL=http://localhost:8001
+NEXT_PUBLIC_PLAYER_SERVICE_URL=http://localhost:8002
+NEXT_PUBLIC_TOURNAMENT_SERVICE_URL=http://localhost:8003
+NEXT_PUBLIC_MATCHMAKING_SERVICE_URL=http://localhost:8004
+NEXT_PUBLIC_RATING_SERVICE_URL=http://localhost:8005
+NEXT_PUBLIC_ADMIN_SERVICE_URL=http://localhost:8006
+NEXT_PUBLIC_ANALYTICS_SERVICE_URL=http://localhost:8007
+```
+
 ### Backend Setup
 
 Navigate into backend directory
@@ -52,14 +64,14 @@ FROM_PASSWORD={Password for verification}
 SECRET_KEY={Secret Key}  
 ALGORITHM={Algorithm}  
 ACCESS_TOKEN_EXPIRE_MINUTES=30  
-PLAYER_SERVICE_URL=http://player-service:8000 // For local now - replace with deployed url  
-RATING_SERVICE_URL=http://rating-service:8000 // For local now - replace with deployed url  
-ANALYTICS_SERVICE_URL = http://analytics-service:8000 // For local now - replace with deployed url  
+PLAYER_SERVICE_URL=http://player-service:8000 // For local - replace with deployed url  
+RATING_SERVICE_URL=http://rating-service:8000 // For local - replace with deployed url  
+ANALYTICS_SERVICE_URL = http://analytics-service:8000 // For local - replace with deployed url  
 
 
 #### Matchmaking service
 
-PLAYER_SERVICE_URL=http://player-service:8000 // For local now - replace with deployed url  
+PLAYER_SERVICE_URL=http://player-service:8000 // For local - replace with deployed url  
 
 #### Player service
 
