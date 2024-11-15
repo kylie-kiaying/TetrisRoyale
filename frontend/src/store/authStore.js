@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { playerService } from '@/services/playerService';
+import { ratingService } from '@/services/ratingService';
 
 export const useAuthStore = create(
   persist(
@@ -38,30 +40,25 @@ export const useAuthStore = create(
 
         // Asynchronously fetch additional user details (rating, profile picture)
         if (decoded.role === 'player') {
-          axios
-            .all([
-              axios.get(`http://localhost:8005/ratings/${decoded.id}`),
-              axios.get(`http://localhost:8002/players/${decoded.id}`),
-            ])
-            .then(
-              axios.spread((ratingResponse, profileResponse) => {
-                const rating = ratingResponse?.data?.rating || null;
-                const profilePicture =
-                  profileResponse?.data?.profile_picture || null;
+          Promise.all([
+            ratingService.getUserRating(decoded.id),
+            playerService.getPlayerDetails(decoded.id)
+          ])
+          .then(([ratingResponse, profileResponse]) => {
+            const rating = ratingResponse?.rating || null;
+            const profilePicture = profileResponse?.profile_picture || null;
 
-                // Update only the rating and profile picture
-                set((state) => ({
-                  user: {
-                    ...state.user,
-                    rating,
-                    profilePicture,
-                  },
-                }));
-              })
-            )
-            .catch((error) => {
-              console.error('Error fetching user data:', error);
-            });
+            set((state) => ({
+              user: {
+                ...state.user,
+                rating,
+                profilePicture,
+              },
+            }));
+          })
+          .catch((error) => {
+            console.error('Error fetching user data:', error);
+          });
         }
       },
 

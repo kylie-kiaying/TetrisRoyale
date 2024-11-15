@@ -5,6 +5,7 @@ import { DataTable } from '@/components/ui/data-table';
 import { IoCalendar } from 'react-icons/io5';
 import React, { useEffect, useState } from 'react';
 import BackgroundWrapper from '@/components/BackgroundWrapper';
+import { tournamentService } from '@/services/tournamentService';
 
 export default function TournamentsPage() {
   const [tournaments, setTournaments] = useState([]);
@@ -12,20 +13,15 @@ export default function TournamentsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8003/tournaments');
-        if (response.ok) {
-          const data = await response.json();
-          setTournaments(data); // Set the data to state
-        } else {
-          console.error('Failed to fetch tournaments:', response.statusText);
-        }
+        const data = await tournamentService.getAllTournaments();
+        setTournaments(data);
       } catch (error) {
         console.error('Error fetching tournaments:', error);
       }
     };
 
     fetchData();
-  }, []); // Empty dependency array ensures this runs once when the component mounts
+  }, []);
 
   return (
     <BackgroundWrapper>
