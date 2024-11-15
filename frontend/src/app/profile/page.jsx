@@ -1,22 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
-import {
-  getPlayerDetails,
-  getPlayerMatchesAndInsertTournamentNameAndStatistics,
-  calculateWinRate,
-} from '@/utils/fetchPlayerDetails';
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar.jsx';
 import { DataTable } from '@/components/ui/data-table';
 import { useAuthStore } from '@/store/authStore';
 import PlayerStatistics from '@/components/PlayerStatistics';
 import ToggleButtons from '@/components/ui/toggle';
-import { getPlayerTier } from '@/utils/getPlayerTier'; // Import the getPlayerTier function
+import { getPlayerTier } from '@/utils/getPlayerTier';
 import { Badge } from '@/components/ui/badge';
 import { FaEdit } from 'react-icons/fa';
 import BackgroundWrapper from '@/components/BackgroundWrapper';
 import { successToast, errorToast } from '@/utils/toastUtils';
+import { playerService } from '@/services/playerService';
 
 export default function PlayerProfile() {
   const username = useAuthStore((state) => state.user.username); // Get username from the auth store
@@ -37,8 +33,7 @@ export default function PlayerProfile() {
   // Fetch profile image on mount
   useEffect(() => {
     if (user_id) {
-      fetch(`http://localhost:8002/players/${user_id}`)
-        .then((response) => response.json())
+      playerService.getPlayerDetails(user_id)
         .then((data) => {
           if (data.profile_picture) {
             setProfileImage(data.profile_picture);
@@ -63,35 +58,20 @@ export default function PlayerProfile() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const response = await fetch(
-        `http://localhost:8002/players/${user_id}/profile-picture`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setProfileImage(data.profile_picture); // Update profile image with new URL
-        successToast('Profile picture updated successfully.');
-        setFile(null); // Reset file after upload
-      } else {
-        errorToast('Failed to upload profile picture.');
-      }
+      const response = await playerService.uploadProfilePicture(user_id, file);
+      setProfileImage(response.profile_picture);
+      successToast('Profile picture updated successfully.');
+      setFile(null);
     } catch (error) {
-      errorToast('An error occurred while uploading the profile picture.');
+      errorToast('Failed to upload profile picture.');
     }
   };
 
   useEffect(() => {
     if (user_id) {
-      getPlayerDetails(user_id).then((data) => setPlayerDetails(data));
-      getPlayerMatchesAndInsertTournamentNameAndStatistics(user_id).then(
+      playerService.getPlayerDetails(user_id).then((data) => setPlayerDetails(data));
+      playerService.getPlayerMatchesWithDetails(user_id).then(
         (data) => {
           setPlayerMatches(data);
           const statistics = calculateWinRate(data, user_id);

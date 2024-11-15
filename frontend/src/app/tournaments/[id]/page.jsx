@@ -28,7 +28,9 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { formatDateMedium } from '@/utils/dateUtils';
-import { successToast } from '@/utils/toastUtils';
+import { successToast, errorToast } from '@/utils/toastUtils';
+import { playerService } from '@/services/playerService';
+import { tournamentService } from '@/services/tournamentService';
 
 export default function TournamentDetails() {
   const router = useRouter();
@@ -49,17 +51,11 @@ export default function TournamentDetails() {
     if (id) {
       async function fetchTournamentDetails() {
         try {
-          const response = await fetch(
-            `http://localhost:8003/tournaments/${id}`
-          );
-          const data = await response.json();
+          const data = await tournamentService.getTournamentDetails(id);
           setTournament(data);
 
           const playerPromises = data.registrants.map(async (registrant) => {
-            const playerResponse = await fetch(
-              `http://localhost:8002/players/${registrant.player_id}`
-            );
-            const playerData = await playerResponse.json();
+            const playerData = await playerService.getPlayerDetails(registrant.player_id);
             return {
               player_id: registrant.player_id,
               username: playerData.username,
@@ -70,11 +66,7 @@ export default function TournamentDetails() {
           const players = await Promise.all(playerPromises);
           setTournamentPlayers(players);
 
-          const tournamentMatchesResponse = await fetch(
-            `http://localhost:8004/matchmaking/tournaments/${id}/matches`
-          );
-
-          const tournamentMatchesData = await tournamentMatchesResponse.json();
+          const tournamentMatchesData = await tournamentService.getTournamentMatches(id);
           setMatches(tournamentMatchesData);
         } catch (error) {
           console.error('Error fetching tournament details:', error);
@@ -99,12 +91,7 @@ export default function TournamentDetails() {
     const playerId = useAuthStore.getState().user.userId; // Get player_id from the Zustand store
 
     try {
-      const response = await fetch(
-        `http://localhost:8003/tournaments/${id}/register?player_id=${playerId}`,
-        {
-          method: 'POST',
-        }
-      );
+      const response = await tournamentService.registerForTournament(id, playerId);
 
       if (response.ok) {
         successToast("Registered successfully! Let's get ready to rumble!");
