@@ -6,9 +6,8 @@ import { useAuthStore } from '@/store/authStore';
 import { useEffect, useState } from 'react';
 import { fetchAdminTournaments } from '@/utils/adminTournamentManagement';
 import { getPlayerTier } from '@/utils/getPlayerTier';
-
-
-
+import { tournamentService } from '@/services/tournamentService';
+import { playerService } from '@/services/playerService';
 
 export default function AdminProfile() {
   const [tournaments, setTournaments] = useState([]);
@@ -16,36 +15,34 @@ export default function AdminProfile() {
 
   const loadTournaments = async () => {
     const fetchedTournaments = await fetchAdminTournaments(username);
-    fetchedTournaments.forEach(async tournament => {
+    const tournamentDetailsPromises = fetchedTournaments.map(async (tournament) => {
       try {
-        const response = await fetch(
-          `http://localhost:8003/tournaments/${tournament.tournament_id}`
+        const data = await tournamentService.getTournamentById(tournament.tournament_id);
+        tournament.players = await Promise.all(
+          data.registrants.map(async (registrant) => {
+            const playerData = await playerService.getPlayerDetails(registrant.player_id);
+            const { tier, color } = getPlayerTier(playerData.rating);
+            return {
+              username: playerData.username,
+              tier: tier,
+              color: color,
+              rating: playerData.rating,
+            };
+          })
         );
-        const data = await response.json();
-        tournament.players = [];
-        
-
-        data.registrants.map(async (registrant) => {
-          const playerResponse = await fetch(
-            `http://localhost:8002/players/${registrant.player_id}`
-          );
-          const playerData = await playerResponse.json();
-          const { tier, color } = getPlayerTier(playerData.rating);
-          const player = {username: playerData.username, tier: tier, color: color, rating: playerData.rating}
-          tournament.players.push(player);
-        })
-      } catch(error) {
+      } catch (error) {
         console.error('Error fetching tournament details:', error);
-      };
+      }
+      return tournament;
     });
-    
-    setTournaments(fetchedTournaments);
+
+    const tournamentsWithDetails = await Promise.all(tournamentDetailsPromises);
+    setTournaments(tournamentsWithDetails);
   };
-  
+
   useEffect(() => {
     loadTournaments();
   }, []);
- 
 
   return (
     <div
@@ -80,7 +77,7 @@ export default function AdminProfile() {
             </div>
           </div>
 
-            <div className="w-full transform rounded-lg bg-[#1c1132] p-4 shadow-lg transition-all duration-300 hover:scale-105 md:p-6">
+          <div className="w-full transform rounded-lg bg-[#1c1132] p-4 shadow-lg transition-all duration-300 hover:scale-105 md:p-6">
             <h2 className="mb-4 text-center text-lg font-semibold text-white md:text-2xl">
               Tournament List
             </h2>

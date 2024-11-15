@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { fetchAdminTournaments, spawnTournyAndParticipants } from '@/utils/adminTournamentManagement';
 import { formatDateMedium } from '@/utils/dateUtils';
 import { successToast, errorToast } from '@/utils/toastUtils';
+import { tournamentService } from '@/services/tournamentService';
 
 export default function AdminPage() {
   const [openDelete, setOpenDelete] = useState(null); // For delete confirmation
@@ -58,33 +59,19 @@ export default function AdminPage() {
     };
 
     try {
-      const response = await fetch('http://localhost:8003/tournaments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
+      await tournamentService.createTournament(payload);
+      successToast('Tournament created successfully!');
+      setOpenCreate(false);
+      setFormData({
+        tournament_name: '',
+        tournament_start: '',
+        tournament_end: '',
+        remarks: '',
+        recommended_rating: 1000,
       });
-
-      if (response.ok) {
-        successToast('Tournament created successfully!');
-        setOpenCreate(false); // Close the dialog on success
-        setFormData({
-          tournament_name: '',
-          tournament_start: '',
-          tournament_end: '',
-          remarks: '',
-          recommended_rating: 1000,
-        });
-        loadTournaments(); // Refresh tournaments list
-      } else {
-        const errorData = await response.json();
-        console.error('Error creating tournament:', errorData);
-        errorToast('Failed to create tournament');
-      }
+      loadTournaments();
     } catch (error) {
-      console.error('Error during request:', error);
-      errorToast('An error occurred. Please try again.');
+      errorToast('Failed to create tournament');
     }
   };
 
@@ -96,30 +83,18 @@ export default function AdminPage() {
       const statusOrder = { ongoing: 0, upcoming: 1, completed: 2 };
       return statusOrder[a.status] - statusOrder[b.status];
     });
-  
+
     setTournaments(sortedTournaments);
   };
 
   const handleDeleteTournament = async (tournamentId) => {
     try {
-      const response = await fetch(
-        `http://localhost:8003/tournaments/${tournamentId}`,
-        {
-          method: 'DELETE',
-        }
-      );
-
-      if (response.ok) {
-        successToast('Tournament deleted successfully!');
-        setOpenDelete(null); // Close the delete confirmation dialog
-        loadTournaments(); // Refresh tournaments list
-      } else {
-        console.error('Failed to delete tournament');
-        errorToast('Failed to delete tournament');
-      }
+      await tournamentService.deleteTournament(tournamentId);
+      successToast('Tournament deleted successfully!');
+      setOpenDelete(null);
+      loadTournaments();
     } catch (error) {
-      console.error('Error during deletion:', error);
-      errorToast('An error occurred. Please try again.');
+      errorToast('Failed to delete tournament');
     }
   };
 

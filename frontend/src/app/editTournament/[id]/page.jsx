@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
+import { tournamentService } from '@/services/tournamentService';
 
 export default function EditPage() {
   const router = useRouter();
@@ -29,8 +30,7 @@ export default function EditPage() {
     // Fetch tournament data when the component mounts
     const fetchTournament = async () => {
       try {
-        const response = await fetch(`http://localhost:8003/tournaments/${id}`);
-        const data = await response.json();
+        const data = await tournamentService.getTournamentById(id);
         setTournamentName(data.tournament_name);
         setRemarks(data.remarks);
         setTournamentStart(data.tournament_start);
@@ -48,18 +48,14 @@ export default function EditPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await fetch(`http://localhost:8003/tournaments/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tournament_name: tournamentName,
-          tournament_start: tournamentStart,
-          tournament_end: tournamentEnd,
-          status: status, // Using fetched value for status
-          remarks: remarks,
-          recommended_rating: Number(recommendedRating),
-          organiser: organiser, // Using fetched value for organiser
-        }),
+      await tournamentService.updateTournament(id, {
+        tournament_name: tournamentName,
+        tournament_start: tournamentStart,
+        tournament_end: tournamentEnd,
+        status: status, // Using fetched value for status
+        remarks: remarks,
+        recommended_rating: Number(recommendedRating),
+        organiser: organiser, // Using fetched value for organiser
       });
       router.push('/adminHome'); // Redirect after successful submission
     } catch (error) {
