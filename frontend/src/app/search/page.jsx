@@ -6,6 +6,8 @@ import Navbar from "@/components/Navbar";
 import SearchBar from "@/components/ui/SearchBar";
 import { DataTable } from "@/components/ui/data-table";
 import { distance } from "fastest-levenshtein";
+import { playerService } from '@/services/playerService';
+import { ratingService } from '@/services/ratingService';
 
 export default function SearchPage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -52,20 +54,27 @@ export default function SearchPage() {
 
     const fetchData = async (selectedOption) => {
         if (selectedOption === "Players" && !hasFetchedPlayers) {
-            const response = await fetch("http://localhost:8002/players");
-            const data = await response.json();
-            setPlayers(data);
-            setHasFetchedPlayers(true);
+            try {
+                const data = await playerService.getAllPlayers();
+                setPlayers(data);
+                setHasFetchedPlayers(true);
+            } catch (error) {
+                console.error('Error fetching players:', error);
+            }
         }
     };
 
     const fetchRatings = async (playerIds) => {
-        const ratingsPromises = playerIds.map(async (user_id) => {
-            const response = await fetch(`http://localhost:8005/ratings/${user_id}`);
-            const ratingData = await response.json();
-            return { user_id, rating: parseFloat(ratingData.rating).toFixed(2) };
-        });
-        return await Promise.all(ratingsPromises);
+        try {
+            const ratingsPromises = playerIds.map(async (user_id) => {
+                const ratingData = await ratingService.getUserRating(user_id);
+                return { user_id, rating: parseFloat(ratingData.rating).toFixed(2) };
+            });
+            return await Promise.all(ratingsPromises);
+        } catch (error) {
+            console.error('Error fetching ratings:', error);
+            return [];
+        }
     };
 
     const handleSearch = async (e) => {
