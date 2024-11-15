@@ -70,5 +70,15 @@ export const tournamentService = {
       console.error('Error fetching recent completed tournaments:', error);
       throw error;
     }
+  },
+
+  createTournament: async (payload) => {
+    try {
+      const response = await apiClients.tournament.post('/tournaments', payload);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating tournament:', error);
+      throw error;
+    }
   }
 };
