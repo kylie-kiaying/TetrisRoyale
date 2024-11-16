@@ -98,28 +98,6 @@ TELEGRAM_TOKEN={Telegram token}
 - AWS Integration for deployment
 - Profile Picture Management with S3
 
-## Architecture
-
-### Frontend
-
-- Next.js 14
-- TailwindCSS
-- Shadcn/UI Components
-- Zustand for State Management
-
-### Backend Microservices
-
-Local ports are listed. Use necessary endpoints for deployed routes.
-
-- Auth Service (Port: 8001)
-- Player Service (Port: 8002)
-- Tournament Service (Port: 8003)
-- Matchmaking Service (Port: 8004)
-- Rating Service (Port: 8005)
-- Admin Service (Port: 8006)
-- Analytics Service (Port: 8007)
-- Telegram Bot Service
-
 ## Prerequisites
 
 - Node.js (v18 or higher)
@@ -128,3 +106,5 @@ Local ports are listed. Use necessary endpoints for deployed routes.
 - AWS Account (for production deployment)
 - AWS CLI for development
 - PostgreSQL
+
+To enable CI/CD pipeline for AWS build, add AWS_ACCOUNT_ID, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY into github secrets, and uncomment the aws-build.yml file in .github/workflows for automatic building of Docker images and pushing into AWS ECR repository.  
